@@ -1,0 +1,30 @@
+#!/usr/bin/bash
+
+icon_dir=~/.config/images/
+
+# Toggle Mute
+toggle_mute() {
+	if [ "$(pamixer --get-mute)" == "false" ]; then
+		pamixer -m && notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$icon_dir/volume-mute.png" "Volume Switched OFF"
+	elif [ "$(pamixer --get-mute)" == "true" ]; then
+		pamixer -u && notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$icon_dir/volume-high.png" "Volume Switched ON"
+	fi
+}
+
+# Toggle Mic
+toggle_mic() {
+	if [ "$(pamixer --default-source --get-mute)" == "false" ]; then
+		pamixer --default-source -m && notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$icon_dir/microphone-mute.png" "Microphone Switched OFF"
+	elif [ "$(pamixer --default-source --get-mute)" == "true" ]; then
+		pamixer -u --default-source u && notify-send -h string:x-canonical-private-synchronous:sys-notify -u low -i "$icon_dir/microphone.png" "Microphone Switched ON"
+	fi
+}
+
+case $1 in
+	--toggle-vol) toggle_mute;;
+	--toggle-mic) toggle_mic;;
+	--mic-inc) pamixer --default-source -i 1;;
+	--mic-dec) pamixer --default-source -d 1;;
+esac
+
+# vim: filetype=bash

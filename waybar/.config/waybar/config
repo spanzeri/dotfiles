@@ -1,0 +1,160 @@
+{
+	// ███████╗ █████╗ ███╗   ███╗███████╗    ██╗    ██╗ █████╗ ██╗   ██╗██████╗  █████╗ ██████╗
+	// ██╔════╝██╔══██╗████╗ ████║██╔════╝    ██║    ██║██╔══██╗╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+	// ███████╗███████║██╔████╔██║███████╗    ██║ █╗ ██║███████║ ╚████╔╝ ██████╔╝███████║██████╔╝
+	// ╚════██║██╔══██║██║╚██╔╝██║╚════██║    ██║███╗██║██╔══██║  ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+	// ███████║██║  ██║██║ ╚═╝ ██║███████║    ╚███╔███╔╝██║  ██║   ██║   ██████╔╝██║  ██║██║  ██║
+	// ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚══╝╚══╝ ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+
+	"layer": "top",
+	"positon": "top",
+	"mod": "doc",
+	"exclusive": true,
+	"passtrhough": false,
+	"gtk-layer-shell": true,
+	"height": 30,
+
+	"modules-left": [
+		"custom/power",
+		"custom/lockscreen",
+		"custom/theme",
+		"wlr/workspaces",
+		"hyprland/window"
+	],
+
+	"modules-center": [
+		"clock",
+		"custom/weather",
+		"custom/updates"
+	],
+
+	"modules-right": [
+		"cpu",
+		"memory",
+		"network",
+		"pulseaudio",
+		"pulseaudio#microphone",
+		// "backlight",
+		// "battery",
+		"tray"
+	],
+
+	"custom/power": {
+		"format": "",
+		"on-click": "sh -c '(sleep 0.5s; wlogout --protocol layer-shell)' & disown",
+		"tooltip": false
+	},
+
+	"custom/lockscreen": {
+		"format": "",
+		"on-click": "sh -c '(sleep 0.5s; swaylock)' & disown",
+		"tooltip": false
+	},
+
+	"custom/theme": {
+		"format": "{}",
+		"exec": "~/.config/scripts/hypr-utils theme-icon",
+		"on-click": "~/.config/scripts/hypr-utils toggle-theme",
+		"tooltip": false
+	},
+
+	"wlr/workspaces": {
+		"disable-scroll": true,
+		"all-outputs": true,
+		"on-click": "activate",
+		"persistent_workspaces": {
+			"1": [],
+			"2": [],
+			"3": [],
+			"4": [],
+			"5": [],
+			"6": [],
+			"7": [],
+			"8": [],
+			"9": [],
+			"10": []
+		}
+	},
+
+	"include": [ "~/.config/waybar/clock.json" ],
+
+	"custom/updates": {
+		"format": "{}",
+		"exec": "~/.config/scripts/update_system count",
+		"on-click": "~/.config/scripts/update_system",
+		"interval": 300,
+		"tooltip": true
+	},
+
+	"cpu":{
+		"interval": 10,
+		"max-length": 10,
+		"format": "{usage}",
+		"on-click": "kitty --start-as=fullscreen --title btop sh -c 'btop'"
+	},
+
+	"memory": {
+		"format": "{}",
+		"on-click": "kitty --start-as=fullscreen --title btop sh -c 'btop'"
+	},
+
+	"network": {
+		"format-wifi": "{essid} ({signalStrength})",
+		"format-ethernet": "{ipaddr}/{cidr}󱘖",
+		"tooltip-format": "{ifname} via {gwaddr}󱘖",
+		"format-linked": "{ifname} (No IP)󱘖",
+		"format-disconnected": "Disconnected⚠",
+		"format-alt": "{ifname}: {ipaddr}/{cidr}"
+	},
+
+	"pulseaudio": {
+		"format": "{volume}{icon}",
+		"format-bluetooth": "{volume}{icon}",
+		"format-bluetooth-muted": " ",
+		"format-muted": "",
+		"format-icons": {
+			"headphone": "",
+			"hands-free": "",
+			"headset": "",
+			"phone": "",
+			"portable": "",
+			"car": "",
+			"default": ["", "", ""]
+		},
+		"on-click": "~/.config/waybar/volume --toggle-vol",
+		"on-click-right": "pavucontrol"
+	},
+
+	"pulseaudio#microphone": {
+		"format": "{format_source}",
+		"format-source": "{volume}",
+		"format-source-muted": "",
+		"on-click": "~/.config/waybar/volume --toggle-mic",
+		"on-click-right": "pavucontrol",
+		"tooltip": true,
+		"tooltip-format": " at {volume}%",
+		"on-scroll-up": "~/.config/scripts/volume --mic-inc",
+		"on-scroll-down": "~/.config/scripts/volume --mic-dec"
+	},
+
+	"battery": {
+		"states": {
+			"good": 80,
+			"warning": 30,
+			"critical": 20
+		},
+		"format": "{icon}",
+		"format-charging": " {capacity}%",
+		"format-plugged": " {capacity}%",
+		"format-alt-click": "click-right",
+		"format-alt": "{icon} {capacity}%",
+		"format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+	},
+
+	"tray": {
+		"icon-size": 16,
+		"spacing": 10
+	}
+}
+
+// vim: filetype=jsonc

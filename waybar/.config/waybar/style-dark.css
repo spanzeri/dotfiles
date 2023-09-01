@@ -1,0 +1,71 @@
+* {
+	border: none;
+	font-family: "MesloLGM Nerd Font";
+	font-weight: bold;
+	font-size: 16px;
+	min-height: 0;
+}
+
+window#waybar {
+	background: rgba(33, 33, 33, 0.5);
+	color: #f0f0f0;
+}
+
+tooltip {
+	background: rgba(16, 16, 16, 0.95);
+	opacity: 0.9;
+}
+
+tooltip label {
+	color: #f0f0f0;
+}
+
+#custom-power {
+	padding: 0px 14px 0px 6px;
+	border-bottom: 4px solid #ad0f12;
+}
+
+#custom-lockscreen {
+	padding: 0px 13px 0px 7px;
+	border-bottom: 4px solid #8E936D;
+}
+
+#custom-theme {
+	padding: 0px 15px 0px 5px;
+	border-bottom: 4px solid #476c9b;
+}
+
+#workspaces {
+	margin: 0px 32px;
+}
+
+#workspaces button {
+	margin-right: 2px;
+	color: #f0f0f0;
+}
+
+#workspaces button.active {
+	background: rgba(200, 200, 200, 0.3);
+	color: #161616;
+}
+
+#workspaces button:hover {
+	color: #161616;
+}
+
+#clock, #custom.updates {
+	margin: 0px 16px;
+}
+
+#cpu, #memory, #network, #pulseaudio, #pulseaudio.microphone {
+	margin-right: 24px;
+}
+
+#tray {
+	padding: 0px 24px;
+	border-left: 4px solid #e0e0e0;
+}
+
+#cldmonths {
+	color: red;
+}

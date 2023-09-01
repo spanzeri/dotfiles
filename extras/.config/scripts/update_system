@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+# This script only works on arch
+if [ ! -f /etc/arch-release ]; then
+	exit 0
+fi
+
+if command -v yay &> /dev/null; then
+	HASYAY=true
+else
+	HASYAY=false
+fi
+
+# Count updates in a lock, so only one instance can lock the db at the same time
+count_updates() {
+	lockdir=/tmp/count_system_updates.lock
+	while true; do
+		if mkdir "$lockdir" &> /dev/null; then
+			trap 'rm -rf "$lockdir"' 0
+			break
+		else
+			sleep 1
+		fi
+	done
+
+	if [ $HASYAY ]; then
+		AUR=$(yay -Qua | wc -l)
+	else
+		AUR=0
+	fi
+
+	PACMAN=$(checkupdates | wc -l)
+
+	COUNT=$((PACMAN + AUR))
+	if [ $COUNT -eq 0 ]; then
+		echo ""
+	else
+		echo " $COUNT"
+	fi
+	exit 0
+}
+
+if [ "$1" = "" ]; then
+	if [ $HASYAY ];	then
+		kitty --title update_system sh -c 'yay -Syu'
+	else
+		kitty --title update_system sh -c 'sudo pacman -Syu'
+	fi
+elif [ "$1" = "count" ]; then
+	count_updates
+fi

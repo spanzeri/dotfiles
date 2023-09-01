@@ -1,0 +1,66 @@
+* {
+	border: none;
+	font-family: "MesloLGM Nerd Font";
+	font-weight: bold;
+	font-size: 16px;
+	min-height: 0;
+}
+
+window#waybar {
+	background: rgba(128, 128, 128, 0.5);
+	color: white;
+	color: #0f0f0f;
+}
+
+tooltip {
+	opacity: 0.9;
+}
+
+#custom-power {
+	padding: 0px 14px 0px 6px;
+	border-bottom: 4px solid #ad0f12;
+}
+
+#custom-lockscreen {
+	padding: 0px 13px 0px 7px;
+	border-bottom: 4px solid #8E936D;
+}
+
+#custom-theme {
+	padding: 0px 15px 0px 5px;
+	border-bottom: 4px solid #476c9b;
+}
+
+#workspaces {
+	margin: 0px 32px;
+}
+
+#workspaces button {
+	margin-right: 2px;
+}
+
+#workspaces button.active {
+	background: rgba(16, 16, 16, 0.3);
+	color: #dddddd;
+}
+
+#workspaces button:hover {
+	color: #dddddd;
+}
+
+#clock, #custom.updates {
+	margin: 0px 16px;
+}
+
+#cpu, #memory, #network, #pulseaudio, #pulseaudio.microphone {
+	margin-right: 24px;
+}
+
+#tray {
+	padding: 0px 24px;
+	border-left: 4px solid #333333;
+}
+
+#cldmonths {
+	color: red;
+}

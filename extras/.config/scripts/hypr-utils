@@ -1,0 +1,96 @@
+get_theme() {
+	# Check which theme is set from waybar
+	THEMEIS=$(readlink -f ~/.config/waybar/style.css | cut -d '-' -f2)
+	if [ "$THEMEIS" = "dark.css" ]; then
+		SWITCHTO="dark"
+	else
+		SWITCHTO="light"
+	fi
+}
+
+set_theme() {
+	get_theme
+
+	if [ "$SWITCHTO" = "dark" ]; then
+		THEMENAME="Breeze-Dark"
+		ICONNAME="Papirus-Dark"
+	else
+		THEMENAME="Breeze"
+		ICONNAME="Papirus-Light"
+	fi
+
+	gsettings set org.gnome.desktop.interface gtk-theme $THEMENAME
+	gsettings set org.gnome.desktop.interface icon-theme $ICONNAME
+	xfconf-query -c xsettings -p /Net/ThemeName -s $THEMENAME
+	xfconf-query -c xsettings -p /Net/IconThemeName -s $ICONNAME
+}
+
+restart_waybar() {
+	pkill waybar
+	waybar &
+}
+
+set_bg() {
+	get_theme
+	swww img ~/.config/images/background-$SWITCHTO.jpg --transition-fps 60 --transition-type wipe --transition-duration 2
+}
+
+select_theme() {
+	THEME=$1
+
+	# Link the correct configurations
+	ln -sf ~/.config/waybar/style-$THEME.css ~/.config/waybar/style.css
+	ln -sf ~/.config/waybar/clock-$THEME.json ~/.config/waybar/clock.json
+	ln -sf ~/.config/wofi/style-$THEME.css ~/.config/wofi/style.css
+	ln -sf ~/.config/mako/config-$THEME ~/.config/mako/config
+
+	# Set background images
+	cp -f ~/.config/images/background-$THEME.jpg /usr/share/sddm/themes/sugar-candy/background.jpg
+}
+
+switch_theme() {
+	get_theme
+	if [ "$SWITCHTO" = "dark" ]; then
+		THEME="light"
+	else
+		THEME="dark"
+	fi
+
+	select_theme $THEME
+	set_bg
+	set_theme
+	restart_waybar
+}
+
+get_theme_icon() {
+	get_theme
+	if [ "$SWITCHTO" = "dark" ]; then
+		echo 
+	else
+		echo 
+	fi
+	exit 0
+}
+
+case $1 in
+	toggle-theme) switch_theme;;
+	set-bg) set_bg;;
+	theme-icon) get_theme_icon;;
+esac
+
+TOOLTIP='Default Keybinds\n'\
+'SUPER + Q = Start Kitty\n'\
+'SUPER + C = Close Window\n'\
+'SUPER + L = Lock Screen\n'\
+'SUPER + M = Logout menu\n'\
+'SUPER + E = File Manager\n'\
+'SUPER + F = Toggle Float\n'\
+'SUPER + J = Change Split Orientation\n'\
+'SUPER + SPACE = App Launcher\n'\
+'SUPER + S = Screenshot\n'\
+'SUPER + F6 = Exit Hyprland\n'\
+'ALT + V = Open clipboard manager'
+
+echo '{"text": "Hyprland Shortcuts", "tooltip": "'$TOOLTIP'"}'
+
+# vim: filetype=bash

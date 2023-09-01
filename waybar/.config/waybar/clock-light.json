@@ -1,0 +1,30 @@
+{
+	"clock": {
+		"tooltip-format": "<tt><small>{calendar}</small></tt>",
+		"format": "󰃭 {:%H:%M %a}",
+		"format-alt": "󰃭 {:%H:%M %d-%m-%Y}",
+		"interval": 1,
+		"calendar": {
+			"mode"          : "year",
+			"mode-mon-col"  : 3,
+			"weeks-pos"     : "right",
+			"on-scroll"     : 1,
+			"on-click-right": "mode",
+			"format": {
+				"months":     "<span color='#00152c'><b>{}</b></span>",
+				"days":       "<span color='#133926'><b>{}</b></span>",
+				"weeks":      "<span color='#660022'><b>W{}</b></span>",
+				"weekdays":   "<span color='#003399'><b>{}</b></span>",
+				"today":      "<span color='#009966'><b><u>{}</u></b></span>"
+			}
+		},
+		"actions":  {
+			"on-click-right": "mode",
+			"on-click-forward": "tz_up",
+			"on-click-backward": "tz_down",
+			"on-scroll-up": "shift_up",
+			"on-scroll-down": "shift_down"
+		}
+	}
+}
+// vim: filetype=jsonc

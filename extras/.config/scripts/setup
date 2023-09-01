@@ -1,0 +1,30 @@
+#!/usr/bin/bash
+
+prepkgs=(
+	qt5-wayland
+	qt5ct
+	qt6-wayland
+	qt6ct
+	qt5-svg
+	qt5-quickcontrols2
+	qt5-graphicaleffects
+	gtk3
+	polkit-gnome
+	pipewire
+	wireplumber
+	jq
+	wl-clipboard
+	cliphist
+	python-requests
+	pacman-contrib
+)
+
+nvidiapkgs=(
+	linux-headers
+	nvidia-dkms
+	nvidia-settings
+	libva
+	libva-nvidia-driver-git
+)
+
+# vim: filetype=bash
