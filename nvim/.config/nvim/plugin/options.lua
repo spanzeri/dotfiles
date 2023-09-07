@@ -71,7 +71,7 @@ opt.colorcolumn = "81,121"
 
 -- Show significant whitespaces
 opt.listchars = {
-	tab   = " ――",
+	tab   = "  ",
 	trail = "~",
 	lead  = ".",
 }

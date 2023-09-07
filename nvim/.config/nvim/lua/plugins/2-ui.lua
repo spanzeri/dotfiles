@@ -139,6 +139,11 @@ return {
 				},
 				shorten_path = true,
 			},
+			pickers = {
+				colorscheme = {
+					enable_preview = true,
+				},
+			},
 		},
 		config = function(_, opts)
 			local telescope = require("telescope")

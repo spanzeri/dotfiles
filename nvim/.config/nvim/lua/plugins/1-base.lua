@@ -57,11 +57,11 @@ return {
 	},
 
 	-- auto-pairings
-	{
-		"echasnovski/mini.pairs",
-		event = "VeryLazy",
-		opts = {},
-	},
+	-- {
+	-- 	"echasnovski/mini.pairs",
+	-- 	event = "VeryLazy",
+	-- 	opts = {},
+	-- },
 
 	-- surround
 	{
