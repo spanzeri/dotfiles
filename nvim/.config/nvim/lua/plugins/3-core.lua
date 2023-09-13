@@ -170,13 +170,14 @@ return {
 			history = true,
 			delete_check_events = "TextChanged",
 		},
+		build = "make install_jsregexp",
 	},
 
 	-- auto-completion
 	{
 		"hrsh7th/nvim-cmp",
 		dependencies = {
-			"saadparwaiz1/cmp_luasnip",
+			{ "saadparwaiz1/cmp_luasnip", dependencies = { "L3MON4D3/LuaSnip" } },
 			"hrsh7th/cmp-buffer",
 			"hrsh7th/cmp-path",
 			"hrsh7th/cmp-nvim-lua",
@@ -186,7 +187,9 @@ return {
 		event = "InsertEnter",
 		opts = function()
 			local cmp = require("cmp")
-			local has_luasnip, luasnip = pcall(require, "luasnip")
+
+			local luasnip = require("luasnip")
+			local lspkind = require("lspkind")
 
 			local has_word_before = function()
 				local unpack = unpack or table.unpack
@@ -194,25 +197,8 @@ return {
 				return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
 			end
 
-			local border_otps = {
-				border = "single",
-				winhighlight = "Normal:Normal,FloatBorder:FloatBorder,CursorLine:Visual,Search:None",
-			}
-
-			local main_sources = {
-				{ name = "nvim_lua" },
-				{ name = "nvim_lsp" },
-			}
-
-			if has_luasnip then
-				table.insert(main_sources, { name = "luasnip" })
-			end
-			-- @TODO: stuff like copilot can be added after luasnip in the same way
-			
-			local has_lspkind, lspkind = pcall(require, "lspkind")
-
 			return {
-				enabled = function() 
+				enabled = function()
 					local lh = require("utils.lazy")
 					local bt = vim.api.nvim_get_option_value("buftype", {buf=0})
 					local dap_prompt = lh.has_plugin("cmp-dap") and vim.tbl_contains(
@@ -226,36 +212,36 @@ return {
 
 				preselect = cmp.PreselectMode.None,
 				formatting = {
-					fields = { "kind", "abbr", "menu" },
-					format = has_lspkind and lspkind.cmp_format {
-						mode = "symbol_text",
-						preset = "default",
-					} or nil,
+					format = lspkind.cmp_format {
+						with_text = true,
+						menu = {
+							buffer = "[buf]",
+							nvim_lsp = "[LSP]",
+							nvim_lua = "[api]",
+							path = "[path]",
+							luasnip = "[snip]",
+							gh_issues = "[issues]",
+							tn = "[TabNine]",
+							eruby = "[erb]",
+							cody = "[cody]",
+						},
+					},
 				},
 				snippet = {
-					expand = has_luasnip and function(args) luasnip.lsp_expand(args.body) end or nil,
-				},
-				duplicates = {
-					nvim_lsp = 1,
-					luasnip = 1,
-					cmp_tabnine = 1,
-					buffer = 1,
-					path = 1,
+					expand = function(args) luasnip.lsp_expand(args.body) end,
 				},
 				confirm_opts = {
 					behavior = cmp.ConfirmBehavior.Replace,
 					select = false,
 				},
-				window = {
-					completion = cmp.config.window.bordered(border_opts),
-					documentation = cmp.config.window.bordered(border_opts),
-				},
 				mapping = {
 					["<tab>"] = cmp.mapping(function(fallback)
 						if cmp.visible() then
 							cmp.select_next_item()
-						elseif has_luasnip and luasnip.expand_or_locally_jumpable() then
+						elseif luasnip.expand_or_locally_jumpable() then
 							luasnip.expand_or_jump()
+						elseif has_word_before() then
+							cmp.complete()
 						else
 							fallback()
 						end
@@ -263,8 +249,8 @@ return {
 
 					["<S-tab>"] = cmp.mapping(function(fallback)
 						if cmp.visible() then
-							cmp.select_previous_item()
-						elseif has_luasnip and luasnip.locally_jumpable(-1) then
+							cmp.select_prev_item()
+						elseif luasnip.locally_jumpable(-1) then
 							luasnip.jump(-1)
 						else
 							fallback()
@@ -281,7 +267,11 @@ return {
 				},
 
 				-- source: according to TJ's config, the order matter (for priority)
-				sources = cmp.config.sources(main_sources, {
+				sources = cmp.config.sources({
+					{ name = "nvim_lua" },
+					{ name = "nvim_lsp" },
+					{ name = "luasnip" },
+				} , {
 					{ name = "path" },
 					{ name = "buffer", keyword_length = 5 },
 				}),
@@ -291,12 +281,11 @@ return {
 					comparators = {
 						cmp.config.compare.offset,
 						cmp.config.compare.exact,
-						cmp.config.compare.source,
-						cmp.config.compare.recently_used,
+						cmp.config.compare.score,
 
 						function(e1, e2)
-							local _, e1_starts_under = e1.completion.item.label:find("^_+")
-							local _, e2_starts_under = e2.completion.item.label:find("^_+")
+							local _, e1_starts_under = e1.completion_item.label:find("^_+")
+							local _, e2_starts_under = e2.completion_item.label:find("^_+")
 							e1_starts_under = e1_starts_under or 0
 							e2_starts_under = e2_starts_under or 0
 							if e1_starts_under > e2_starts_under then

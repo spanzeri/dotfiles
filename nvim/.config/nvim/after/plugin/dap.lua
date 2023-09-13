@@ -42,7 +42,9 @@ dap.configurations.cpp = {
 		type = "codelldb",
 		request = "launch",
 		program = function()
-			return vim.fn.input("Executable path: ", vim.fn.getcwd() .. "/", "file")
+			codelldb_last_exe_path_ = codelldb_last_exe_path_ or vim.fn.getcwd() .. "/"
+			codelldb_last_exe_path_ = vim.fn.input("Executable path: ", codelldb_last_exe_path_, "file")
+			return codelldb_last_exe_path_
 		end,
 		cwd = "${workspaceFolder}",
 		stopOnEntry = false,
@@ -63,13 +65,25 @@ local dapnmap = function(lhs, rhs, desc)
 	vim.keymap.set("n", lhs, rhs, { silent = true, desc = desc })
 end
 
-dapnmap("<F5>", dap.continue, "continue")
+local dapui = require("dapui")
+
+dapnmap("<F5>", dap.continue, "terminate")
 dapnmap("<S-F5>", dap.terminate, "terminate")
 dapnmap("<M-S-F5>", dap.restart, "restart")
 dapnmap("<S-F10>", dap.step_back, "step back")
 dapnmap("<F11>", dap.step_into, "step into")
 dapnmap("<F10>", dap.step_over, "step over")
 dapnmap("<S-F11>", dap.step_out, "step out")
+
+-- Alternative mappings not using F keys
+dapnmap("<leader>dc", dap.continue, "[c]ontinue")
+dapnmap("<leader>dt", dap.terminate, "[t]erminate")
+dapnmap("<leader>dr", dap.restart, "[r]estart")
+dapnmap("<leader>db", dap.step_back, "step back")
+dapnmap("<leader>di", dap.step_into, "step [i]nto")
+dapnmap("<leader>ds", dap.step_over, "[s]tep over")
+dapnmap("<leader>do", dap.step_out, "step [o]ut")
+dapnmap("<leader>du", dapui.toggle, "[u]i toggle")
 
 dapnmap("<leader>db", dap.toggle_breakpoint, "toggle [b]reakpoint")
 dapnmap("<leader>dB", function()
@@ -81,20 +95,19 @@ dapnmap("<leader>dE", function()
 	require("dapui").eval(vim.fn.input "[DAP] Expression > ")
 end, "eval [E]xpression")
 
+
 -- UI
 
-local dap_ui = require("dapui")
-
-dap_ui.setup {}
+vim.api.nvim_create_user_command("DapUiToggle", dapui.toggle, {})
 
 dap.listeners.after.event_initialized["dapui_config"] = function()
-	dap_ui.open()
+	dapui.open()
 end
 
 dap.listeners.before.event_terminated["dapui_config"] = function()
-	dap_ui.close()
+	dapui.close()
 end
 
 dap.listeners.before.event_exited["dapui_config"] = function()
-	dap_ui.close()
+	dapui.close()
 end

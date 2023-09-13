@@ -85,7 +85,14 @@ return {
 		ft = "zig",
 		config = function(_, _)
 			vim.g.zig_fmt_autosave=false
-		end,
+		end
+	},
+
+	-- Markdown preview
+	{
+		"iamcco/markdown-preview.nvim",
+		ft = "markdown",
+		build = function() vim.fn["mkdp#util#install"]() end,
 	},
 
 	{

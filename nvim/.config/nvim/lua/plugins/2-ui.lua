@@ -230,4 +230,13 @@ return {
 				}, { prefix = "<leader>" })
 		end,
 	},
+
+	-- Notifications
+	{
+		"rcarriga/nvim-notify",
+		event = "VeryLazy",
+		config = function()
+			vim.notify = require("notify")
+		end
+	},
 }
