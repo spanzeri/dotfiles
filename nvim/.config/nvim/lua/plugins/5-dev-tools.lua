@@ -8,7 +8,6 @@ return {
 		event = "VeryLazy",
 		dependencies = "mfussenegger/nvim-dap",
 		config = function()
-			local dap = require("dap")
 			local dapui = require("dapui")
 			dapui.setup()
 		end,

@@ -51,6 +51,8 @@ return {
 				return path
 			end
 
+			local has_overseer, _ = pcall(require, "overseer")
+
 			return {
 				options = {
 					theme = "auto",
@@ -59,6 +61,7 @@ return {
 				},
 				sections = {
 					lualine_c = { fullfilepath },
+					lualine_x = has_overseer and { "overseer" } or nil,
 				},
 			}
 		end,

@@ -73,3 +73,15 @@ vim.api.nvim_create_autocmd("TermClose", {
 	end,
 	group = ft_augroup,
 })
+
+-- Make autocmds
+local mk_augroup = vim.api.nvim_create_augroup("CustomMakeCmds", { clear = true })
+
+vim.api.nvim_create_autocmd("QuickFixCmdPre", {
+	callback = function()
+		vim.cmd.wall()
+	end,
+	pattern = "*make",
+	group = mk_augroup,
+})
+

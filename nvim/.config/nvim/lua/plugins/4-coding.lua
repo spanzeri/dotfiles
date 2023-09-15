@@ -82,7 +82,7 @@ return {
 
 	{
 		"ziglang/zig.vim",
-		ft = "zig",
+		ft = { "zig", "zon" },
 		config = function(_, _)
 			vim.g.zig_fmt_autosave=false
 		end

@@ -5,6 +5,15 @@ if not has_dap then
 	return
 end
 
+local dap_ext_vscode = require("dap.ext.vscode")
+dap_ext_vscode.load_launchjs(nil, {})
+
+-- If available, use overseer parser as it supports comments
+local has_overseer, overseer = pcall(require, "overseer")
+if has_overseer then
+	dap_ext_vscode.json_decode = require("overseer.json").decode
+end
+
 vim.fn.sign_define("DapBreakpoint", { text = "", texthl = "", linehl = "", numhl = "" })
 vim.fn.sign_define("DapBreakpointCondition", { text = "", texthl = "", linehl = "", numhl = "" })
 vim.fn.sign_define("DapStopped", { text = "", texhl = "Error" })
