@@ -82,8 +82,13 @@ return {
 
 	{
 		"ziglang/zig.vim",
-		ft = { "zig", "zon" },
+		ft = { "zig" },
 		config = function(_, _)
+			vim.filetype.add({
+				extension = {
+					zon = "zig",
+				},
+			})
 			vim.g.zig_fmt_autosave=false
 		end
 	},

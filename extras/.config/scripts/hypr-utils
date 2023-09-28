@@ -32,7 +32,10 @@ restart_waybar() {
 
 set_bg() {
 	get_theme
-	swww img ~/.config/images/background-$SWITCHTO.jpg
+	if ! $(pgrep hyprpaper); then
+		hyprpaper &disown
+	fi
+	hyprctl hyprpaper wallpaper "monitor1,/home/sam/.config/images/${SWITCHTO}.jpg"
 }
 
 select_theme() {
@@ -57,8 +60,8 @@ switch_theme() {
 	fi
 
 	select_theme $THEME
-	swww img ~/.config/images/background-$THEME.jpg --transition-fps 60 --transition-type wipe --transition-duration 2
 	set_theme
+	set_bg
 	restart_waybar
 }
 
