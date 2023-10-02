@@ -5,11 +5,9 @@ if not has_dap then
 	return
 end
 
-local dap_ext_vscode = require("dap.ext.vscode")
-dap_ext_vscode.load_launchjs(nil, {})
-
 -- If available, use overseer parser as it supports comments
-local has_overseer, overseer = pcall(require, "overseer")
+local dap_ext_vscode = require("dap.ext.vscode")
+local has_overseer, _ = pcall(require, "overseer")
 if has_overseer then
 	dap_ext_vscode.json_decode = require("overseer.json").decode
 end
@@ -36,14 +34,19 @@ dap.configurations.lua = {
 	},
 }
 
+local is_windows = vim.loop.os_uname().sysname:find "Windows" and true or false
+local codelldb_cmd = is_window and "codelldb.cmd" or "codelldb"
+
 dap.adapters.codelldb = {
 	type = "server",
 	port = "${port}",
 	executable = {
-		command = vim.fn.stdpath("data") .. "/mason/bin/codelldb.cmd",
+		command = vim.fn.stdpath("data") .. "/mason/bin/" .. codelldb_cmd,
 		args = { "--port", "${port}" },
 	},
 }
+
+dap.adapters.cppdbg = dap.adapters.codelldb
 
 dap.configurations.cpp = {
 	{

@@ -5,7 +5,7 @@ Helper functions for setting up lsp server
 local custom_capabilities = vim.lsp.protocol.make_client_capabilities()
 local ok, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
 if ok then
-	custom_capabilities = cmp_nvim_lsp.default_capabilities(capabilities)
+	custom_capabilities = cmp_nvim_lsp.default_capabilities(custom_capabilities)
 end
 custom_capabilities.textDocument.completion.completionItem.snippetSupport = true
 
@@ -76,6 +76,11 @@ local custom_attach = function(client, bufnr)
 			group = augroup_highlights,
 			callback = vim.lsp.buf.clear_references,
 		})
+	end
+
+	local has_dap, dap_vscode = pcall(require, "dap.ext.vscode")
+	if has_dap then
+		dap_vscode.load_launchjs(nil, { cppdbg = { "c", "cpp" } })
 	end
 
 	local ft = vim.api.nvim_buf_get_option(0, "filetype")
@@ -173,8 +178,6 @@ local lsp_servers = {
 	zls = true,
 }
 
-local has_lspconfig, lspconfig = pcall(require, "lspconfig")
-
 local setup_server = function(server, config)
 	if not config then
 		return
@@ -187,7 +190,7 @@ local setup_server = function(server, config)
 	config = vim.tbl_deep_extend("force", {
 		on_init = custom_init,
 		on_attach = custom_attach,
-		capabilities = capabilities,
+		capabilities = custom_capabilities,
 	}, config)
 
 	require "lspconfig"[server].setup(config)

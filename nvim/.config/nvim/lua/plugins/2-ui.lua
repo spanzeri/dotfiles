@@ -94,6 +94,7 @@ return {
 	-- Indent (guide)lines
 	{
 		"lukas-reineke/indent-blankline.nvim",
+		main = "ibl",
 		event = "BufEnter",
 		opts = {
 			buftype_exclude = {
