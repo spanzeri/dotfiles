@@ -1,24 +1,24 @@
+# Lines configured by zsh-newuser-install
 HISTFILE=~/.histfile
-HISTSIZE=2048
-SAVEHIST=2048
-bindkey -v
+HISTSIZE=10000
+SAVEHIST=10000
+unsetopt beep
+bindkey -e
+# End of lines configured by zsh-newuser-install
+# The following lines were added by compinstall
+zstyle :compinstall filename '/home/samuele/.zshrc'
 
-zstyle :compinstall filename '/home/sam/.zshrc'
 autoload -Uz compinit
 compinit
+# End of lines added by compinstall
 
-# Oh my ZSH
-#
-ZSH_THEME="fino-time"
-source /usr/share/oh-my-zsh/oh-my-zsh.sh
+eval "$(oh-my-posh init zsh --config /usr/share/oh-my-posh/themes/atomic.omp.json)"
 plugins=(
 	git
 	archlinux
 )
 
-# Personal
+# Aliases and env
 #
 alias ll="ls -lha"
-alias vim=nvim
-
 export EDITOR=nvim
