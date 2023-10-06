@@ -97,18 +97,25 @@ return {
 		main = "ibl",
 		event = "BufEnter",
 		opts = {
-			buftype_exclude = {
-				"nofile",
-				"terminal",
+			exclude = {
+				buftypes = {
+					"nofile",
+					"terminal",
+					"quickfix",
+					"prompt",
+				},
+				filetypes = {
+					"help",
+					"TelescopePrompt",
+					"TelescopeResult",
+					"man",
+					"lazy",
+					"neo-tree",
+					"lspinfo",
+				},
 			},
-			filetype_exclude = {
-				"help",
-				"startify",
-				"lazy",
-				"neo-tree",
-			},
-			use_treesitter = true,
-			show_current_context = true,
+			scope = { enabled = true },
+			indent = { smart_indent_cap = true },
 		},
 	},
 
