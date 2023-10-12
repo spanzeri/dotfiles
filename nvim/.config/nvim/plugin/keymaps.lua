@@ -65,3 +65,11 @@ nmap { "<leader>st", [[:TodoTelescope]], desc = "[s]earch [t]odos"}
 nmap { "<leader>sgf", builtin.git_files, desc = "[s]earch [G]it [f]iles" }
 nmap { "<leader>sGb", builtin.git_branches, desc = "[s]earch [G]it [b]ranches" }
 nmap { "<leader>sGc", builtin.git_commits, desc = "[s]earch [G]it [c]ommits" }
+
+-- make
+nmap { "<leader>ms", function()
+	local makeprg = vim.fn.input("Make command: ", vim.bo.makeprg, "compiler")
+	vim.bo.makeprg, vim.o.makeprg = makeprg
+end, desc = "[m]ake program [s]election" }
+
+nmap { "<leader>mm", "<cmd>make<CR>", desc = "[m]ake" }

@@ -30,7 +30,7 @@ va.nvim_create_autocmd("BufEnter", {
 })
 
 -- Auto-reload files that have been modified
-va.nvim_create_autocmd("FocusGained,BufEnter,CursorHold,CursorHoldI", {
+va.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
 	callback = function()
 		local fname = vim.fn.expand("%")
 		if vim.loop.fs_stat(fname) then

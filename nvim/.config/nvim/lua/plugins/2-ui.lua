@@ -166,22 +166,21 @@ return {
 	-- Better ui elemets (input and select)
 	{
 		"stevearc/dressing.nvim",
-		init = function()
-			local lh = require("utils.lazy")
-			lh.load_plugin_with_function("dressing.nvim", vim.ui, { "input", "select" })
-		end,
+		event = "VeryLazy",
 		opts = {
 			input = {
 				default_prompt = "➤ ",
 				win_options = { winhighlight = "Normal:Normal,NormalNC:Normal" },
 			},
 			select = {
-				backend = { "telescope", "builtin" },
 				builtin = {
 					win_options = { winhighlight = "Normal:Normal,NormalNC:Normal" },
 				},
 			},
 		},
+		config = function(_, opts)
+			require("dressing").setup(opts)
+		end,
 	},
 
 	--  LSP icons [icons]
