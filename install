@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if ! command -v stow &> /dev/null; then
+	echo "stow is missing. Install it from your package manager"
+	exit 1
+fi
+
+root=$(dirname $0)
+
+sources=$(find $root -maxdepth 1 -mindepth 1 -type d -not -path '*/.*')
+homedir=$( getent passwd "$USER" | cut -d: -f6 )
+
+for d in $sources; do
+	source=${d:2}
+	prefix=${d:0:2}
+	if [ ! $prefix = "./" ]; then
+		echo "Unexpected prefix: $prefix. Expected: ./ for: $d"
+		exit 1
+	fi
+	stow -t $homedir $source
+done
+
+# vim: filetype=sh
