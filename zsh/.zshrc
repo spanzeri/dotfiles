@@ -18,6 +18,10 @@ plugins=(
 	archlinux
 )
 
+# Path
+#
+export PATH=$PATH:~/.local/bin
+
 # Aliases and env
 #
 alias ll="ls -lha"

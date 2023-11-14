@@ -43,6 +43,7 @@ return {
 				"c",
 				"cmake",
 				"cpp",
+				"gdscript",
 				"glsl",
 				"go",
 				"hlsl",
@@ -191,6 +192,8 @@ return {
 			local luasnip = require("luasnip")
 			local lspkind = require("lspkind")
 
+			require("cmp/copilot").setup()
+
 			local has_word_before = function()
 				local unpack = unpack or table.unpack
 				local line, col = unpack(vim.api.nvim_win_get_cursor(0))
@@ -218,12 +221,9 @@ return {
 							buffer = "[buf]",
 							nvim_lsp = "[LSP]",
 							nvim_lua = "[api]",
+							copilot = "[]",
 							path = "[path]",
 							luasnip = "[snip]",
-							gh_issues = "[issues]",
-							tn = "[TabNine]",
-							eruby = "[erb]",
-							cody = "[cody]",
 						},
 					},
 				},
@@ -264,12 +264,27 @@ return {
 							cmp.complete()
 						end
 					end, { "i", "s" }),
+
+					["<C-y>"] = cmp.mapping(function(fallback)
+						if cmp.visible() then
+							cmp.confirm { select = true }
+						elseif vim.b._copilot_completion or vim.b._copilot_suggestion then
+							vim.fn["copilot#Accept"]()
+						else
+							fallback()
+						end
+					end, { "i", "s" }),
+
+					["<C-e>"] = cmp.mapping(function()
+						cmp.abort()
+					end, { "i", "s" }),
 				},
 
 				-- source: according to TJ's config, the order matter (for priority)
 				sources = cmp.config.sources({
-					{ name = "nvim_lua" },
+					--{ name = "copilot" },
 					{ name = "nvim_lsp" },
+					{ name = "nvim_lua" },
 					{ name = "luasnip" },
 				} , {
 					{ name = "path" },

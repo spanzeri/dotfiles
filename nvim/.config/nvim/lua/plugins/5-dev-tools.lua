@@ -61,26 +61,6 @@ return {
 	},
 
 	{
-		"lewis6991/gitsigns.nvim",
-		event = "BufEnter",
-		opts = {
-			signs = {
-				add = { text = "+" },
-				change = { text = "M" },
-				delete = { text = "_" },
-				topdelete = { text = "‾" },
-				changedelete = { text = "~" },
-				untracked = { text = "┆" },
-			},
-			on_attach = function(_)
-				local gs = require("gitsigns")
-				local nmap = require("utils.remap").nmap
-				nmap { "<leader>gb", function() gs.blame_line { full = true } end, desc = "[g]it [b]lame" }
-			end,
-		},
-	},
-
-	{
 		"tpope/vim-fugitive",
 		event = "VeryLazy",
 	},

@@ -1,0 +1,45 @@
+#!/bin/sh
+
+if ! command -v fzf &> /dev/null; then
+	echo fzf missing. Install it from your package manager.
+	exit 1
+fi
+
+if ! command -v tmux &> /dev/null; then
+	echo tmux missing. Install it from your package manager.
+	exit 1
+fi
+
+homedir=$( getent passwd "$USER" | cut -d: -f6 )
+
+project_paths="$homedir/projects $homedir/godot_projects"
+
+project_path=$(find $project_paths -maxdepth 1 -mindepth 1 -type d|fzf --preview 'ls -la {} --color' --height=40% --layout=reverse)
+
+if [ -z $project_path ]; then
+	exit 0
+fi
+
+project_name=$(basename $project_path)
+
+echo "Starting project: $project_name - At location: $project_path"
+
+tmux_running=$(pgrep tmux)
+
+if [[ -z $tmux_running ]]; then
+	tmux new -s $project_name -c $project_path
+	exit 0
+fi
+
+if ! tmux has-session -t=$project_name 2> /dev/null; then
+	tmux new-session -ds $project_name -c $project_path
+fi
+
+if [[ -z $TMUX ]]; then
+	tmux attach -t $project_name
+else
+	tmux switch-client -t $project_name
+fi
+
+
+# vim: filetype=sh

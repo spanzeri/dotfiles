@@ -103,4 +103,16 @@ return {
 	{
 		"b0o/SchemaStore.nvim",
 	},
+
+	-- Copilot
+	{
+		"github/copilot.vim",
+		event = "InsertEnter",
+		init = function()
+			vim.api.nvim_set_keymap("i", "<C-y>", 'copilot#Accept("CR")', { expr = true, silent = true })
+			vim.api.nvim_set_keymap("i", "<C-S-y>", 'copilot#Accept("CR")', { expr = true, silent = true })
+			vim.g.copilot_no_tab_map = true
+			vim.g.copilot_assume_mapped = true
+		end,
+	}
 }

@@ -1,0 +1,20 @@
+#!/usr/bin/bash
+
+TERM="kitty"
+SERVER_PATH="$HOME/.cache/nvim/godot-sever-pipe"
+
+start_server() {
+	"$TERM" -e nvim --listen "$SERVER_PATH" "$1"
+}
+
+open_file() {
+	"$TERM" -e nvim --server "$SERVER_PATH" --remote-send "<C-\><C-n>:n $1<CR>:call cursor($2)<CR>"
+}
+
+if ! [ -e "$SERVER_PATH" ]; then
+	start_server "$1"
+else
+	open_file "$1" "$2"
+fi
+
+# vim: filetype=bash

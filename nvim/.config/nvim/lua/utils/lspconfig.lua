@@ -9,6 +9,14 @@ if ok then
 end
 custom_capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+-- Fix capabilities to not cause conflicts with copilot
+custom_capabilities = vim.tbl_deep_extend("force", custom_capabilities, {
+	offsetEncoding = { "utf-16" },
+	general = {
+		positionEncoding = { "utf-16" },
+	},
+})
+
 local custom_init = function(client)
 	client.config.flags = client.config.flags or {}
 	client.config.flags.allow_incremental_sync = true
@@ -97,7 +105,7 @@ M.get_codelldb_path = function()
 	return mason_codelldb_path
 end
 
-local rust_analyzer, rust_analyzer_cmd = nil, { "rustup", "run", "nightly", "rust-analyzer" }
+local rust_analyzer, rust_analyzer_cmd = nil, { "rustup", "run", "stable", "rust-analyzer" }
 local has_rust_tools, rust_tools = pcall(require, "rust-tools")
 if has_rust_tools then
 	local codelldb_path = M.get_codelldb_path()
@@ -176,6 +184,8 @@ local lsp_servers = {
 	rust_analyzer = rust_analyzer,
 
 	zls = true,
+
+	gdscript = {},
 }
 
 local setup_server = function(server, config)
@@ -198,8 +208,11 @@ end
 
 M.get_server_names = function()
 	local res = {}
+	local ignored = { "gdscript" }
 	for server, _ in pairs(lsp_servers) do
-		table.insert(res, server)
+		if not vim.tbl_contains(ignored, server) then
+			table.insert(res, server)
+		end
 	end
 	return res
 end
