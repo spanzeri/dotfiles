@@ -114,5 +114,8 @@ return {
 			vim.g.copilot_no_tab_map = true
 			vim.g.copilot_assume_mapped = true
 		end,
+		config = function(_, _)
+			vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#555555", italic = true })
+		end,
 	}
 }

@@ -8,10 +8,7 @@ return {
 		"sainnhe/sonokai",
 		lazy = false,
 		priority = 1000,
-		opts = {
-			italic_comments = false,
-		},
-		config = function(plugin, opts)
+		config = function(_, _)
 			vim.g.sonokay_style = "atlantis"
 			vim.cmd.colorscheme("sonokai")
 		end

@@ -72,4 +72,4 @@ nmap { "<leader>ms", function()
 	vim.bo.makeprg, vim.o.makeprg = makeprg
 end, desc = "[m]ake program [s]election" }
 
-nmap { "<leader>mm", "<cmd>make<CR>", desc = "[m]ake" }
+nmap { "<leader>mm", "<cmd>make!<CR>", desc = "[m]ake" }

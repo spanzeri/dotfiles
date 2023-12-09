@@ -12,7 +12,11 @@ fi
 
 homedir=$( getent passwd "$USER" | cut -d: -f6 )
 
-project_paths="$homedir/projects $homedir/godot_projects"
+if [[ -z $1 ]]; then
+	project_paths="$homedir/projects $homedir/godot-projects"
+else
+	project_paths="$1"
+fi
 
 project_path=$(find $project_paths -maxdepth 1 -mindepth 1 -type d|fzf --preview 'ls -la {} --color' --height=40% --layout=reverse)
 
@@ -24,15 +28,18 @@ project_name=$(basename $project_path)
 
 echo "Starting project: $project_name - At location: $project_path"
 
+set -- $(stty size)
+tmux_setup="-x $2; split-window -h -c $project_path; resize-pane -t 0 -x 80%; select-pane -t 0"
+
 tmux_running=$(pgrep tmux)
 
 if [[ -z $tmux_running ]]; then
-	tmux new -s $project_name -c $project_path
+	tmux new -s $project_name -c $project_path $tmux_setup
 	exit 0
 fi
 
 if ! tmux has-session -t=$project_name 2> /dev/null; then
-	tmux new-session -ds $project_name -c $project_path
+	tmux new-session -ds $project_name -c $project_path $tmux_setup
 fi
 
 if [[ -z $TMUX ]]; then
@@ -40,6 +47,5 @@ if [[ -z $TMUX ]]; then
 else
 	tmux switch-client -t $project_name
 fi
-
 
 # vim: filetype=sh
