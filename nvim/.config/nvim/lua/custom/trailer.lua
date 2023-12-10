@@ -124,8 +124,8 @@ H.create_autocommands = function()
 		vim.api.nvim_create_autocmd(event, { group = augroup, pattern = pattern, callback = callback, desc = desc })
 	end
 
-	au({ "WinEnter", "BufEnter", "InsertLeave" }, "*", M.enable_hl, "Enable highlight")
-	au({ "WinLeave", "BufLeave", "InsertEnter" }, "*", M.disable_hl, "Disable highlight")
+	au({ "WinEnter", "BufEnter", "InsertLeave", "TermClose" }, "*", M.enable_hl, "Enable highlight")
+	au({ "WinLeave", "BufLeave", "InsertEnter", "TermEnter" }, "*", M.disable_hl, "Disable highlight")
 end
 
 H.create_hl = function()

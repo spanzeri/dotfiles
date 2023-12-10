@@ -70,6 +70,10 @@ vim.api.nvim_create_autocmd("TermClose", {
 	callback = function()
 		vim.wo.number = vim.o.number
 		vim.wo.relativenumber = vim.o.relativenumber
+		-- Auto-close terminal windows if exited without errors
+		if vim.v.event.status == 0 then
+			vim.cmd.close()
+		end
 	end,
 	group = ft_augroup,
 })

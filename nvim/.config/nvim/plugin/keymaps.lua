@@ -27,12 +27,25 @@ nmap { "<leader>P", [["+P]], { desc = "[P]aste before cursor from sytem" } }
 -- Diagnostic and error navigation and windows
 nmap { "[d", vim.diagnostic.goto_prev, { desc = "go to previous [d]iagnostic" } }
 nmap { "]d", vim.diagnostic.goto_prev, { desc = "go to next [d]iagnostic" } }
-nmap { "[e", vim.cmd.cprev, { desc = "go to previous [e]rror", silent = true } }
-nmap { "]e", vim.cmd.cnext, { desc = "go to next [e]rror", silent = true } }
 nmap { "<leader>df", vim.diagnostic.open_float, { desc = "open [d]iagnostic [f]loat" } }
 nmap { "<leader>dl", vim.diagnostic.setloclist, { desc = "open [d]iagnostic [l]ist" } }
--- @TODO: error list and float
-nmap { "<leader>el", function() vim.cmd.copen { count = 20 } end, { desc = "open [e]rror [l]ist" } }
+
+function toggle_quickfix()
+	local winid = vim.fn.getqflist({ winid = 0 }).winid
+	if winid == 0 then
+		vim.cmd "copen 24"
+	else
+		vim.cmd "cclose"
+	end
+end
+
+nmap { "<leader>el", function() vim.cmd "copen 24" end, { desc = "open [e]rror [l]ist" } }
+nmap { "<leader>et", toggle_quickfix, { desc = "[e]rror list [t]oggle" } }
+nmap { "<leader>ee", vim.cmd.cc, { desc = "open first [e]rror", silent = true } }
+nmap { "<leader>en", vim.cmd.cn, { desc = "open [e]rror [n]ext", silent = true } }
+nmap { "<leader>ep", vim.cmd.cp, { desc = "open [e]rror [p]revious", silent = true } }
+nmap { "[e", vim.cmd.cp, { desc = "go to previous [e]rror", silent = true } }
+nmap { "]e", vim.cmd.cn, { desc = "go to next [e]rror", silent = true } }
 
 -- Diff
 nmap { "gh", "<cmd>diffget //2<CR>", { silent = true, desc = "diff[g]et left [h]" } }
@@ -72,4 +85,32 @@ nmap { "<leader>ms", function()
 	vim.bo.makeprg, vim.o.makeprg = makeprg
 end, desc = "[m]ake program [s]election" }
 
-nmap { "<leader>mm", "<cmd>make!<CR>", desc = "[m]ake" }
+nmap { "<leader>mm", function() vim.cmd "make! | cw 24" end, desc = "[m]ake" }
+
+local function make_centered_float_win_opts(width_ration, height_ratio, border)
+	local width = math.floor(vim.o.columns * width_ration)
+	local height = math.floor((vim.o.lines - vim.o.cmdheight) * height_ratio)
+	local row = math.floor((vim.o.lines - height) / 2)
+	local col = math.floor((vim.o.columns - width) / 2)
+	return {
+		relative = "editor",
+		width = width,
+		height = height,
+		row = row,
+		col = col,
+		border = border or "rounded",
+	}
+end
+
+function open_terminal_float()
+	local win = vim.fn.bufwinnr("term://*")
+	if win ~= -1 then
+		vim.api.nvim_set_current_win(win)
+	else
+		vim.api.nvim_open_win(0, true, make_centered_float_win_opts(0.8, 0.8))
+		vim.cmd "terminal"
+		vim.cmd "startinsert"
+	end
+end
+
+nmap { "<leader>mt", open_terminal_float, desc = "[m]ake [t]erminal" }
