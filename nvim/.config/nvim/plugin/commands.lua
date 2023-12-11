@@ -89,3 +89,34 @@ vim.api.nvim_create_autocmd("QuickFixCmdPre", {
 	group = mk_augroup,
 })
 
+vim.api.nvim_create_user_command("ScratchNew", function()
+	local bufnr = vim.api.nvim_create_buf(true, true) 
+	if bufnr == 0 then
+		vim.api.nvim_notify("Error creating scratch buffer", vim.log.levels.ERROR, {})
+	end
+
+	local scratch_names = {}
+	local prefix = "*scratch"
+	local prefix_len = #prefix
+	for _, obuf in ipairs(vim.api.nvim_list_bufs()) do
+		local bufname = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(obuf), ":~:.")
+		if string.sub(bufname, 1, prefix_len) == prefix then
+			scratch_names[bufname] = true
+		end
+	end
+
+	local scratch_name = "*scratch*"
+	if scratch_names[scratch_name] then
+		local found_name = false
+		local scratch_num = 1
+		while not found_name do
+			scratch_num = scratch_num + 1
+			scratch_name = "*scratch_" .. scratch_num .. "*"
+			found_name = not scratch_names[scratch_name]
+		end
+	end
+
+	vim.api.nvim_buf_set_name(bufnr, scratch_name)
+	vim.api.nvim_win_set_buf(0, bufnr)
+end , {})
+

@@ -102,7 +102,7 @@ local function make_centered_float_win_opts(width_ration, height_ratio, border)
 	}
 end
 
-function open_terminal_float()
+local function open_terminal_float()
 	local win = vim.fn.bufwinnr("term://*")
 	if win ~= -1 then
 		vim.api.nvim_set_current_win(win)
@@ -114,3 +114,14 @@ function open_terminal_float()
 end
 
 nmap { "<leader>mt", open_terminal_float, desc = "[m]ake [t]erminal" }
+
+-- Scratch buffers
+nmap { "<leader>bss", "<CMD>ScratchNew<CR>", desc = "[b]uffer [s]cratch" }
+nmap { "<leader>bsv", function()
+	vim.cmd "vsplit"
+	vim.cmd "ScratchNew"
+end, desc = "[b]uffer [s]cratch [v]split" }
+nmap { "<leader>bsh", function()
+	vim.cmd "split"
+	vim.cmd "ScratchNew"
+end, desc = "[b]uffer  [s]cratch [h]split" }
