@@ -81,7 +81,14 @@ nmap { "<leader>sGc", builtin.git_commits, desc = "[s]earch [G]it [c]ommits" }
 
 -- make
 nmap { "<leader>ms", function()
+	local prev_makeprg = vim.bo.makeprg
 	local makeprg = vim.fn.input("Make command: ", vim.bo.makeprg, "compiler")
+
+	-- Make sure pressing esc preserves the previous makeprg
+	if makeprg == "" then
+		makeprg = prev_makeprg
+	end
+
 	vim.bo.makeprg, vim.o.makeprg = makeprg
 end, desc = "[m]ake program [s]election" }
 
