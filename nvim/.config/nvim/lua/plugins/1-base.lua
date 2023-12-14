@@ -37,25 +37,6 @@ return {
 		config = true,
 	},
 
-	-- Floating terminal
-	{
-		"akinsho/toggleterm.nvim",
-		cmd = { "ToggleTerm", "TermExec" },
-		opts = {
-			size = 10,
-			open_mapping = "<F7>",
-			shading_factor = 2,
-			direction = "float",
-			float_opts = {
-				border = "curved",
-				highlight = { border = "Normal", background = "Normal" },
-			},
-		},
-		keys = {
-			{ "<F7>", "<cmd>ToggleTerm<CR>", desc = "toggle floating terminal" },
-		},
-	},
-
 	-- auto-pairings
 	-- {
 	-- 	"echasnovski/mini.pairs",

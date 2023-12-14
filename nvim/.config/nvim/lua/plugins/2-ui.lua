@@ -5,13 +5,15 @@ Improve or add to the UI
 return {
 	-- Colorscheme
 	{
-		"sainnhe/sonokai",
+		"NTBBloodbath/doom-one.nvim",
 		lazy = false,
 		priority = 1000,
 		config = function(_, _)
-			vim.g.sonokay_style = "atlantis"
-			vim.cmd.colorscheme("sonokai")
-		end
+			vim.cmd.colorscheme "doom-one"
+		end,
+		setup = function()
+			vim.g.doom_one_italic_comments = true
+		end,
 	},
 
 	-- Statusline
