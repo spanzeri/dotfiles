@@ -73,6 +73,15 @@ MTS.nvim_config = function()
 	}
 end
 
+MTS.find_files_in_path = function(path)
+	return function()
+		tsbuiltin.find_files {
+			cwd = path,
+			prompt_title = "Find in Library",
+		}
+	end
+end
+
 MTS.plugin_files = function()
 	tsbuiltin.find_files {
 		cwd = vim.fn.stdpath("data") .. "/lazy/",

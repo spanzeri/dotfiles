@@ -22,6 +22,25 @@ local custom_init = function(client)
 	client.config.flags.allow_incremental_sync = true
 end
 
+local path = require("plenary.path")
+
+local language_libraries = {
+	zls = function()
+		if (vim.fn.executable "zig") == 1 then
+			local zig_info = vim.fn.system "zig env"
+			local info = vim.json.decode(zig_info)
+			local std_path = path.new(info.std_dir)
+			if not std_path:is_absolute() then
+				local home = path.new(info.env.HOME)
+				std_path = home:joinpath(std_path)
+			end
+
+			return tostring(std_path)
+		end
+		return nil
+	end,
+}
+
 local custom_attach = function(client, bufnr)
 	local remap_utils = require("utils.remap")
 
@@ -62,6 +81,16 @@ local custom_attach = function(client, bufnr)
 		bnm { "gi", tsbuiltin.lsp_implementations, desc = "[g]o to [i]mplementations under cursor" }
 		bnm { "<leader>ss", tsbuiltin.lsp_document_symbols, desc = "[s]earch document [s]ymbols" }
 		bnm { "<leader>sS", tsbuiltin.lsp_workspace_symbols, desc = "search workspace [S]ymbols" }
+
+		local lib = language_libraries[client.name]
+		if lib then
+			lib = type(lib) == "function" and lib() or lib
+			if type(lib) ~= "string" then
+				vim.api.nvim_notify("LSP: library for " .. client.name .. " is not a table", vim.log.levels.ERROR, {})
+			else
+				bnm { "<leader>sl", tsbuiltin.find_files_in_path(lib), desc = "[s]earch [l]ibrary" }
+			end	
+		end
 	end
 
 	vim.bo.omnifunc = "v:lua.vim.lsp.omnifunc"
@@ -183,7 +212,10 @@ local lsp_servers = {
 
 	rust_analyzer = rust_analyzer,
 
-	zls = true,
+	zls = {
+		cmd = { "zls" },
+		filetypes = { "zig", "zon" },
+	},
 
 	gdscript = {},
 }
@@ -208,7 +240,7 @@ end
 
 M.get_server_names = function()
 	local res = {}
-	local ignored = { "gdscript" }
+	local ignored = { "gdscript", "zls" }
 	for server, _ in pairs(lsp_servers) do
 		if not vim.tbl_contains(ignored, server) then
 			table.insert(res, server)

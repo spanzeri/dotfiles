@@ -72,7 +72,7 @@ nmap { "<leader>sk", builtin.keymaps, desc = "[s]earch [k]eymaps" }
 nmap { "<leader>sr", builtin.registers, desc = "[s]earch [r]egisters" }
 nmap { "<leader>se", builtin.quickfix, desc = "[s]earch [e]rrors" }
 nmap { "<leader>sp", builtin.plugin_files, desc = "[s]earch [p]lugins" }
-nmap { "<leader>st", [[:TodoTelescope]], desc = "[s]earch [t]odos"}
+nmap { "<leader>st", [[:TodoTelescope <CR>]], desc = "[s]earch [t]odos"}
 
 -- git
 nmap { "<leader>sgf", builtin.git_files, desc = "[s]earch [G]it [f]iles" }

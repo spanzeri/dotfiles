@@ -20,16 +20,6 @@ return {
 		event = "VeryLazy",
 	},
 
-	-- org mode support for neovim
-	{
-		"nvim-orgmode/orgmode",
-		config = function(_, opts)
-			require("orgmode").setup_ts_grammar()
-			require("orgmode").setup(opts)
-		end,
-		event = "VeryLazy",
-	},
-
 	-- Make sure certain buffers don't get displaced
 	{
 		"stevearc/stickybuf.nvim",

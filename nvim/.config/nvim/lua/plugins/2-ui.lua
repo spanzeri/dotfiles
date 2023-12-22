@@ -5,15 +5,18 @@ Improve or add to the UI
 return {
 	-- Colorscheme
 	{
-		"NTBBloodbath/doom-one.nvim",
+		"rebelot/kanagawa.nvim",
 		lazy = false,
 		priority = 1000,
-		config = function(_, _)
-			vim.cmd.colorscheme "doom-one"
-		end,
-		setup = function()
-			vim.g.doom_one_italic_comments = true
-		end,
+		opts = {
+			background = {
+				dark = "dragon",
+			},
+		},
+		config = function(_, opts)
+			require("kanagawa").setup(opts)
+			vim.cmd [[colorscheme kanagawa]]
+		end
 	},
 
 	-- Statusline
