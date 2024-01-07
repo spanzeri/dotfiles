@@ -21,8 +21,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 vim.keymap.set({ "n", "v" }, "s", "<nop>", { silent = true, noremap = true })
 
--- try and run impatient
-pcall(require, "impatient")
+require("sam.options")
 
 -- use lazy.nvim for plugin management
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -40,7 +39,7 @@ vim.opt.runtimepath:prepend(lazypath)
 
 require("lazy").setup("plugins", {
 	dev = {
-		path = "~/nvim-plugins",
+		path = "~/projects/nvim-plugins/",
 		fallback = false,
 	},
 	ui = {
@@ -63,3 +62,5 @@ require("lazy").setup("plugins", {
 	},
 })
 
+require("sam.commands")
+require("sam.remaps")

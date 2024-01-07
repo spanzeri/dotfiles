@@ -1,15 +1,25 @@
---[[ Basic keymaps
-Keymaps we always want available, with or without plugins
-]]
+local log = require("sam.logging")
 
-local remap_utils = require("utils.remap")
-local nmap = remap_utils.nmap
-local xmap = remap_utils.xmap
-local imap = remap_utils.imap
+--- More ergonomic remap
+---
+--- Use: remap { "n", "<leader>h", "cmd", desc = "Description" }
+local remap = function(mode, args)
+	if #args == 3 then
+		vim.keymap.set(mode, args[1], args[2], args[3])
+	else
+		local cmd = table.remove(args, 2)
+		local key = table.remove(args, 1)
+		vim.keymap.set(mode, key, cmd, args)
+	end
+end
+
+local nmap = function(args) remap("n", args) end
+local imap = function(args) remap("i", args) end
+local xmap = function(args) remap("x", args) end
 
 -- Better movement with word-wrap
-nmap { "k", [[v:count == 0 ? "gk" : "k"]], { expr = true, silent = true } }
-nmap { "j", [[v:count == 0 ? "gj" : "j"]], { expr = true, silent = true } }
+nmap { "k", [[v:count == 0 ? "gk" : "k"]], expr = true, silent = true }
+nmap { "j", [[v:count == 0 ? "gj" : "j"]], expr = true, silent = true }
 
 -- Ctrl+Backspace and Ctrl+Del in insert mode
 imap { "<C-del>", "<C-o>dw" }
@@ -19,8 +29,8 @@ imap { "<C-h>", "<C-o>db" } -- support for terminals that remap C-BS to C-h
 -- Yank to and paste from system clipboard
 xmap { "<leader>p", [["_dP]], { desc = "[p]aste and preserve register" } }
 xmap { "<leader>P", [["+dP]], { desc = "[P]aste from system" } }
-vim.keymap.set({ "n", "x" }, "<leader>y", [["+y]], { desc = "[y]ank to system" })
-vim.keymap.set({ "n", "x" }, "<leader>Y", [["+Y]], { desc = "[Y]ank line to system" })
+remap({ "n", "x" }, { "<leader>y", [["+y]], desc = "[y]ank to system" })
+remap({ "n", "x" }, { "<leader>Y", [["+Y]], desc = "[Y]ank line to system" })
 nmap { "<leader>p", [["+p]], { desc = "[p]aste from sytem" } }
 nmap { "<leader>P", [["+P]], { desc = "[P]aste before cursor from sytem" } }
 
@@ -33,7 +43,7 @@ nmap { "<leader>dl", vim.diagnostic.setloclist, { desc = "open [d]iagnostic [l]i
 function toggle_quickfix()
 	local winid = vim.fn.getqflist({ winid = 0 }).winid
 	if winid == 0 then
-		vim.cmd "copen 24"
+		vim.cmd "copen 30"
 	else
 		vim.cmd "cclose"
 	end
@@ -54,30 +64,33 @@ nmap { "gl", "<cmd>diffget //3<CR>", { silent = true, desc = "diff[g]et left [l]
 -- Quickly execute lua stuff
 nmap { "<leader>xx", "<cmd>w | so %<CR>", { desc = "save and source current lua file" } }
 
+local has_ts, builtin = pcall(require, "sam.telescope_custom")
+require("sam.telescope_custom")
+if	 has_ts then
+	nmap { "<leader>/", builtin.current_buffer_fuzzy_find, desc = "fuzzy search current buffer [/]" }
+	nmap { "<leader>sx", builtin.builtin, desc = "[s]earch telescope builtns" }
+	nmap { "<leader>sh", builtin.help_tags, desc = "[s]earch [h]elp" }
+	nmap { "<leader>sf", builtin.find_files, desc = "[s]earch [f]iles" }
+	nmap { "<leader>so", builtin.oldfiles, desc = "[s]earch [o]ld files" }
+	nmap { "<leader>sb", builtin.buffers, desc = "[s]earch [b]uffers" }
+	nmap { "<leader>sn", builtin.nvim_config, desc = "[s]earch [n]vim config files" }
+	nmap { "<leader>sw", builtin.grep_string, desc = "[s]earch current [w]ord" }
+	nmap { "<leader>sg", builtin.live_grep, desc = "[s]earch by [g]rep" }
+	nmap { "<leader>sd", builtin.diagnostics, desc = "[s]earch [d]iagnostics" }
+	nmap { "<leader>sj", builtin.jumplist, desc = "[s]earch [j]umplist" }
+	nmap { "<leader>sk", builtin.keymaps, desc = "[s]earch [k]eymaps" }
+	nmap { "<leader>sr", builtin.registers, desc = "[s]earch [r]egisters" }
+	nmap { "<leader>se", builtin.quickfix, desc = "[s]earch [e]rrors" }
+	nmap { "<leader>sp", builtin.plugin_files, desc = "[s]earch [p]lugins" }
+	nmap { "<leader>sT", [[:TodoTelescope <CR>]], desc = "[s]earch [t]odos"}
 
-local builtin = require("utils.telescope_custom")
-
-nmap { "<leader>/", builtin.current_buffer_fuzzy_find, desc = "fuzzy search current buffer [/]" }
-nmap { "<leader>sx", builtin.builtin, desc = "[s]earch telescope builtns" }
-nmap { "<leader>sh", builtin.help_tags, desc = "[s]earch [h]elp" }
-nmap { "<leader>sf", builtin.find_files, desc = "[s]earch [f]iles" }
-nmap { "<leader>so", builtin.oldfiles, desc = "[s]earch [o]ld files" }
-nmap { "<leader>sb", builtin.buffers, desc = "[s]earch [b]uffers" }
-nmap { "<leader>sn", builtin.nvim_config, desc = "[s]earch [n]vim config files" }
-nmap { "<leader>sw", builtin.grep_string, desc = "[s]earch current [w]ord" }
-nmap { "<leader>sg", builtin.live_grep, desc = "[s]earch by [g]rep" }
-nmap { "<leader>sd", builtin.diagnostics, desc = "[s]earch [d]iagnostics" }
-nmap { "<leader>sj", builtin.jumplist, desc = "[s]earch [j]umplist" }
-nmap { "<leader>sk", builtin.keymaps, desc = "[s]earch [k]eymaps" }
-nmap { "<leader>sr", builtin.registers, desc = "[s]earch [r]egisters" }
-nmap { "<leader>se", builtin.quickfix, desc = "[s]earch [e]rrors" }
-nmap { "<leader>sp", builtin.plugin_files, desc = "[s]earch [p]lugins" }
-nmap { "<leader>st", [[:TodoTelescope <CR>]], desc = "[s]earch [t]odos"}
-
--- git
-nmap { "<leader>sgf", builtin.git_files, desc = "[s]earch [G]it [f]iles" }
-nmap { "<leader>sGb", builtin.git_branches, desc = "[s]earch [G]it [b]ranches" }
-nmap { "<leader>sGc", builtin.git_commits, desc = "[s]earch [G]it [c]ommits" }
+	-- git
+	nmap { "<leader>sgf", builtin.git_files, desc = "[s]earch [G]it [f]iles" }
+	nmap { "<leader>sGb", builtin.git_branches, desc = "[s]earch [G]it [b]ranches" }
+	nmap { "<leader>sGc", builtin.git_commits, desc = "[s]earch [G]it [c]ommits" }
+else
+	log.warn("Telescope not found")
+end
 
 -- make
 nmap { "<leader>ms", function()

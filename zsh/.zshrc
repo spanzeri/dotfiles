@@ -20,14 +20,14 @@ plugins=(
 
 # Path
 #
-export PATH=$PATH:~/.local/bin
+export PATH=~/.local/bin:$PATH
 
 export LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # Aliases and env
 #
-alias ll="ls -lha"
+alias ll="ls -lha --color"
 export EDITOR=nvim
 
 alias wrenderdoc="WAYLAND_DISPLAY= QT_QA_PLATFORM=xcb qrenderdoc"

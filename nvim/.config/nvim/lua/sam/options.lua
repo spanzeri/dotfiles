@@ -1,7 +1,3 @@
---
--- Vim options
---
-
 local opt = vim.opt
 
 -- Better search defaults
@@ -27,10 +23,12 @@ opt.cindent = true
 opt.wrap = true
 
 -- Formatting options: in normal mode, o and O do not add comments
-opt.formatoptions = "jcrql"
-vim.bo.formatoptions = "jcrql"
+opt.formatoptions:remove("to")
+opt.formatoptions:append("rl")
+vim.opt_local.formatoptions:remove("to")
+vim.opt_local.formatoptions:append("rl")
 
--- Pseudo-trasparent completion popup for command line 
+-- Pseudo-trasparent completion popup for command line
 opt.pumblend = 10
 opt.wildmode = "longest:full"
 opt.wildoptions = "pum"
@@ -72,36 +70,9 @@ opt.colorcolumn = "81,121"
 
 -- Show significant whitespaces
 opt.listchars = {
-	tab   = "  ",
+	tab   =  "→ ",
 	trail = "~",
 	lead  = ".",
 }
-
--- Cursorline highlighting
--- Only on the active buffer, not at all in certain filetypes like telescope
-opt.cursorline = true
-local group = vim.api.nvim_create_augroup("CursorlineControl", { clear = true })
-local set_cursorline = function(event, value, pattern)
-	vim.api.nvim_create_autocmd(event, {
-		group = group,
-		pattern = pattern,
-		callback = function()
-			vim.opt_local.cursorline = value
-		end,
-	})
-end
-set_cursorline("WinLeave", false) -- disable on leave
-set_cursorline("WinEnter", true) -- enable on enter
-set_cursorline("FileType", false, "TelescopePrompt") -- always disabled filetypes
-
--- Use powershell on windows
-
-if vim.fn.has('win32') == 1 then
-	vim.o.shell = 'powershell'
-	vim.o.shellcmdflag = '-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;'
-	vim.o.shellredir = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-	vim.o.shellpipe = '2>&1 | Out-File -Encoding UTF8 %s; exit $LastExitCode'
-	vim.o.shellquote = ''
-	vim.o.shellxquote = ''
-end
+opt.list = true
 
