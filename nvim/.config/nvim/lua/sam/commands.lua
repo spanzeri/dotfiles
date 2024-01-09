@@ -201,3 +201,20 @@ vim.api.nvim_create_user_command("ScratchNew", function()
 	vim.api.nvim_win_set_buf(0, bufnr)
 end , {})
 
+--
+-- Better terminal and help drawing
+--
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+	callback = function()
+		if vim.bo.buftype == "terminal" or vim.bo.filetype == "help" then
+			vim.wo.number = false
+			vim.wo.list = false
+		else
+			vim.wo.number = true
+			vim.wo.list = true
+		end
+	end,
+	group = utils_augroup,
+	desc = "Remove line number and whitechars from terminal and help buffers",
+})
+
