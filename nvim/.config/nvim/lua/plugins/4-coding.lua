@@ -120,6 +120,8 @@ return {
 		config = function()
 			local dapui = require("dapui")
 			dapui.setup()
+
+			require("sam.dap-config")
 		end,
 	},
 	{

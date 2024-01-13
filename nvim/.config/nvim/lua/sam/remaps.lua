@@ -66,7 +66,7 @@ nmap { "<leader>xx", "<cmd>w | so %<CR>", { desc = "save and source current lua 
 
 local has_ts, builtin = pcall(require, "sam.telescope_custom")
 require("sam.telescope_custom")
-if	 has_ts then
+if has_ts then
 	nmap { "<leader>/", builtin.current_buffer_fuzzy_find, desc = "fuzzy search current buffer [/]" }
 	nmap { "<leader>sx", builtin.builtin, desc = "[s]earch telescope builtns" }
 	nmap { "<leader>sh", builtin.help_tags, desc = "[s]earch [h]elp" }
@@ -145,3 +145,37 @@ nmap { "<leader>bsh", function()
 	vim.cmd "split"
 	vim.cmd "ScratchNew"
 end, desc = "[b]uffer  [s]cratch [h]split" }
+
+-- DAP
+local has_dap, dap = pcall(require, "dap")
+if has_dap then
+	nmap { "<F5>", dap.continue, desc = "DAP: terminate" }
+	nmap { "<S-F5>", dap.terminate, desc = "DAP: terminate" }
+	nmap { "<M-S-F5>", dap.restart, desc = "DAP: restart" }
+	nmap { "<S-F10>", dap.step_back, desc = "DAP: step back" }
+	nmap { "<F11>", dap.step_into, desc = "DAP: step into" }
+	nmap { "<F10>", dap.step_over, desc = "DAP: step over" }
+	nmap { "<S-F11>", dap.step_out, desc = "DAP: step out" }
+
+	-- Alternative mappings not using F keys
+	nmap { "<leader>dc", dap.continue, desc = "DAP: [c]ontinue" }
+	nmap { "<leader>dt", dap.terminate, desc = "DAP: [t]erminate" }
+	nmap { "<leader>dr", dap.restart, desc = "DAP: [r]estart" }
+	nmap { "<leader>db", dap.step_back, desc = "DAP: step back" }
+	nmap { "<leader>di", dap.step_into, desc = "DAP: step [i]nto" }
+	nmap { "<leader>ds", dap.step_over, desc = "DAP: [s]tep over" }
+	nmap { "<leader>do", dap.step_out, desc = "DAP: step [o]ut" }
+
+	nmap { "<leader>db", dap.toggle_breakpoint, desc = "DAP: toggle [b]reakpoint" }
+	nmap { "<leader>dB", function()
+		dap.set_breakpoint(vim.fn.input "DAP: Condition > ")
+	end, desc = "DAP: set conditonal [b]reakpoint" }
+
+	local has_dapui, dapui = pcall(require, "dapui")
+	if has_dapui then
+		nmap { "<leader>du", dapui.toggle, desc = "DAP: [u]i toggle" }
+		nmap { "<leader>de", dapui.eval, desc = "DAP: [e]val" }
+		nmap { "<leader>dE", function() dapui.eval(vim.fn.input("DAP: Expression > ")) end, desc = "DAP: eval [E]xpression" }
+	end
+end
+

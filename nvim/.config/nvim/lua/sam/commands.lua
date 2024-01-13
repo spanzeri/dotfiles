@@ -218,3 +218,12 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 	desc = "Remove line number and whitechars from terminal and help buffers",
 })
 
+
+--
+-- DAP
+--
+
+local has_dapui, dapui = pcall(require, "dapui")
+if has_dapui then
+	vim.api.nvim_create_user_command("DapUiToggle", dapui.toggle, {})
+end
