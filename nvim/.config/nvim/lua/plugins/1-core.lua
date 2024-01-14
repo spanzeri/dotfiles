@@ -154,14 +154,14 @@ return {
 			wk.setup(opts)
 			wk.register({
 				b = { name = "Buffer" },
-				c = { name = "Code" },
 				d = { name = "Diagnostic|Debug" },
 				e = { name = "Errors" },
 				g = { name = "Git" },
 				o = { name = "Org" },
 				q = { name = "Session" },
 				s = { name = "Search" },
-				t = { name = "Treesiteer" },
+				t = { name = "tab" },
+				T = { name = "Treesiteer" },
 				u = { name = "Undo" },
 				x = { name = "Source" },
 				}, { prefix = "<leader>" })

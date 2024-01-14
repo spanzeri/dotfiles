@@ -118,6 +118,13 @@ local custom_on_attach = function(client, bufnr)
 	nmap { "<leader>ca", vim.lsp.buf.code_action, desc = "[c]ode [a]ction" }
 	nmap { "<leader>cf", vim.lsp.buf.format, desc = "[c]ode [f]ormat" }
 
+	local has_wk, wk = pcall(require, "which-key")
+	if has_wk then
+		wk.register({
+			c = "Code",
+		})
+	end
+
 	nmap { "gd", vim.lsp.buf.definition, desc = "[g]o to [d]efinition" }
 	nmap { "gD", vim.lsp.buf.declaration, desc = "[g]o to [D]eclaration" }
 	nmap { "gt", vim.lsp.buf.type_definition, desc = "[g]o to [t]ype definition" }

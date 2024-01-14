@@ -34,6 +34,13 @@ remap({ "n", "x" }, { "<leader>Y", [["+Y]], desc = "[Y]ank line to system" })
 nmap { "<leader>p", [["+p]], { desc = "[p]aste from sytem" } }
 nmap { "<leader>P", [["+P]], { desc = "[P]aste before cursor from sytem" } }
 
+-- Tabs
+nmap { "<leader>to", "<cmd>tabnew<CR>", { desc = "[t]ab [o]pen" } }
+nmap { "<leader>tc", "<cmd>tabclose<CR>", { desc = "[t]ab [c]lose" } }
+nmap { "<leader>ts", "<cmd>tab split<CR>", { desc = "[t]ab [s]plit" } }
+nmap { "<leader>tn", "<cmd>tabnext<CR>", { desc = "[t]ab [n]ext" } }
+nmap { "<leader>tp", "<cmd>tabprevious<CR>", { desc = "[t]ab [p]revious" } }
+
 -- Diagnostic and error navigation and windows
 nmap { "[d", vim.diagnostic.goto_prev, { desc = "go to previous [d]iagnostic" } }
 nmap { "]d", vim.diagnostic.goto_prev, { desc = "go to next [d]iagnostic" } }

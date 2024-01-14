@@ -12,8 +12,8 @@ return {
 			}
 		},
 		keys = {
-			{ "<leader>tp", "<cmd>TSPlaygroundToggle<CR>", desc = "[t]reesitter [p]layground" },
-			{ "<leader>th", "<cmd>TSHighlightCaptureUnderCursor<CR>", desc = "[t]reesitter [h]ighlight under cursor" },
+			{ "<leader>Tp", "<cmd>TSPlaygroundToggle<CR>", desc = "[T]reesitter [p]layground" },
+			{ "<leader>Th", "<cmd>TSHighlightCaptureUnderCursor<CR>", desc = "[T]reesitter [h]ighlight under cursor" },
 		},
 		event = "BufEnter",
 		cmd = {
