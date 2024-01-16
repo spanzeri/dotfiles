@@ -204,9 +204,9 @@ end , {})
 --
 -- Better terminal and help drawing
 --
-vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnter" }, {
 	callback = function()
-		if vim.bo.buftype == "terminal" or vim.bo.filetype == "help" then
+		if vim.bo.buftype == "terminal" or vim.bo.buftype == "prompt" or vim.bo.filetype == "help" then
 			vim.wo.number = false
 			vim.wo.list = false
 		else

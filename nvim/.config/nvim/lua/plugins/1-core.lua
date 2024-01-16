@@ -245,5 +245,18 @@ return {
 		"tpope/vim-fugitive",
 		event = "VeryLazy",
 	},
+
+	-- status line
+	{
+		"nvim-lualine/lualine.nvim",
+		requires = { "nvim-tree/nvim-web-devicons", opt = true },
+		opts = {
+			options = {
+				section_separators = { left = "", right = "" },
+				component_separators = { left = "", right = "" },
+			},
+		},
+		event = "VeryLazy",
+	},
 }
 
