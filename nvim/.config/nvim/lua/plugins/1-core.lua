@@ -28,17 +28,15 @@ return {
 
 	-- colorscheme
 	{
-		"rebelot/kanagawa.nvim",
+		"navarasu/onedark.nvim",
 		lazy = false,
 		priority = 1000,
-		opt = {
-			background = {
-				dark = "dragon",
-			},
+		opts = {
+			style = "warmer",
 		},
 		config = function(_, opts)
-			require("kanagawa").setup(opts)
-			vim.cmd [[colorscheme kanagawa]]
+			require("onedark").setup(opts)
+			require("onedark").load()
 		end,
 	},
 
@@ -62,8 +60,9 @@ return {
 		},
 		cmd = "Telescope",
 		opts = {
-			defauts = {
+			defaults = {
 				winblend = 5,
+				sorting_strategy = "ascending",
 				layout_config = {
 					width = 200,
 					vertical = {
@@ -71,6 +70,13 @@ return {
 						cutoff = 180,
 					},
 					height = 0.5,
+					prompt_position = "top",
+					horizontal = {
+						prompt_position = "top",
+					},
+					vertical = {
+						prompt_position = "top",
+					},
 				},
 				shorten_path = true,
 			},
