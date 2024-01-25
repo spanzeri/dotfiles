@@ -100,19 +100,24 @@ else
 end
 
 -- make
-nmap { "<leader>ms", function()
-	local prev_makeprg = vim.bo.makeprg
-	local makeprg = vim.fn.input("Make command: ", vim.bo.makeprg, "compiler")
-
-	-- Make sure pressing esc preserves the previous makeprg
-	if makeprg == "" then
-		makeprg = prev_makeprg
+local function set_make_prog(buflocal)
+	return function()
+		local prev_mp = buflocal and vim.bo.makeprg or vim.o.makeprg
+		local mp = vim.fn.input("Make command: ", prev_mp, "compiler")
+		if mp == "" then
+			return
+		end
+		if buflocal then
+			vim.bo.makeprg = mp
+		else
+			vim.o.makeprg = mp
+		end
 	end
+end
 
-	vim.bo.makeprg, vim.o.makeprg = makeprg
-end, desc = "[m]ake program [s]election" }
-
-nmap { "<leader>mm", function() vim.cmd "make! | cw 24" end, desc = "[m]ake" }
+nmap { "<leader>ms", set_make_prog(false), desc = "[m]ake [s]et program" }
+nmap { "<leader>mS", set_make_prog(false), desc = "[m]ake [S]et local program" }
+nmap { "<leader>mm", [[silent! wa | make! | cw 30<CR>]], desc = "[m]ake" }
 
 local function make_centered_float_win_opts(width_ration, height_ratio, border)
 	local width = math.floor(vim.o.columns * width_ration)
