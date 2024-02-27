@@ -12,7 +12,7 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-eval "$(oh-my-posh init zsh --config /usr/share/oh-my-posh/themes/powerlevel10k_rainbow.omp.json)"
+eval "$(oh-my-posh init zsh --config /usr/share/oh-my-posh/themes/velvet.omp.json)"
 plugins=(
 	git
 	archlinux

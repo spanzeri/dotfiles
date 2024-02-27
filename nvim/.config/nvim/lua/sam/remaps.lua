@@ -117,7 +117,7 @@ end
 
 nmap { "<leader>ms", set_make_prog(false), desc = "[m]ake [s]et program" }
 nmap { "<leader>mS", set_make_prog(false), desc = "[m]ake [S]et local program" }
-nmap { "<leader>mm", [[silent! wa | make! | cw 30<CR>]], desc = "[m]ake" }
+nmap { "<leader>mm", [[:silent! wa | make! | cw 30<CR>]], desc = "[m]ake" }
 
 local function make_centered_float_win_opts(width_ration, height_ratio, border)
 	local width = math.floor(vim.o.columns * width_ration)
