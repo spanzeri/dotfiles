@@ -177,4 +177,10 @@ return {
 		event = "VeryLazy",
 		opts = {},
 	},
+
+	-- Better colors for quickfix and location list
+	{
+		"yorickpeterse/nvim-pqf",
+		event = "VeryLazy",
+	},
 }
