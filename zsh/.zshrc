@@ -16,4 +16,4 @@ SAVEHIST=10000
 
 ## Move the main config over to XDG_CONFIG_HOME
 # All the settigs should be in there.
-source $XDG_CONFIG_HOME/zsh/.zshrc
+source $XDG_CONFIG_HOME/zsh/zshrc

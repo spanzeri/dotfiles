@@ -28,3 +28,17 @@ function load_plugin {
 		return 1
 	fi
 }
+
+function load_file {
+	if [[ -z $1 ]]; then
+		echo "Usage: load_file file_name"
+		return 1
+	fi
+	local file_name=$XDG_CONFIG_HOME/zsh/$1
+	if [[ -f $file_name ]]; then
+		source $file_name
+	else
+		echo "File $file_name does not exist"
+		return 1
+	fi
+}

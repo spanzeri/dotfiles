@@ -10,6 +10,8 @@ else
 	return 1
 fi
 
+load_file "prompt.zsh"
+
 load_plugin "zsh-users" "zsh-syntax-highlighting"
 load_plugin "zsh-users" "zsh-autosuggestions"
 
