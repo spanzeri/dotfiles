@@ -10,7 +10,7 @@ if [[ -z $XDG_CACHE_HOME ]]; then
 fi
 
 # Lines configured by zsh-newuser-install
-HISTFILE=~$XDG_DATA_HOME/.histfile
+HISTFILE=$XDG_DATA_HOME/.histfile
 HISTSIZE=10000
 SAVEHIST=10000
 
