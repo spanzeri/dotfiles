@@ -6,12 +6,8 @@ zstyle  ':vcs_info:*' max-exports 5
 zstyle  ':vcs_info:*' get-revision true
 zstyle  ':vcs_info:*' check-for-changes true
 #zstyle ":vcs_info:*" actionformats "%F{red}(%b)%f"
-<<<<<<< HEAD
-zstyle ':vcs_info:*' formats '%s' '%b' '%c' '%u'
-=======
 zstyle ':vcs_info:*' formats '%s' '%b'
 zstyle ':vcs_info:*' actionformats '%s' '%b' '%a'
->>>>>>> cafa967 (Add more info for git prompt)
 
 precmd() {
 	vcs_info
