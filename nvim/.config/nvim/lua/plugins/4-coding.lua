@@ -68,8 +68,16 @@ return {
 	-- rust lsp auto-conf and tools
 	{
 		'mrcjkb/rustaceanvim',
-		version = '^3',
+		version = '^4',
 		ft = { 'rust' },
+		config = function()
+			vim.notify('Rustacean init', vim.log.levels.INFO, {})
+			vim.g.rustaceanvim = {
+				server = {
+					on_attach = require("sam.lsp-config").custom_on_attach,
+				},
+			}
+		end,
 	},
 
 	-- zig support

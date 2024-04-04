@@ -213,4 +213,6 @@ return {
 		end
 		return installed
 	end,
+
+	custom_on_attach = custom_on_attach,
 }
