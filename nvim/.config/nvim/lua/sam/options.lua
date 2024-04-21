@@ -16,7 +16,7 @@ opt.tabstop = 4
 opt.softtabstop = 4
 opt.shiftwidth = 4
 opt.shiftround = true
-opt.expandtab = false
+opt.expandtab = true
 opt.smartindent = true
 opt.autoindent = true
 opt.cindent = true
@@ -72,7 +72,6 @@ opt.colorcolumn = "81,121"
 opt.listchars = {
 	tab   =  "→ ",
 	trail = "~",
-	lead  = ".",
 }
 opt.list = true
 
