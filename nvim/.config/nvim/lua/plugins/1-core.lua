@@ -148,6 +148,15 @@ return {
 		end,
 	},
 
+	-- Quick window jump
+	{
+		"yorickpeterse/nvim-window",
+		config = true,
+		keys = {
+			{ "<leader>j", function() require('nvim-window').pick() end, desc = "[J]ump to window" },
+		},
+	},
+
 	-- On screen key helpers
 	{
 		"folke/which-key.nvim",
