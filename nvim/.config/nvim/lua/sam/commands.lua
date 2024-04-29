@@ -227,3 +227,25 @@ local has_dapui, dapui = pcall(require, "dapui")
 if has_dapui then
 	vim.api.nvim_create_user_command("DapUiToggle", dapui.toggle, {})
 end
+
+--
+-- Comment strings
+--
+
+local comment_string_overrides = {
+    ["c"] = "//",
+    ["cpp"] = "//",
+    ["gdscript"] = "#",
+}
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "*",
+    group = vim.api.nvim_create_augroup("CommentString", { clear = true }),
+    callback = function()
+        local ft = vim.bo.filetype
+        local override = comment_string_overrides[ft]
+        if override then
+            vim.bo.commentstring = override .. " %s"
+        end
+    end,
+})

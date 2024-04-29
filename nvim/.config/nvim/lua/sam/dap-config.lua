@@ -67,6 +67,13 @@ dap.configurations.cpp = {
 		cwd = "${workspaceFolder}",
 		stopOnEntry = false,
 	},
+    {
+        name = "Attach to Process",
+        type = "cpp",
+        request = "attach",
+        pid = require("dap.utils").pick_process,
+        args = {},
+    }
 }
 
 dap.configurations.c = dap.configurations.cpp
