@@ -39,3 +39,16 @@ if [[ -d "$HOME/.zvm" ]]; then
 	export PATH="$PATH:$ZVM_INSTALL/"
 fi
 
+# Hook callback when keybind is changed
+#
+
+function fix_cursor_shape() {
+    if [[ $KEYMAP == "vicmd" ]]; then
+        echo -ne "\e[2 q"
+    else
+        echo -ne "\e[3 q"
+    fi
+}
+
+precmd_function+=(fix_cursor_shape)
+zle -N zle-keymap-select fix_cursor_shape

@@ -60,11 +60,28 @@ dap.configurations.cpp = {
 		type = "codelldb",
 		request = "launch",
 		program = function()
-			codelldb_last.exe_path = codelldb_last.exe_path or vim.fn.getcwd() .. "/"
-			codelldb_last.exe_path = vim.fn.input("Executable path: ", codelldb_last.exe_path, "file")
-			return codelldb_last.exe_path
+			codelldb_last.cmd = codelldb_last.cmd or vim.fn.getcwd() .. "/"
+			codelldb_last.cmd = vim.fn.input({
+                prompt = "Executable path: ",
+                default = codelldb_last.cmd,
+                completion = "file" })
+
+            local args = vim.split(codelldb_last.cmd, " ", { trimempty = true })
+
+            if #args == 0 then
+                return nil
+            end
+            if not vim.fn.executable(args[1]) then
+                vim.notify("File not found or not executable", vim.log.levels.ERROR)
+                return nil
+            end
+
+            local exe_path = table.remove(args, 1)
+            codelldb_last.args = args
+			return exe_path
 		end,
 		cwd = "${workspaceFolder}",
+        args = function() return codelldb_last.args end,
 		stopOnEntry = false,
 	},
     {
