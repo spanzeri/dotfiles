@@ -56,3 +56,20 @@ vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper win
 
 -- Save and source lua
 vim.keymap.set("n", "<leader>xx", [[<cmd>w | so<CR>]], { desc = "Write and source file" })
+
+-- Compilation
+
+local set_mkprg = function()
+    local prev_mp = vim.o.makeprg
+    local mp = vim.fn.input({
+        prompt = "Make command: ",
+        default = prev_mp,
+        completion = "compiler"
+    })
+    if mp ~= nil and mp ~= "" then
+        vim.o.makeprg = mp
+    end
+end
+
+vim.keymap.set("n", "<leader>ms", set_mkprg, { desc = "[m]ake [s]et" })
+vim.keymap.set("n", "<leader>mm", [[:silent! wa | make! | cw 30<CR>]], { desc = "[m]ake [m]ake" })
