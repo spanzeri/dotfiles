@@ -11,7 +11,6 @@ vim.keymap.set("n", "<Esc>", [[<cmd>nohlsearch<CR>]])
 -- Ctrl+Del and Ctrl+BS in insert mode
 vim.keymap.set("i", "<C-del>", [[<C-o>dw]])
 vim.keymap.set("i", "<C-BS>", [[<C-o>db]])
-vim.keymap.set("i", "<C-h>", [[<C-o>db]]) -- unix terminals remap C-BS to C-h
 
 -- Move visual selection up and down
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
