@@ -10,6 +10,7 @@ return {
             },
             "williamboman/mason.nvim",
             "jay-babu/mason-nvim-dap.nvim",
+            "theHamsta/nvim-dap-virtual-text",
         },
 
         event = "VeryLazy",
@@ -22,6 +23,8 @@ return {
                 automatic_installation = true,
                 handlers = {},
             })
+
+            require("nvim-dap-virtual-text").setup()
 
             require("dap.ext.vscode").load_launchjs()
 
@@ -49,19 +52,21 @@ return {
                 local args = vim.split(exe_launch_opts.cmd, " ", { trimempty = true })
                 exe_launch_opts.program = table.remove(args, 1)
                 exe_launch_opts.args = args
+                exe_launch_opts.has_program = true
+                exe_launch_opts.has_args = true
             end
             local get_program = function()
-                if exe_launch_opts.program == nil then
+                if not exe_launch_opts.has_program then
                     make_launch_opts()
                 end
-                local res = exe_launch_opts.program
-                exe_launch_opts.program = nil
-                return res
+                exe_launch_opts.has_program = false
+                return exe_launch_opts.program
             end
             local get_args = function()
-                if exe_launch_opts.program == nil then
+                if not exe_launch_opts.has_args then
                     make_launch_opts()
                 end
+                exe_launch_opts.has_args = false
                 return exe_launch_opts.args
             end
 
@@ -108,24 +113,24 @@ return {
 
             local dap_ui_widgets = require("dap.ui.widgets")
 
-            local hover_aucmd_id = nil
-            dap.listeners.after["event_initialized"]["sam_dap"] = function()
-                 hover_aucmd_id = vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-                    group = vim.api.nvim_create_augroup("SamDap", { clear = true }),
-                    callback = dap_ui_widgets.hover,
-                    desc = "Debug hover expression",
-                })
-            end
-
-            local remove_hover_aucmd = function()
-                if hover_aucmd_id then
-                    vim.api.nvim_del_autocmd(hover_aucmd_id)
-                    hover_aucmd_id = nil
-                end
-            end
-
-            dap.listeners.before["event_terminated"]["sam_dap"] = remove_hover_aucmd
-            dap.listeners.before["event_exited"]["sam_dap"] = remove_hover_aucmd
+            -- local hover_aucmd_id = nil
+            -- dap.listeners.after["event_initialized"]["sam_dap"] = function()
+            --      hover_aucmd_id = vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+            --         group = vim.api.nvim_create_augroup("SamDap", { clear = true }),
+            --         callback = dap_ui_widgets.hover,
+            --         desc = "Debug hover expression",
+            --     })
+            -- end
+            --
+            -- local remove_hover_aucmd = function()
+            --     if hover_aucmd_id then
+            --         vim.api.nvim_del_autocmd(hover_aucmd_id)
+            --         hover_aucmd_id = nil
+            --     end
+            -- end
+            --
+            -- dap.listeners.before["event_terminated"]["sam_dap"] = remove_hover_aucmd
+            -- dap.listeners.before["event_exited"]["sam_dap"] = remove_hover_aucmd
 
             pcall(require("which-key").register, { ["<leader>d"] = { name = "debug" } })
 
@@ -163,12 +168,15 @@ return {
             vim.keymap.set("n", "<F11>", dap.step_into, { desc = "debug step into" })
             vim.keymap.set("n", "<M-F11>", dap.step_out, { desc = "debug step out" })
 
+            local eval_at_cursor = function()
+                dapui.eval(nil, { enter = true })
+            end
             local eval_expr = function()
                 dapui.eval(vim.fn.input("Expression: "))
             end
 
             vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "[d]ebug [u]i toggle" })
-            vim.keymap.set("n", "<leader>de", dapui.eval, { desc = "[d]ebug [e]val under the cursor" })
+            vim.keymap.set("n", "<leader>de", eval_at_cursor, { desc = "[d]ebug [e]val under the cursor" })
             vim.keymap.set("n", "<leader>dx", eval_expr, { desc = "[d]ebug eval e[x]pression" })
         end,
     },

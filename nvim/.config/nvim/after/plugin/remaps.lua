@@ -1,5 +1,6 @@
 -- Exit vim mode with jj
 vim.keymap.set("i", "jj", [[<Esc>]])
+vim.keymap.set("t", "jj", [[<C-\><C-n>]])
 
 -- Exit terminal with esc+esc (it won't work in every terminal, tmux etc).
 -- When it does not work, <C-\><C-n> can still be used
