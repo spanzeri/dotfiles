@@ -39,9 +39,9 @@ vim.keymap.set("n", "<leader>ec", vim.cmd.cclose, { desc = "[e]rrors [c]lose" })
 local toggle_errors = function()
     local ewinid = vim.fn.getqflist({ winid = 0 }).winid
     if ewinid == 0 then
-        vim.fn.copen()
+        vim.cmd.copen()
     else
-        vim.fn.cclose()
+        vim.cmd.cclose()
     end
 end
 

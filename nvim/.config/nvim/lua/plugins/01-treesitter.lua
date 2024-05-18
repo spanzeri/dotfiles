@@ -30,6 +30,7 @@ return {
                 enable_autocmd = false,
                 config = {
                     c = "// %s",
+                    cpp = "// %s",
                     lua = "-- %s",
                     godot = "# %s",
                 },

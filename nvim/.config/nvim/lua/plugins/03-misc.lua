@@ -1,16 +1,17 @@
 return {
     {
-        'ramojus/mellifluous.nvim',
+        "rebelot/kanagawa.nvim",
         lazy = false,
         priority = 1000,
         init = function()
-            require("mellifluous").setup({
-                transparent_background = {
-                    telescope = false,
+            require("kanagawa").setup({
+                transparent = true,
+                theme = "dragon",
+                background = {
+                    dark = "dragon",
                 },
             })
-            vim.cmd.colorscheme("mellifluous")
-            vim.cmd("hi Normal guibg=NONE")
+            vim.cmd.colorscheme("kanagawa")
         end,
     },
 
@@ -21,7 +22,7 @@ return {
             local trouble = require("trouble")
             trouble.setup()
 
-            vim.keymap.set("n", "<leader>ed", function() trouble.toggle("document_diagnostics") end, { desc = "[e]rror [d]ocument" })
+            vim.keymap.set("n", "<leader>ed", function() trouble.toggled("document_diagnostics") end, { desc = "[e]rror [d]ocument" })
             vim.keymap.set("n", "<leader>ew", function() trouble.toggle("workspace_diagnostics") end, { desc = "[e]rror [w]orkspace" })
             vim.keymap.set("n", "<leader>el", function() trouble.toggle("loclist") end, { desc = "[e]rror [l]ist" })
         end,
