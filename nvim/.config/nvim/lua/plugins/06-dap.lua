@@ -43,11 +43,15 @@ return {
             local exe_launch_opts = {}
             local make_launch_opts = function()
                 exe_launch_opts.cmd = exe_launch_opts.cmd or vim.fn.getcwd() .. "/"
-                exe_launch_opts.cmd = vim.fn.input({
+                local new_cmd = vim.fn.input({
                     prompt = "Command: ",
                     default = exe_launch_opts.cmd,
                     completion = "file"
                 })
+                if new_cmd == nil or new_cmd == "" then
+                    return
+                end
+                exe_launch_opts.cmd = new_cmd
 
                 local args = vim.split(exe_launch_opts.cmd, " ", { trimempty = true })
                 exe_launch_opts.program = table.remove(args, 1)

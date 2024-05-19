@@ -47,7 +47,7 @@ return {
                     vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help, { buffer = event.buf, desc = "LSP: signature help" })
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
-                    if client and client.server_capabilities.documentHighlightProvider then
+                    if client and client.server_capabilities.documentHighlightProvider == true then
                         vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
                             buffer = event.buf,
                             callback = vim.lsp.buf.document_highlight,
@@ -111,7 +111,7 @@ return {
                 gdscript = {},
             }
 
-            local skip_install = { "gdscript", "zls" }
+            local skip_install = { "gdscript" }
 
             local ensure_installed = {}
             for server, _ in pairs(servers) do
@@ -128,6 +128,7 @@ return {
                 handlers = {
                     function(server_name)
                         local server = servers[server_name] or {}
+                        vim.notify("Setting up LSP server: " .. server_name, vim.log.levels.INFO)
                         server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
                         require("lspconfig")[server_name].setup(server)
                     end
