@@ -6,6 +6,8 @@ return {
         init = function()
             require("kanagawa").setup({
                 transparent = true,
+                commentStyle = { italic = false },
+                keywordStyle = { italic = false},
                 theme = "dragon",
                 background = {
                     dark = "dragon",
