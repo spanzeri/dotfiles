@@ -29,7 +29,8 @@ project_name=$(basename $project_path)
 echo "Starting project: $project_name - At location: $project_path"
 
 set -- $(stty size)
-tmux_setup="-x $2; split-window -h -c $project_path; resize-pane -t 0 -x 80%; select-pane -t 0"
+# tmux_setup="-x $2; split-window -h -c $project_path; resize-pane -t 0 -x 80%; select-pane -t 0"
+tmux_setup=""
 
 tmux_running=$(pgrep tmux)
 
