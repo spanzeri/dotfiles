@@ -18,9 +18,6 @@ return {
             -- - sr)'  - [S]urround [R]eplace [)] [']
             require("mini.surround").setup()
 
-            -- Comment with gcc
-            require("mini.comment").setup()
-
             -- Simple and easy statusline.
             local statusline = require("mini.statusline")
             statusline.setup({ use_icons = true })
