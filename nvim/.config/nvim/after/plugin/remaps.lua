@@ -25,6 +25,9 @@ vim.keymap.set("n", "<C-u>", [[<C-u>zz]])
 vim.keymap.set("n", "n", [[nzz]])
 vim.keymap.set("n", "N", [[Nzz]])
 
+-- Copy to clipboard
+vim.keymap.set("v", "<leader>y", [["+y]])
+
 -- Diagnostic keymaps
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnistic message" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnistic message" })

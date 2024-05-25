@@ -39,6 +39,16 @@ return {
                     args = { "--port", "${port}" },
                 },
             }
+            dap.adapters.cpptools = {
+                type = 'executable';
+                name = "cpptools",
+                command = vim.fn.stdpath('data') .. '/mason/bin/OpenDebugAD7',
+                args = {},
+                attach = {
+                    pidProperty = "processId",
+                    pidSelect = "ask"
+                },
+            }
 
             local exe_launch_opts = {}
             local make_launch_opts = function()
@@ -76,7 +86,15 @@ return {
 
             dap.configurations.cpp = {
                 {
-                    name = "Launch program",
+                    name = "Launch program (gdb)",
+                    type = "cpptools",
+                    request = "launch",
+                    program = get_program,
+                    args = get_args,
+                    cwd = "${workspaceFolder}",
+                },
+                {
+                    name = "Launch program (codelldb)",
                     type = "codelldb",
                     request = "launch",
                     program = get_program,
@@ -111,30 +129,12 @@ return {
                 },
             }
 
-            dap.listeners.after["event_initialized"]["dapui_config"] = dapui.open
-            dap.listeners.before["event_terminated"]["dapui_config"] = dapui.close
-            dap.listeners.before["event_exited"]["dapui_config"] = dapui.close
+            dap.listeners.after.event_initialized["dapui_config"] = dapui.open
+            dap.listeners.before.event_terminated["dapui_config"] = dapui.close
+            dap.listeners.before.event_exited["dapui_config"] = dapui.close
+            dap.listeners.after.disconnect["dapui_config"] = dapui.close
 
             local dap_ui_widgets = require("dap.ui.widgets")
-
-            -- local hover_aucmd_id = nil
-            -- dap.listeners.after["event_initialized"]["sam_dap"] = function()
-            --      hover_aucmd_id = vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
-            --         group = vim.api.nvim_create_augroup("SamDap", { clear = true }),
-            --         callback = dap_ui_widgets.hover,
-            --         desc = "Debug hover expression",
-            --     })
-            -- end
-            --
-            -- local remove_hover_aucmd = function()
-            --     if hover_aucmd_id then
-            --         vim.api.nvim_del_autocmd(hover_aucmd_id)
-            --         hover_aucmd_id = nil
-            --     end
-            -- end
-            --
-            -- dap.listeners.before["event_terminated"]["sam_dap"] = remove_hover_aucmd
-            -- dap.listeners.before["event_exited"]["sam_dap"] = remove_hover_aucmd
 
             pcall(require("which-key").register, { ["<leader>d"] = { name = "debug" } })
 

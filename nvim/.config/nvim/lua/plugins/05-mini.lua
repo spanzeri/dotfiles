@@ -30,6 +30,8 @@ return {
                 return "%2l:%-2v"
             end
 
+            require("mini.align").setup()
+
             require("mini.trailspace").setup();
 
             require("mini.notify").setup();
