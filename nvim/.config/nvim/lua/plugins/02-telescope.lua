@@ -39,8 +39,8 @@ return {
                 },
             })
 
-            pcall(ts.load_extension, "fzf")
-            pcall(ts.load_extension, "ui-select")
+            ts.load_extension("fzf")
+            ts.load_extension("ui-select")
 
             local builtin = require("telescope.builtin")
 
