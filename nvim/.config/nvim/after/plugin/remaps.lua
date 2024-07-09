@@ -75,4 +75,4 @@ local set_mkprg = function()
 end
 
 vim.keymap.set("n", "<leader>ms", set_mkprg, { desc = "[m]ake [s]et" })
-vim.keymap.set("n", "<leader>mm", [[:silent! wa | make! | cw 30<CR>]], { desc = "[m]ake [m]ake" })
+vim.keymap.set("n", "<leader>mm", [[:silent! wa | make!<CR>]], { desc = "[m]ake [m]ake" })

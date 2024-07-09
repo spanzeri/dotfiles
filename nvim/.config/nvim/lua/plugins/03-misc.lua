@@ -1,19 +1,16 @@
 return {
     {
-        "rebelot/kanagawa.nvim",
+        "rose-pine/neovim",
+        name = "rose-pine",
         lazy = false,
-        priority = 1000,
-        init = function()
-            require("kanagawa").setup({
-                transparent = true,
-                commentStyle = { italic = false },
-                keywordStyle = { italic = false},
-                theme = "dragon",
-                background = {
-                    dark = "dragon",
+        config = function()
+            require("rose-pine").setup({
+                styles = {
+                    italic = false,
+                    transparency = true,
                 },
             })
-            vim.cmd.colorscheme("kanagawa")
+            vim.cmd("colorscheme rose-pine")
         end,
     },
 
@@ -57,8 +54,9 @@ return {
         config = function()
             require("which-key").setup()
             require("which-key").register({
-                ["<leader>c"] = { name = "code" },
                 ["<leader>x"] = { name = "execute" },
+                ["<leader>e"] = { name = "errors" },
+                ["<leader>m"] = { name = "make" },
                 ["g"] = { name = "goto" },
             })
         end

@@ -40,6 +40,14 @@ return {
                     map("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
 
                     map("<leader>cr", vim.lsp.buf.rename, "[c]ode [r]ename")
+
+                    local has_wk, wk = pcall(require, "which-key")
+                    if has_wk then
+                        wk.register({
+                            ["<leader>c"] = { name = "code" },
+                        })
+                    end
+
                     map("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")
 
                     map("K", vim.lsp.buf.hover, "hover documentation")

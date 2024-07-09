@@ -10,6 +10,7 @@ return {
         event = "BufEnter",
         opts = {
             ensure_installed = { "bash", "c", "html", "lua", "luadoc", "cpp" },
+            ignore_install = { 'org' },
             auto_install = true,
             highlight = { enable = true },
             indent = { enable = true },
