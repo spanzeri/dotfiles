@@ -53,11 +53,11 @@ return {
         event = "VimEnter",
         config = function()
             require("which-key").setup()
-            require("which-key").register({
-                ["<leader>x"] = { name = "execute" },
-                ["<leader>e"] = { name = "errors" },
-                ["<leader>m"] = { name = "make" },
-                ["g"] = { name = "goto" },
+            require("which-key").add({
+                { "<leader>x", group = "execute" },
+                { "<leader>e", group = "errors" },
+                { "<leader>m", group = "make" },
+                { "g", group = "goto" },
             })
         end
     },

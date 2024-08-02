@@ -67,8 +67,8 @@ return {
             vim.keymap.set("n", "<leader>sGb", builtin.git_branches, { desc = "[s]earch [G]it [b]ranches" })
             vim.keymap.set("n", "<leader>sGc", builtin.git_commits, { desc = "[s]earch [G]it [c]ommits" })
 
-            pcall(require("which-key").register, { ["<leader>s"] = { name = "search" } })
-            pcall(require("which-key").register, { ["<leader>sG"] = { name = "[G]it" } })
+            pcall(require("which-key").add, { "<leader>s", group = "search" })
+            pcall(require("which-key").add, { "<leader>sG", group = "[G]it" })
         end,
     },
 }

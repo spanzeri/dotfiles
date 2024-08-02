@@ -43,9 +43,7 @@ return {
 
                     local has_wk, wk = pcall(require, "which-key")
                     if has_wk then
-                        wk.register({
-                            ["<leader>c"] = { name = "code" },
-                        })
+                        wk.add({ "<leader>c", group = "code" })
                     end
 
                     map("<leader>ca", vim.lsp.buf.code_action, "[c]ode [a]ction")

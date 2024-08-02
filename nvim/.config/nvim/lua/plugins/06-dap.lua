@@ -39,16 +39,20 @@ return {
                     args = { "--port", "${port}" },
                 },
             }
-            dap.adapters.cpptools = {
-                type = 'executable';
-                name = "cpptools",
-                command = vim.fn.stdpath('data') .. '/mason/bin/OpenDebugAD7',
-                args = {},
-                attach = {
-                    pidProperty = "processId",
-                    pidSelect = "ask"
-                },
-            }
+
+            if vim.fn.executable("gdb") == 1 then
+                local cpptools_ext = vim.fn.has("win32") and ".cmd" or ""
+                dap.adapters.cpptools = {
+                    type = "executable";
+                    name = "cpptools",
+                    command = vim.fn.stdpath("data") .. "/mason/bin/OpenDebugAD7" .. cpptools_ext,
+                    args = {},
+                    attach = {
+                        pidProperty = "processId",
+                        pidSelect = "ask"
+                    },
+                }
+            end
 
             local exe_launch_opts = {}
             local make_launch_opts = function()
@@ -84,30 +88,32 @@ return {
                 return exe_launch_opts.args
             end
 
-            dap.configurations.cpp = {
-                {
+            dap.configurations.cpp = {}
+            if vim.fn.executable("gdb") == 1 then
+                table.insert(dap.configurations.cpp, {
                     name = "Launch program (gdb)",
                     type = "cpptools",
                     request = "launch",
                     program = get_program,
                     args = get_args,
                     cwd = "${workspaceFolder}",
-                },
-                {
-                    name = "Launch program (codelldb)",
-                    type = "codelldb",
-                    request = "launch",
-                    program = get_program,
-                    args = get_args,
-                },
-                {
-                    name = "Attach ot process",
-                    type = "codellldb",
-                    request = "attach",
-                    pid = require("dap.utils").pick_process,
-                    args = {},
-                }
-            }
+                })
+            end
+            table.insert(dap.configurations.cpp, {
+                name = "Launch program (codelldb)",
+                type = "codelldb",
+                request = "launch",
+                program = get_program,
+                args = get_args,
+            })
+            table.insert(dap.configurations.cpp, {
+                name = "Attach ot process",
+                type = "codellldb",
+                request = "attach",
+                pid = require("dap.utils").pick_process,
+                args = {},
+            })
+
             dap.configurations.c = dap.configurations.cpp
             dap.configurations.rust = dap.configurations.cpp
             dap.configurations.zig = dap.configurations.cpp
@@ -129,19 +135,28 @@ return {
                 },
             }
 
-            local shutdown_all_ui = function()
+            local dapui_open = function()
+                dapui.open()
+                vim.cmd("wincmd=")
+            end
+            local dapui_close = function()
                 dapui.close()
                 vim.cmd("DapVirtualTextForceRefresh")
+                vim.cmd("wincmd=")
+            end
+            local dapui_toggle = function()
+                dapui.toggle()
+                vim.cmd("wincmd=")
             end
 
-            dap.listeners.after.event_initialized["dapui_config"] = dapui.open
-            dap.listeners.before.event_terminated["dapui_config"] = shutdown_all_ui
-            dap.listeners.before.event_exited["dapui_config"] = shutdown_all_ui
-            dap.listeners.after.disconnect["dapui_config"] = shutdown_all_ui
+            dap.listeners.after.event_initialized["dapui_config"] = dapui_open
+            dap.listeners.before.event_terminated["dapui_config"] = dapui_close
+            dap.listeners.before.event_exited["dapui_config"] = dapui_close
+            dap.listeners.after.disconnect["dapui_config"] = dapui_close
 
             local dap_ui_widgets = require("dap.ui.widgets")
 
-            pcall(require("which-key").register, { ["<leader>d"] = { name = "debug" } })
+            pcall(require("which-key").add, { "<leader>d", group = "debug" })
 
             local toggle_conditional_breakpoint = function()
                 local condition = vim.fn.input({
@@ -184,7 +199,7 @@ return {
                 dapui.eval(vim.fn.input("Expression: "))
             end
 
-            vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "[d]ebug [u]i toggle" })
+            vim.keymap.set("n", "<leader>du", dapui_toggle, { desc = "[d]ebug [u]i toggle" })
             vim.keymap.set("n", "<leader>de", eval_at_cursor, { desc = "[d]ebug [e]val under the cursor" })
             vim.keymap.set("n", "<leader>dx", eval_expr, { desc = "[d]ebug eval e[x]pression" })
         end,
