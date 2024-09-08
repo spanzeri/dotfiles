@@ -60,7 +60,8 @@
   ;; Remove all bells
   (setopt ring-bell-function (lambda ()))
   ;; Tabs
-  (setopt tab-width 4)
+  (setopt tab-width 4
+		  indent-tabs-mode nil)
   ;; Transparency
   (set-frame-parameter (selected-frame) 'alpha '(92 . 80))
   ;; UI cleanup and decoration
@@ -87,6 +88,9 @@
 						  (other . "linux"))
 		c-ts-mode-indent-style 'linux
 		c-ts-mode-indent-offset 4)
+  ;; Auto revert everything
+  (setopt dired-auto-revert-buffer t)
+  (global-auto-revert-mode)
   ;; Debugging
   (setopt gdb-many-windows t)
   ;; Column indicator
@@ -96,6 +100,8 @@
 	(display-fill-column-indicator-mode 1)
 	(modify-syntax-entry ?_ "w"))
   (add-hook 'prog-mode-hook #'sam/prog-hook))
+
+(use-package cmake-mode)
 
 ;; Colorise compilation buffer
 (use-package ansi-color
@@ -124,9 +130,12 @@
   ;; Keymap
   (evil-define-key 'normal 'global (kbd "<leader>bd") #'kill-buffer)
   (evil-define-key 'normal 'global (kbd "<leader>gc") #'comment-or-uncomment-region)
-  (evil-define-key 'normal 'dired-mode-map (kbd "RET") #'dired-find-file)
   ;; Mode
   (evil-mode 1))
+
+(use-package evil-collection
+  :config
+  (evil-collection-init))
 
 ;; DAP
 (use-package dap-mode
@@ -169,12 +178,6 @@
 (use-package marginalia
   :config
   (marginalia-mode 1))
-
-;; (use-package vertico
-;;   :bind (:map vertico-map
-;; 	      ("C-y" . vertico-insert))
-;;   :config
-;;   (vertico-mode 1))
 
 (use-package orderless
   :custom
