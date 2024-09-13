@@ -69,7 +69,7 @@ vim.opt.wildignore:append({ "*.o", "*~", "*.lock" })
 
 -- UI & colors
 vim.opt.termguicolors = true
-vim.opt.colorcolumn = "81,101"
+vim.opt.colorcolumn = "81,111"
 
 -- Netrw setup
 vim.g.netrw_banner = 0

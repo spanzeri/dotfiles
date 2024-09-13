@@ -1,18 +1,53 @@
 return {
+    -- {
+    --     "rose-pine/neovim",
+    --     name = "rose-pine",
+    --     lazy = false,
+    --     config = function()
+    --         require("rose-pine").setup({
+    --             styles = {
+    --                 italic = false,
+    --                 transparency = true,
+    --             },
+    --         })
+    --         vim.cmd("colorscheme rose-pine")
+    --     end,
+    -- },
+
     {
-        "rose-pine/neovim",
-        name = "rose-pine",
+        "ellisonleao/gruvbox.nvim",
         lazy = false,
         config = function()
-            require("rose-pine").setup({
-                styles = {
-                    italic = false,
-                    transparency = true,
+            require("gruvbox").setup({
+                italic = {
+                    comments = false,
+                    strings = false,
                 },
+                transparent_mode = true,
             })
-            vim.cmd("colorscheme rose-pine")
+            vim.o.background = "dark"
+            vim.cmd("colorscheme gruvbox")
         end,
     },
+
+    -- {
+    --     "catppuccin/nvim",
+    --     name = "catppuccin",
+    --     priority = 1000,
+    --     opts = {
+    --     },
+    --     config = function()
+    --         require("catppuccin").setup({
+    --             background = {
+    --                 dark = "mocha",
+    --             },
+    --             transparent_background = true,
+    --         })
+    --         vim.o.background = "dark"
+    --         vim.cmd("colorscheme catppuccin")
+    --     end,
+    --     lazy = false,
+    -- },
 
     {
         "folke/trouble.nvim",
@@ -60,6 +95,12 @@ return {
                 { "g", group = "goto" },
             })
         end
+    },
+
+    {
+        "folke/zen-mode.nvim",
+        config = true,
+        event = "VeryLazy",
     },
 
     { "tpope/vim-sleuth", event = "VeryLazy" },
