@@ -15,39 +15,22 @@ return {
     -- },
 
     {
-        "ellisonleao/gruvbox.nvim",
+        "ribru17/bamboo.nvim",
         lazy = false,
+        priority = 1000,
         config = function()
-            require("gruvbox").setup({
-                italic = {
-                    comments = false,
-                    strings = false,
+            require("bamboo").setup {
+                transparent = true,
+                code_style = {
+                    comments = { italic = false },
+                    conditionals = { italic = false },
+                    namespaces = { italic = false },
+                    parameters = { italic = false },
                 },
-                transparent_mode = true,
-            })
-            vim.o.background = "dark"
-            vim.cmd("colorscheme gruvbox")
+            }
+            require("bamboo").load()
         end,
     },
-
-    -- {
-    --     "catppuccin/nvim",
-    --     name = "catppuccin",
-    --     priority = 1000,
-    --     opts = {
-    --     },
-    --     config = function()
-    --         require("catppuccin").setup({
-    --             background = {
-    --                 dark = "mocha",
-    --             },
-    --             transparent_background = true,
-    --         })
-    --         vim.o.background = "dark"
-    --         vim.cmd("colorscheme catppuccin")
-    --     end,
-    --     lazy = false,
-    -- },
 
     {
         "folke/trouble.nvim",
@@ -56,10 +39,34 @@ return {
             local trouble = require("trouble")
             trouble.setup()
 
-            vim.keymap.set("n", "<leader>ed", function() trouble.toggled("document_diagnostics") end, { desc = "[e]rror [d]ocument" })
-            vim.keymap.set("n", "<leader>ew", function() trouble.toggle("workspace_diagnostics") end, { desc = "[e]rror [w]orkspace" })
-            vim.keymap.set("n", "<leader>el", function() trouble.toggle("loclist") end, { desc = "[e]rror [l]ist" })
+            vim.keymap.set(
+                "n",
+                "<leader>ed",
+                function() trouble.toggled("document_diagnostics") end,
+                { desc = "[e]rror [d]ocument" })
+            vim.keymap.set(
+                "n",
+                "<leader>ew",
+                function() trouble.toggle("workspace_diagnostics") end,
+                { desc = "[e]rror [w]orkspace" })
+            vim.keymap.set(
+                "n",
+                "<leader>el",
+                function() trouble.toggle("loclist") end,
+                { desc = "[e]rror [l]ist" })
         end,
+    },
+
+    {
+        "folke/todo-comments.nvim",
+        dependencies = { "nvim-lua/plenary.nvim" },
+        event = "BufEnter",
+        opts = {
+            highlight = {
+                pattern = [[.*([@]<(KEYWORDS)(\(.*\))?)\s*:]],
+                keyword = "bg",
+            },
+        },
     },
 
     {

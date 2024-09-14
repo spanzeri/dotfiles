@@ -32,11 +32,11 @@ return {
 
             require("mini.align").setup()
 
-            require("mini.trailspace").setup();
+            require("mini.trailspace").setup()
 
-            require("mini.notify").setup();
+            require("mini.notify").setup()
 
-            require("mini.bufremove").setup();
+            require("mini.bufremove").setup()
             pcall(require("which-key").add, { "<leader>b", group = "buffer" })
             vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "[b]uffer [d]elete" })
             vim.keymap.set("n", "<leader>bh", MiniBufremove.unshow, { desc = "[b]uffer [h]ide" })
