@@ -6,7 +6,21 @@ return {
             {
                 "rcarriga/nvim-dap-ui",
                 dependencies = { "nvim-neotest/nvim-nio" },
-                opts = {},
+                opts = {
+                    controls = {
+                        icons = {
+                            pause = "",
+                            play = "",
+                            step_into = "󰆹",
+                            step_over = "",
+                            step_out = "󰆸",
+                            step_back = "",
+                            run_last = "",
+                            terminate = "",
+                            disconnect = "",
+                        },
+                    },
+                },
             },
             "williamboman/mason.nvim",
             "jay-babu/mason-nvim-dap.nvim",

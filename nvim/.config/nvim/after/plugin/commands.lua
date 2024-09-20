@@ -206,7 +206,11 @@ end , {})
 --
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnter" }, {
     callback = function()
-        if vim.bo.buftype == "terminal" or vim.bo.buftype == "prompt" or vim.bo.filetype == "help" then
+        if vim.bo.buftype == "terminal"
+            or vim.bo.buftype == "prompt"
+            or vim.bo.filetype == "help"
+            or vim.bo.filetype:find("dapui_", 1, true) == 1
+        then
             vim.wo.number = false
             vim.wo.list = false
         else
