@@ -55,7 +55,7 @@ return {
             }
 
             if vim.fn.executable("gdb") == 1 then
-                local cpptools_ext = vim.fn.has("win32") and ".cmd" or ""
+                local cpptools_ext = (is_windows and ".cmd") or ""
                 dap.adapters.cpptools = {
                     type = "executable";
                     name = "cpptools",
