@@ -40,6 +40,22 @@ return {
             pcall(require("which-key").add, { "<leader>b", group = "buffer" })
             vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "[b]uffer [d]elete" })
             vim.keymap.set("n", "<leader>bh", MiniBufremove.unshow, { desc = "[b]uffer [h]ide" })
+
+            local my_commentstring = {
+                lua = "-- %s",
+                c = "// %s",
+                cpp = "// %s",
+                gdscript = "# %s",
+            }
+
+            require("mini.comment").setup({
+                options = {
+                    custom_commentstring = function()
+                        local commentstring = my_commentstring[vim.bo.filetype]
+                        return commentstring or vim.bo.commentstring
+                    end,
+                },
+            })
         end,
     },
 }
