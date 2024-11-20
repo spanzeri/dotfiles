@@ -103,16 +103,6 @@ return {
             end
 
             dap.configurations.cpp = {}
-            if vim.fn.executable("gdb") == 1 then
-                table.insert(dap.configurations.cpp, {
-                    name = "Launch program (gdb)",
-                    type = "cpptools",
-                    request = "launch",
-                    program = get_program,
-                    args = get_args,
-                    cwd = "${workspaceFolder}",
-                })
-            end
             table.insert(dap.configurations.cpp, {
                 name = "Launch program (codelldb)",
                 type = "codelldb",
@@ -127,6 +117,16 @@ return {
                 pid = require("dap.utils").pick_process,
                 args = {},
             })
+            if vim.fn.executable("gdb") == 1 then
+                table.insert(dap.configurations.cpp, {
+                    name = "Launch program (gdb)",
+                    type = "cpptools",
+                    request = "launch",
+                    program = get_program,
+                    args = get_args,
+                    cwd = "${workspaceFolder}",
+                })
+            end
 
             dap.configurations.c = dap.configurations.cpp
             dap.configurations.rust = dap.configurations.cpp

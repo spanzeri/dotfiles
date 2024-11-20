@@ -14,13 +14,19 @@ precmd() {
 }
 
 function parse_git_status {
-	local g_status=$(git status --porcelain 2> /dev/null)
 	local g_branch=$(git rev-parse --abbrev-ref HEAD 2> /dev/null)
-	local g_short_sha=$(git rev-parse --short HEAD 2> /dev/null)
+	local g_upstream=$(git rev-parse --abbrev-ref @{upstream} 2> /dev/null)
 
-	local branch_msg="%F{red}${g_branch}*%f"
-	if [[ $g_status == "" ]]; then
-		branch_msg="%F{green}${g_branch}%f"
+	if [[ -n $g_upstream ]]; then
+		local g_status=$(git status --porcelain 2> /dev/null)
+		local g_short_sha=$(git rev-parse --short HEAD 2> /dev/null)
+
+		local branch_msg="%F{red}${g_branch}*%f"
+		if [[ $g_status == "" ]]; then
+			branch_msg="%F{green}${g_branch}%f"
+		fi
+	else
+		branch_msg="%F{magenta}${g_branch}%f"
 	fi
 
 	status_msg+=" on (git  ${branch_msg}" # @%F{magenta}${g_short_sha}%f"
@@ -74,21 +80,25 @@ function parse_git_status {
 	# fi
 
 	# Remote
-	local remotes="$(git remote | tr -s ' ')"
-	if [[ -n $remotes ]]; then
-		while read -r remote; do
-			rev_parse=$(git rev-list --left-right --count ${remote}/${g_branch}..${g_branch})
-			if [[ $? -eq 0 ]]; then
-				behind_ahead=($rev_parse)
-				behind=${behind_ahead[0]}
-				ahead=${behind_ahead[2]}
-				if [[ $behind > 0 || $ahead > 0 ]]; then
-					status_msg+=" 󰒍 ${remote}%F{red}↓${behind}%f %F{green}↑${ahead}%f "
-				else
-					status_msg+=" 󰒍 ${remote} %F{green}✔%f "
+	if [[ -n $g_upstream ]]; then
+		local remotes="$(git remote | tr -s ' ')"
+		if [[ -n $remotes ]]; then
+			while read -r remote; do
+				rev_parse=$(git rev-list --left-right --count ${remote}/${g_branch}..${g_branch})
+				if [[ $? -eq 0 ]]; then
+					behind_ahead=($rev_parse)
+					behind=${behind_ahead[0]}
+					ahead=${behind_ahead[2]}
+					if [[ $behind > 0 || $ahead > 0 ]]; then
+						status_msg+=" 󰒍 ${remote}%F{red}↓${behind}%f %F{green}↑${ahead}%f "
+					else
+						status_msg+=" 󰒍 ${remote} %F{green}✔%f "
+					fi
 				fi
-			fi
-		done <<< "$remotes"
+			done <<< "$remotes"
+		fi
+	else
+		status_msg+=" 󰒎 untracked"
 	fi
 
 	status_msg+=") "

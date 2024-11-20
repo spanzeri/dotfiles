@@ -29,6 +29,9 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 #
 alias ll="ls -lha --color"
 export EDITOR=nvim
+export CMAKE_GENERATOR=Ninja
+export ANDROID_HOME=$HOME/Android/Sdk
+export ANDROID_NDK_HOME=$ANDROID_HOME/Android/Sdk/ndk/28.0.12433566
 
 alias wrenderdoc="WAYLAND_DISPLAY= QT_QA_PLATFORM=xcb qrenderdoc"
 
@@ -52,3 +55,4 @@ function fix_cursor_shape() {
 
 precmd_function+=(fix_cursor_shape)
 zle -N zle-keymap-select fix_cursor_shape
+

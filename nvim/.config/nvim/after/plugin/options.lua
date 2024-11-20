@@ -74,3 +74,11 @@ vim.opt.colorcolumn = "81,111"
 -- Netrw setup
 vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 1
+
+-- Folds
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldcolumn = "0"
+vim.opt.foldtext = ""
+vim.opt.foldlevelstart = 99
+vim.opt.foldnestmax = 5
