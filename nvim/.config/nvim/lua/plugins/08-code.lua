@@ -5,11 +5,6 @@ return {
         ft = { 'rust' },
         config = function()
             vim.notify('Rustacean init', vim.log.levels.INFO, {})
-            vim.g.rustaceanvim = {
-                server = {
-                    on_attach = require("sam.lsp-config").custom_on_attach,
-                },
-            }
         end,
     },
 

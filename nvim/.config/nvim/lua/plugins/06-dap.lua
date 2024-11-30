@@ -44,6 +44,19 @@ return {
 
             local is_windows = vim.loop.os_uname().sysname:find("Windows") and true or false
             local codelldb_cmd = is_windows and "codelldb.cmd" or "codelldb"
+            local cwd = nil
+
+            local function set_dap_cwd()
+                local new_dir = vim.fn.input({
+                    prompt = "Directory: ",
+                    default = vim.fn.getcwd(),
+                    completion = "dir",
+                })
+                if new_dir == nil or new_dir == "" then
+                    cwd = nil
+                end
+                cwd = new_dir
+            end
 
             dap.adapters.codelldb = {
                 type = "server",
@@ -77,28 +90,28 @@ return {
                     completion = "file"
                 })
                 if new_cmd == nil or new_cmd == "" then
-                    return
+                    return dap.ABORT
                 end
                 exe_launch_opts.cmd = new_cmd
 
                 local args = vim.split(exe_launch_opts.cmd, " ", { trimempty = true })
                 exe_launch_opts.program = table.remove(args, 1)
                 exe_launch_opts.args = args
-                exe_launch_opts.has_program = true
-                exe_launch_opts.has_args = true
+                exe_launch_opts.has_program = vim.fn.executable(exe_launch_opts.program) == 1
             end
             local get_program = function()
                 if not exe_launch_opts.has_program then
                     make_launch_opts()
                 end
-                exe_launch_opts.has_program = false
+                if vim.fn.executable(exe_launch_opts.program) == 0 then
+                    return dap.ABORT
+                end
                 return exe_launch_opts.program
             end
             local get_args = function()
-                if not exe_launch_opts.has_args then
+                if not exe_launch_opts.has_program then
                     make_launch_opts()
                 end
-                exe_launch_opts.has_args = false
                 return exe_launch_opts.args
             end
 
@@ -109,13 +122,9 @@ return {
                 request = "launch",
                 program = get_program,
                 args = get_args,
-            })
-            table.insert(dap.configurations.cpp, {
-                name = "Attach ot process",
-                type = "codellldb",
-                request = "attach",
-                pid = require("dap.utils").pick_process,
-                args = {},
+                cwd = function()
+                    return cwd or "${workspaceFolder}"
+                end,
             })
             if vim.fn.executable("gdb") == 1 then
                 table.insert(dap.configurations.cpp, {
@@ -124,9 +133,18 @@ return {
                     request = "launch",
                     program = get_program,
                     args = get_args,
-                    cwd = "${workspaceFolder}",
+                    cwd = function()
+                        return cwd or "${workspaceFolder}"
+                    end,
                 })
             end
+            table.insert(dap.configurations.cpp, {
+                name = "Attach ot process",
+                type = "codellldb",
+                request = "attach",
+                pid = require("dap.utils").pick_process,
+                args = {},
+            })
 
             dap.configurations.c = dap.configurations.cpp
             dap.configurations.rust = dap.configurations.cpp
@@ -182,8 +200,13 @@ return {
                 end
             end
 
+            local set_program_and_run = function()
+                exe_launch_opts.has_program = false
+                dap.continue()
+            end
 
             vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "[d]ebug [c]ontinue" })
+            vim.keymap.set("n", "<leader>dC", set_program_and_run, { desc = "[d]ebug [C]ontinue setup" })
             vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "[d]ebug run [l]ast" })
             vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "[d]ebug [t]erminate" })
             vim.keymap.set("n", "<leader>dr", dap.restart, { desc = "[d]ebug [r]estart" })
@@ -194,6 +217,7 @@ return {
             vim.keymap.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "[d]ebug toggle [b]reakpoint" })
             vim.keymap.set("n", "<leader>dB", toggle_conditional_breakpoint, { desc = "[d]ebug toggle conditional [B]reakpoint" })
             vim.keymap.set("n", "<leader>dh", dap_ui_widgets.hover, { desc = "[d]ebug [h]over" })
+            vim.keymap.set("n", "<leader>dw", set_dap_cwd, { desc = "[d]ebug [w]orking d]irectory" })
 
             vim.keymap.set("n", "<F5>", dap.continue, { desc = "debug continue" })
             vim.keymap.set("n", "<S-F5>", dap.terminate, { desc = "debug terminate" })
