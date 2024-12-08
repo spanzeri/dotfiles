@@ -9,7 +9,7 @@ return {
         build = ":TSUpdate",
         event = "BufEnter",
         opts = {
-            ensure_installed = { "bash", "c", "html", "lua", "luadoc", "cpp" },
+            ensure_installed = { "c", "lua", "luadoc", "cpp", "c", "glsl" },
             ignore_install = { 'org' },
             auto_install = true,
             highlight = { enable = true },
