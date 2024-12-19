@@ -97,7 +97,9 @@ return {
                 local args = vim.split(exe_launch_opts.cmd, " ", { trimempty = true })
                 exe_launch_opts.program = table.remove(args, 1)
                 exe_launch_opts.args = args
-                exe_launch_opts.has_program = vim.fn.executable(exe_launch_opts.program) == 1
+                exe_launch_opts.has_program =
+                    exe_launch_opts.program ~= nil and
+                    vim.fn.executable(exe_launch_opts.program) == 1
             end
             local get_program = function()
                 if not exe_launch_opts.has_program then

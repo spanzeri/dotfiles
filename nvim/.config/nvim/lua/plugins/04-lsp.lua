@@ -16,6 +16,7 @@ return {
                 },
             },
             { "folke/neodev.nvim", opts = {} },
+            { 'saghen/blink.cmp' },
         },
 
         event = "BufEnter",
@@ -69,9 +70,13 @@ return {
 
             local capabilities = vim.lsp.protocol.make_client_capabilities()
             local has_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+            local has_blink, blink_cmp = pcall(require, "blink.cmp")
             if has_cmp_lsp then
                 capabilities = vim.tbl_deep_extend("force", capabilities, cmp_lsp.default_capabilities())
+            elseif has_blink then
+                capabilities = blink_cmp.get_lsp_capabilities(capabilities)
             end
+
             capabilities.textDocument.completion.completionItem.snippetSupport = true
 
             -- Fix compatibility issues with copilot
