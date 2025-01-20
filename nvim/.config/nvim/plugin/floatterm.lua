@@ -70,4 +70,5 @@ local open_lazygit = function()
     vim.cmd.startinsert()
 end
 
-vim.api.nvim_create_user_command("LazyGit", open_lazygit, {})
+vim.api.nvim_create_user_command("Lazygit", open_lazygit, {})
+vim.api.nvim_set_keymap("n", "<leader>lg", ":Lazygit<CR>", { noremap = true, silent = true })

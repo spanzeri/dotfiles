@@ -1,34 +1,23 @@
 return {
-    -- {
-    --     "rose-pine/neovim",
-    --     name = "rose-pine",
-    --     lazy = false,
-    --     config = function()
-    --         require("rose-pine").setup({
-    --             styles = {
-    --                 italic = false,
-    --                 transparency = true,
-    --             },
-    --         })
-    --         vim.cmd("colorscheme rose-pine")
-    --     end,
-    -- },
-
     {
-        "ribru17/bamboo.nvim",
+        -- 'comfysage/evergarden',
+        "cdmill/neomodern.nvim",
         lazy = false,
         priority = 1000,
         config = function()
-            require("bamboo").setup {
+            -- require("evergarden").setup({
+            --     transparent_background = true,
+            --     variant = "hard",
+            -- })
+            -- vim.cmd.colorscheme("evergarden")
+            require("neomodern").setup({
+                theme = "roseprime",
                 transparent = true,
-                code_style = {
-                    comments = { italic = false },
-                    conditionals = { italic = false },
-                    namespaces = { italic = false },
-                    parameters = { italic = false },
-                },
-            }
-            require("bamboo").load()
+                highlights = {
+                    ColorColumn = { bg = "#2c2c2c" },
+                }
+            })
+            require("neomodern").load()
         end,
     },
 
@@ -104,12 +93,6 @@ return {
         end
     },
 
-    {
-        "folke/zen-mode.nvim",
-        config = true,
-        event = "VeryLazy",
-    },
-
     { "tpope/vim-sleuth", event = "VeryLazy" },
     { "tpope/vim-repeat", event = "VeryLazy" },
 
@@ -136,7 +119,11 @@ return {
                 buftypes = { "nofile", "terminal", "quickfix", "prompt" },
                 filetypes = { "help", "TelescopePrompt", "TelescopeResult", "man", "lazy", "lspinfo" },
             },
-            scope = { enabled = true },
+            scope = {
+                enabled = true,
+                show_start = false,
+                show_end = false,
+            },
         },
     },
 

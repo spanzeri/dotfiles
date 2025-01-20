@@ -58,6 +58,10 @@ return {
             end, { desc = "[s]earch [n]oevim config files" })
             vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[s]earch current [w]ord" })
             vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "[s]earch by [g]rep" })
+            vim.keymap.set("n", "<leader>sG", function()
+                builtin.live_grep({ no_ignore = true })
+            end, { desc = "[s]earch by [G]rep (don't ignore files)" })
+            vim.keymap.set("n", "<leader>sm", builtin.marks, { desc = "[s]earch [m]arks" })
             vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[s]earch [d]iagnostics" })
             vim.keymap.set("n", "<leader>sj", builtin.jumplist, { desc = "[s]earch [j]umplist" })
             vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[s]earch [k]eymaps" })
@@ -66,12 +70,12 @@ return {
             vim.keymap.set("n", "<leader>sp", function()
                 builtin.find_files({ cwd = vim.fn.stdpath("data") .. "/lazy" })
             end, { desc = "[s]earch [p]lugins" })
-            vim.keymap.set("n", "<leader>sGf", builtin.git_files, { desc = "[s]earch [G]it [f]iles" })
-            vim.keymap.set("n", "<leader>sGb", builtin.git_branches, { desc = "[s]earch [G]it [b]ranches" })
-            vim.keymap.set("n", "<leader>sGc", builtin.git_commits, { desc = "[s]earch [G]it [c]ommits" })
+            vim.keymap.set("n", "<leader>svf", builtin.git_files, { desc = "[s]earch git [f]iles" })
+            vim.keymap.set("n", "<leader>svb", builtin.git_branches, { desc = "[s]earch git [b]ranches" })
+            vim.keymap.set("n", "<leader>svc", builtin.git_commits, { desc = "[s]earch git [c]ommits" })
 
             pcall(require("which-key").add, { "<leader>s", group = "search" })
-            pcall(require("which-key").add, { "<leader>sG", group = "[G]it" })
+            pcall(require("which-key").add, { "<leader>sv", group = "git" })
         end,
     },
 }
