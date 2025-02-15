@@ -13,7 +13,7 @@ fi
 homedir=$( getent passwd "$USER" | cut -d: -f6 )
 
 if [[ -z $1 ]]; then
-	project_paths="$homedir/projects $homedir/godot-projects"
+	project_paths="$homedir/projects"
 else
 	project_paths="$1"
 fi
@@ -24,7 +24,7 @@ if [ -z $project_path ]; then
 	exit 0
 fi
 
-project_name=$(basename $project_path)
+project_name=$(basename $project_path | sed 's/\./_/g')
 
 echo "Starting project: $project_name - At location: $project_path"
 
@@ -35,18 +35,22 @@ tmux_setup=""
 tmux_running=$(pgrep tmux)
 
 if [[ -z $tmux_running ]]; then
-	tmux new -s $project_name -c $project_path $tmux_setup
+	echo tmux new -s "$project_name" -c "$project_path" $tmux_setup
+	tmux new -s "$project_name" -c "$project_path" $tmux_setup
 	exit 0
 fi
 
-if ! tmux has-session -t=$project_name 2> /dev/null; then
-	tmux new-session -ds $project_name -c $project_path $tmux_setup
+if ! tmux has-session -t="$project_name" 2> /dev/null; then
+	echo tmux new-session -ds "$project_name" -c "$project_path" $tmux_setup
+	tmux new-session -ds "$project_name" -c "$project_path" $tmux_setup
 fi
 
 if [[ -z $TMUX ]]; then
-	tmux attach -t $project_name
+    echo tmux attach -t "$project_name"
+	tmux attach -t "$project_name"
 else
-	tmux switch-client -t $project_name
+    echo tmux switch-client -t "$project_name"
+	tmux switch-client -t "$project_name"
 fi
 
 # vim: filetype=sh

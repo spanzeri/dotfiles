@@ -1,24 +1,17 @@
 return {
     {
-        -- 'comfysage/evergarden',
-        "cdmill/neomodern.nvim",
-        lazy = false,
-        priority = 1000,
+        "vague2k/vague.nvim",
         config = function()
-            -- require("evergarden").setup({
-            --     transparent_background = true,
-            --     variant = "hard",
-            -- })
-            -- vim.cmd.colorscheme("evergarden")
-            require("neomodern").setup({
-                theme = "roseprime",
+            require("vague").setup({
                 transparent = true,
-                highlights = {
-                    ColorColumn = { bg = "#2c2c2c" },
-                }
+                style = {
+                    comments = "none",
+                    strings = "none",
+                },
             })
-            require("neomodern").load()
+            vim.cmd.colorscheme("vague")
         end,
+        lazy = false,
     },
 
     {
@@ -145,5 +138,11 @@ return {
         "rcarriga/nvim-notify",
         event = "VeryLazy",
         config = true,
+    },
+
+    {
+        "aserowy/tmux.nvim",
+        event = "VimEnter",
+        opts = {},
     },
 }

@@ -75,3 +75,9 @@ end
 
 vim.keymap.set("n", "<leader>ms", set_mkprg, { desc = "[m]ake [s]et" })
 vim.keymap.set("n", "<leader>mm", [[:silent! wa | make!<CR>]], { desc = "[m]ake [m]ake" })
+
+vim.keymap.set("n", "<leader>tc", vim.cmd.tabnew, { desc = "[t]ab [c]reate" })
+vim.keymap.set("n", "<leader>to", vim.cmd.tabonly, { desc = "[t]ab [o]nly" })
+vim.keymap.set("n", "<leader>tn", vim.cmd.tabnext, { desc = "[t]ab [n]ext" })
+vim.keymap.set("n", "<leader>tp", vim.cmd.tabprevious, { desc = "[t]ab [p]revious" })
+vim.keymap.set("n", "<leader>td", vim.cmd.tabclose, { desc = "[t]ab [d]elete" })
