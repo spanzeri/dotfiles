@@ -33,14 +33,15 @@ return {
             local dap = require("dap")
             local dapui = require("dapui")
 
+            local dap_ext_vscode = require("dap.ext.vscode")
+            dap_ext_vscode.json_decode = require("json").decode
+
             require("mason-nvim-dap").setup({
                 automatic_installation = true,
                 handlers = {},
             })
 
-            require("nvim-dap-virtual-text").setup()
-
-            require("dap.ext.vscode").load_launchjs()
+            require("nvim-dap-virtual-text").setup({})
 
             local is_windows = vim.loop.os_uname().sysname:find("Windows") and true or false
             local codelldb_cmd = is_windows and "codelldb.cmd" or "codelldb"

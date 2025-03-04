@@ -52,11 +52,4 @@ return {
         },
         event = "VeryLazy",
     },
-
-
-    {
-        "yorickpeterse/nvim-pqf",
-        event = "VeryLazy",
-    },
-
 }

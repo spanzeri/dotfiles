@@ -73,8 +73,29 @@ local set_mkprg = function()
     end
 end
 
+local make_and_open_quickfix = function()
+    -- Save all buffers and run makeprg
+    vim.cmd [[silent! wa | make]]
+    local qflist = vim.fn.getqflist({ items = 0 }).items
+    local has_valid_errors = false
+    for _, item in ipairs(qflist) do
+        if item.valid == 1 then
+            has_valid_errors = true
+            break
+        end
+    end
+    if has_valid_errors then
+        local qf_winid = vim.fn.getqflist({ winid = 0 }).winid
+        if qf_winid == 0 then
+            vim.cmd [[botright copen | wincmd p]]
+        end
+    else
+        vim.cmd [[cclose]]
+    end
+end
+
 vim.keymap.set("n", "<leader>ms", set_mkprg, { desc = "[m]ake [s]et" })
-vim.keymap.set("n", "<leader>mm", [[:silent! wa | make!<CR>]], { desc = "[m]ake [m]ake" })
+vim.keymap.set("n", "<leader>mm", make_and_open_quickfix, { desc = "[m]ake [m]ake" })
 
 vim.keymap.set("n", "<leader>tc", vim.cmd.tabnew, { desc = "[t]ab [c]reate" })
 vim.keymap.set("n", "<leader>to", vim.cmd.tabonly, { desc = "[t]ab [o]nly" })

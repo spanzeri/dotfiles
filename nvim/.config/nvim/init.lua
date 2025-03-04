@@ -24,10 +24,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup("plugins", {
-    dev = {
-        path = "~/projects/nvim-plugins",
-        fallback = false,
-    },
     ui = {
         icons = {
             cmd = "⌘",
