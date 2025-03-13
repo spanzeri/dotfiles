@@ -109,9 +109,14 @@ return {
                     cmd = {
                         "clangd",
                         "--background-index",
+                        "--j=4",
                         "--suggest-missing-includes",
                         "--clang-tidy",
+                        "--clang-tidy-checks=performance-*,bugprone-*",
+                        "--all-scopes-completion",
+                        "--completion-style=detailed",
                         "--header-insertion=iwyu",
+                        "--pretty",
                     },
                     init_options = {
                         clangdFileStatus = true,
