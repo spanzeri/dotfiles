@@ -1,6 +1,5 @@
--- Relative line numberopt
+-- Line numbers
 vim.opt.number = true
-vim.opt.relativenumber = true
 
 -- Enable mouse
 vim.opt.mouse = "a"
@@ -25,7 +24,7 @@ vim.opt.hlsearch = true
 vim.opt.updatetime = 250
 
 -- Decrease mapped sequence wait time
--- Displays which-key popup sooner
+-- Displays which-key pop-up sooner
 vim.opt.timeoutlen = 300
 
 -- Configure how new splits should be opened
@@ -35,7 +34,7 @@ vim.opt.splitbelow = true
 -- Show matching paren on insertion
 vim.opt.showmatch = true
 
--- Sets how neovim will display certain whitespace characters in the editor.
+-- Sets how neovim will display certain white space characters in the editor.
 vim.opt.list = true
 vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣" }
 
@@ -58,7 +57,7 @@ vim.opt.smartindent = true
 vim.opt.autoindent = true
 vim.opt.wrap = true
 
--- Pseudo-transparent completion popup for command-line
+-- Pseudo-transparent completion pop-up for command-line
 vim.opt.pumblend = 10
 vim.opt.wildmode = "longest:full"
 vim.opt.wildoptions = "pum"
@@ -76,19 +75,66 @@ vim.g.netrw_banner = 0
 vim.g.netrw_liststyle = 1
 
 -- Folds
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.o.foldenable   = true
+vim.o.foldlevel    = 99
+vim.o.foldmethod   = "expr"
+vim.o.foldexpr     = "v:lua.vim.treesitter.foldexpr()"
+vim.o.foldtext     = ""
 vim.opt.foldcolumn = "0"
-vim.opt.foldtext = ""
-vim.opt.foldlevelstart = 99
-vim.opt.foldnestmax = 5
+vim.opt.fillchars:append({fold = " "})
+
+-- Spelling
+vim.opt.spelllang = "en"
+vim.opt.spell = true
 
 -- Quickfix: add gcc and clang formats for errors, warnings and notes
-vim.o.errorformat =
-       [[%f:%l:%c:\ %trror:\ %m,]]
-    .. [[%f:%l:%c:\ %tarning:\ %m,]]
-    .. [[%f:%l:%c:\ %tote:\ %m,]]
-    .. vim.o.errorformat
+
+local errformat_wrapper = {
+    --- @type string[]
+    before = {},
+    --- @type string[]
+    after = {},
+
+    --- @param fmt string
+    make_str = function(fmt)
+        return fmt:gsub(" ", "\\ ")
+    end,
+
+    --- @param fmt string
+    append = function(self, fmt)
+        self.after[#self.after + 1] = self.make_str(fmt)
+        return self
+    end,
+
+    prepend = function(self, fmt)
+        self.before[#self.before + 1] = self.make_str(fmt)
+        return self
+    end,
+
+    set = function(self)
+        vim.o.errorformat =
+            table.concat(self.before, ",") ..
+            "," ..
+            vim.o.errorformat ..
+            "," ..
+            table.concat(self.after, ",")
+    end,
+}
+
+errformat_wrapper
+    :prepend("%f:%l:%c: %trror: %m")
+    :prepend("%f:%l:%c: %tarning: %m")
+    :prepend("%f:%l:%c: %tote: %m")
+    :prepend("%f:%l:%c: %m")
+    :prepend("%f:%l: %trror: %m")
+    :prepend("%f:%l: %tarning: %m")
+    :prepend("%f:%l: %tote: %m")
+    :prepend("%f:%l: %m")
+    :prepend("%f(%l\\,%c): %trror: %m")
+    :prepend("%f(%l\\,%c): %tarning: %m")
+    :prepend("%f(%l\\,%c): %tote: %m")
+    :prepend("%f(%l\\,%c): %m")
+    :set()
 
 local qf_item_icon = {
     e = "",
@@ -107,72 +153,67 @@ local qf_hl_group = {
 local qf_hl_filename = "qfFileName"
 local qf_hl_line_col = "qfLineNr"
 
-local qf_sep = " ┃ "
-local qf_fname_max_len = 20
-local qf_line_col_len = 7
-
-vim.api.nvim_create_autocmd("FileType", {
-    group = vim.api.nvim_create_augroup("qf_highlight_group", { clear = true }),
-    pattern = "qf",
-    callback = function()
-        vim.cmd [[syntax clear]]
-        vim.api.nvim_buf_clear_namespace(0, qf_highlight_ns, 1, -1)
-
-        local qflist = vim.fn.getqflist({ items = 0 })
-        for i, item in ipairs(qflist.items) do
-            local index = 0
-            local do_hl = function(hl, len)
-                vim.api.nvim_buf_set_extmark(0, qf_highlight_ns, i - 1, index, {
-                    end_line = i - 1,
-                    end_col = index + len,
-                    hl_group = hl,
-                })
-                index = index + len
-            end
-
-            local icon_len = (qf_item_icon[item.type] or " "):len()
-            local sep_len = qf_sep:len()
-
-            local icon_hl = qf_hl_group[item.type] or "Normal"
-            do_hl(icon_hl, icon_len + 1)
-            do_hl(qf_hl_filename, qf_fname_max_len)
-            do_hl(icon_hl, sep_len)
-            do_hl(qf_hl_line_col, qf_line_col_len)
-            do_hl(icon_hl, sep_len)
-            do_hl("Normal", #item.text)
-        end
-    end
-})
+-- vim.api.nvim_create_autocmd("FileType", {
+--     group = vim.api.nvim_create_augroup("qf_highlight_group", { clear = true }),
+--     pattern = "qf",
+--     callback = function()
+--         vim.cmd [[syntax clear]]
+--         vim.api.nvim_buf_clear_namespace(0, qf_highlight_ns, 1, -1)
+--
+--         local qflist = vim.fn.getqflist({ items = 0 })
+--         for i, item in ipairs(qflist.items) do
+--             local index = 0
+--             local do_hl = function(hl, len)
+--                 vim.api.nvim_buf_set_extmark(0, qf_highlight_ns, i - 1, index, {
+--                     end_line = i - 1,
+--                     end_col = index + len,
+--                     hl_group = hl,
+--                 })
+--                 index = index + len
+--             end
+--
+--             local type = string.lower(item.type)
+--
+--             local icon_len = (qf_item_icon[type] or " "):len()
+--             local sep_len = qf_sep:len()
+--
+--             local icon_hl = qf_hl_group[type] or "Normal"
+--             do_hl(icon_hl, icon_len + 1)
+--             do_hl(qf_hl_filename, qf_fname_max_len)
+--             do_hl(icon_hl, sep_len)
+--             do_hl(qf_hl_line_col, qf_line_col_len)
+--             -- do_hl(icon_hl, sep_len)
+--             -- do_hl("Normal", #item.text)
+--         end
+--     end
+-- })
 
 local function improved_qf_text_line(item)
     local fname = vim.api.nvim_buf_get_name(item.bufnr)
-    local filename = fname ~= "" and vim.fn.fnamemodify(fname, ":p:~") or ""
+    local filename = fname ~= "" and vim.fn.fnamemodify(fname, ":.") or ""
 
     local line = item.lnum
     local col = item.col
-    local text = item.text
-
-    local max_col_len = 4
-    if #filename > qf_fname_max_len then
-        filename = "..." .. filename:sub(#filename - qf_fname_max_len + 4)
-    end
+    local message = item.text
 
     local line_col
     if line == 0 then
         line_col = ""
     else
-        line_col = string.format("%d:%d", line, col)
+        line_col = string.format(" %d col %d ", line, col)
     end
 
-    local icon = qf_item_icon[item.type] or " "
-    return string.format(
-            "%s %"..qf_fname_max_len.."s%s%-"..qf_line_col_len.."s%s%s",
-            icon,
-            filename,
-            qf_sep,
-            line_col,
-            qf_sep,
-            text)
+    local prefix = ""
+    local icon = qf_item_icon[item.type:lower()]
+    if icon then
+        prefix = icon .. "  "
+    end
+
+    if filename:len() ~= 0 then
+        prefix = prefix .. filename .. " "
+    end
+
+    return string.format("%s|%s| %s", prefix, line_col, message)
 end
 
 function ImprovedQFTextFunc(info)

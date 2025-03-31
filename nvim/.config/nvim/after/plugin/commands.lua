@@ -137,7 +137,6 @@ vim.api.nvim_create_autocmd("TermOpen", {
     callback = function()
         vim.cmd.set "filetype=term"
         vim.wo.number = false
-        vim.wo.relativenumber = false
     end,
     group = utils_augroup,
     desc = "Set terminal filetype and disable numbers",
@@ -146,7 +145,6 @@ vim.api.nvim_create_autocmd("TermOpen", {
 vim.api.nvim_create_autocmd("TermClose", {
     callback = function()
         vim.wo.number = vim.o.number
-        vim.wo.relativenumber = vim.o.relativenumber
     end,
     group = utils_augroup,
     desc = "Restore settings on terminal close",
@@ -195,14 +193,13 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
             or vim.bo.buftype  == "prompt"
             or vim.bo.filetype == "help"
             or vim.bo.buftype  == "quickfix"
+            or vim.bo.filetype == "man"
             or vim.bo.filetype:find("dapui_", 1, true) == 1
         then
             vim.opt.number = false
-            vim.opt.relativenumber = false
             vim.opt.list = false
         else
             vim.opt.number = true
-            vim.opt.relativenumber = true
             vim.opt.list = true
         end
     end,

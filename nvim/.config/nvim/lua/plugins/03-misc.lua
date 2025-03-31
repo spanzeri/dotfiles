@@ -1,18 +1,54 @@
 return {
+  -- {
+  --   "vague2k/vague.nvim",
+  --   config = function()
+  --     require("vague").setup {
+  --       transparent = true,
+  --       style = {
+  --         comments = "none",
+  --         strings = "none",
+  --         keywords_return = "none",
+  --       }
+  --     }
+  --     vim.cmd.colorscheme "vague"
+  --   end,
+  --   lazy = false,
+  --   priority = 1000,
+  -- },
+
   {
-    "aktersnurra/no-clown-fiesta.nvim",
-    priority = 1000,
-    lazy = false,
+    "blazkowolf/gruber-darker.nvim",
     config = function()
-      local ncf = require "no-clown-fiesta"
-      ncf.setup {
-        transparent = true,
-        styles = {
-          comments = { italic = false },
-        }
+      require("gruber-darker").setup {
+        italic = {
+          strings   = false,
+          comments  = false,
+          operators = false,
+          folds     = false,
+        },
       }
-      ncf.load()
+
+      local yellow = "#f9de3e"
+      local green = "#7bc158"
+      local brown = "#9b7d46"
+
+      vim.cmd.colorscheme "gruber-darker"
+      vim.api.nvim_set_hl(0, "GruberDarkerYellow", { fg = yellow })
+      vim.api.nvim_set_hl(0, "GruberDarkerYellowBold", { fg = yellow })
+      vim.api.nvim_set_hl(0, "GruberDarkerYellowSign", { fg = yellow })
+      vim.api.nvim_set_hl(0, "GruberDarkerGreen", { fg = green })
+      vim.api.nvim_set_hl(0, "GruberDarkerGreenBold", { fg = green })
+      vim.api.nvim_set_hl(0, "GruberDarkerGreenSign", { fg = green })
+      vim.api.nvim_set_hl(0, "String", { fg = green })
+      vim.api.nvim_set_hl(0, "GruberDarkerBrown", { fg = brown })
+      vim.api.nvim_set_hl(0, "Comment", { fg = brown })
+      vim.api.nvim_set_hl(0, "Normal", { bg = nil })
+      vim.api.nvim_set_hl(0, "NormalNC", { bg = nil })
+      vim.api.nvim_set_hl(0, "VertSplit", { bg = nil })
+      vim.api.nvim_set_hl(0, "Float", { bg = nil })
     end,
+    lazy = false,
+    priority = 1000,
   },
 
   {

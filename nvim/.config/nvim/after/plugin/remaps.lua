@@ -28,8 +28,18 @@ vim.keymap.set("n", "N", [[Nzz]])
 vim.keymap.set("v", "<leader>y", [["+y]])
 
 -- Diagnostic keymaps
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [d]iagnistic message" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [d]iagnistic message" })
+
+local diagnostic_float = function(count)
+    return function()
+        vim.diagnostic.jump {
+            count = count,
+            float = true,
+        }
+    end
+end
+
+vim.keymap.set("n", "[d", diagnostic_float(-1), { desc = "Go to previous [d]iagnistic message" })
+vim.keymap.set("n", "]d", diagnostic_float( 1), { desc = "Go to next [d]iagnistic message" })
 vim.keymap.set("n", "<leader>ef", vim.diagnostic.open_float, { desc = "Show diagnostic [f]loat" })
 vim.keymap.set("n", "<leader>el", vim.diagnostic.setloclist, { desc = "Move diagnostics to [l]oclist" })
 vim.keymap.set("n", "<leader>ee", vim.cmd.cc, { desc = "go to first [e]rror" })

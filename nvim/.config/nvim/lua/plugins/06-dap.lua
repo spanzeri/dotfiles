@@ -152,6 +152,7 @@ return {
             dap.configurations.c = dap.configurations.cpp
             dap.configurations.rust = dap.configurations.cpp
             dap.configurations.zig = dap.configurations.cpp
+            dap.configurations.d = dap.configurations.cpp
 
             dap.adapters.godot = {
                 type = "server",
