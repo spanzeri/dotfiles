@@ -11,7 +11,6 @@ return {
             -- Floating terminal
             local smpterm = require "smp.term"
             smpterm.setup {}
-            print("Loaded smp.term")
 
             vim.keymap.set("n", "<leader>tl", function()
                 smpterm.open {

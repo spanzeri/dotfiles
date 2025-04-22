@@ -88,7 +88,7 @@ return {
                 local new_cmd = vim.fn.input({
                     prompt = "Command: ",
                     default = exe_launch_opts.cmd,
-                    completion = "file"
+                    completion = "shellcmdline"
                 })
                 if new_cmd == nil or new_cmd == "" then
                     return dap.ABORT

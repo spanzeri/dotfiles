@@ -34,11 +34,11 @@
   "Use nerd font symbols if not nil."
   :type 'boolean
   :group 'appearance)
-(defcustom sam-active-frame-opacity 95
+(defcustom sam-active-frame-opacity 97
   "Opacity for the Emacs frame when focused."
   :type 'integer
   :group 'appareance)
-(defcustom sam-inactive-frame-opacity 90
+(defcustom sam-inactive-frame-opacity 94
   "Opacity for the Emacs frame when unfocused."
   :type 'integer
   :group 'appareance)
@@ -88,14 +88,14 @@
 
   :config
   ;; Use default wombat theme.
-  (load-theme 'wombat t)
+  (load-theme 'gruber-darker t)
 
   ;; Set the default font.
-  (set-face-attribute 'default nil :family "BerkeleyMono Nerd Font" :height 125)
+  (set-face-attribute 'default nil :family "Iosevka Term" :height 150))
 
   ;; Set the frame transparency options
-  (set-frame-parameter (selected-frame) 'alpha (list sam-active-frame-opacity sam-inactive-frame-opacity))
-  (add-to-list 'default-frame-alist `(alpha . ,(list sam-active-frame-opacity sam-inactive-frame-opacity)))
+  (set-frame-parameter (selected-frame) 'alpha (list sam-active-frame-opacity sam-active-frame-opacity))
+  (add-to-list 'default-frame-alist `(alpha . ,(list sam-inactive-frame-opacity sam-inactive-frame-opacity)))
 
   ;; On mac-os, make meta the modifier.
   (when (and (eq system-type 'darwin) (boundp 'mac-command-modifier))
@@ -140,7 +140,7 @@
 ;;======================================
 "
 						 (emacs-init-time)
-						 (number-to-string (length package-activated-list))))))))
+						 (number-to-string (length package-activated-list)))))))
 
 ;;; ANSI COLOR
 ;; Color compilation output
@@ -238,6 +238,10 @@
   (evil-define-key 'normal 'global (kbd "<leader>ee") #'first-error)
   (evil-define-key 'normal 'global (kbd "<leader>en") #'next-error)
   (evil-define-key 'normal 'global (kbd "<leader>ep") #'previous-error)
+  (evil-define-key 'normal 'global (kbd "C-h") #'evil-window-left)
+  (evil-define-key 'normal 'global (kbd "C-j") #'evil-window-down)
+  (evil-define-key 'normal 'global (kbd "C-k") #'evil-window-up)
+  (evil-define-key 'normal 'global (kbd "C-l") #'evil-window-right)
 
   (defun compile-maybe-in-project ()
 	"Try and run `project-compile`. If no project, run compile."
