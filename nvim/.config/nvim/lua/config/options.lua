@@ -111,7 +111,7 @@ local qf_item_icon = {
     n = "󰎞",
 }
 
-local improved_qf_text_line = function()
+local improved_qf_text_line = function(item)
     local fname = vim.api.nvim_buf_get_name(item.bufnr)
     local filename = fname ~= "" and vim.fn.fnamemodify(fname, ":.") or ""
 
