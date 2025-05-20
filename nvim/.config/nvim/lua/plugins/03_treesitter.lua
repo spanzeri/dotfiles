@@ -19,10 +19,10 @@ return {
                 enable = true,
                 lookahead = true,
                 keymaps = {
-                    init_selection = "<C-s>",
-                    node_incremental = "<C-n>",
+                    init_selection    = "<C-s>",
+                    node_incremental  = "<C-n>",
                     scope_incremental = "<C-s>",
-                    node_decremental = "<M-s>",
+                    node_decremental  = "<M-s>",
                 },
             },
 

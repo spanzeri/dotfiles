@@ -139,7 +139,7 @@ local improved_qf_text_line = function()
     return string.format("%s|%s| %s", prefix, line_col, message)
 end
 
-local improved_qf_text_func = function(info)
+ImprovedQFTextFunc = function(info)
     local query = { id = info.id, items = 0, qfbufnr = 0, context = 0 }
     local qf_list
     if info.quickfix == 1 then
@@ -159,5 +159,5 @@ local improved_qf_text_func = function(info)
     return lines
 end
 
-vim.opt.quickfixtextfunc = "v:lua.improved_qf_text_func"
+vim.opt.quickfixtextfunc = "v:lua.ImprovedQFTextFunc"
 

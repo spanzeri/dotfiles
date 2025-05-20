@@ -63,7 +63,12 @@ return {
 
                     map("K", vim.lsp.buf.hover, "hover documentation")
                     map("S", vim.lsp.buf.signature_help, "[S]ignature help")
-                    vim.keymap.set("i", "<C-s>", vim.lsp.buf.signature_help, { buffer = event.buf, desc = "LSP: signature help" })
+                    vim.keymap.set(
+                        "i",
+                        "<C-s>",
+                        vim.lsp.buf.signature_help,
+                        { buffer = event.buf,
+                            desc = "LSP: signature help" })
 
                     local client = vim.lsp.get_client_by_id(event.data.client_id)
                     if client and client.server_capabilities.documentHighlightProvider == true then
@@ -81,6 +86,27 @@ return {
                             end,
                         })
                     end
+
+                    -- Clangd extensions
+                    local function on_clangd_switch_source_header(err, uri)
+                        if not uri or uri == "" then
+                            vim.api.nvim_echo({ { "No source/header found", "WarningMsg" } }, true, {})
+                            return
+                        end
+                        local filename = vim.uri_to_fname(uri)
+                        vim.api.nvim_cmd({
+                            cmd = "edit",
+                            args = { filename },
+                        }, {})
+                    end
+
+                    local function clangd_switch_source_header()
+                        vim.lsp.buf_request(0, "textDocument/switchSourceHeader", {
+                            uri = vim.uri_from_bufnr(0),
+                        }, on_clangd_switch_source_header)
+                    end
+
+                    map("<leader>co", clangd_switch_source_header, "switch source/header")
                 end,
             })
 
