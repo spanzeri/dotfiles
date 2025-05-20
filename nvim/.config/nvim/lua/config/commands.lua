@@ -1,25 +1,28 @@
-local custom_hl_group = vim.api.nvim_create_augroup("CustomHighlightGroup", { clear = true })
-
+--
+-- Highlight yanked text
+--
 vim.api.nvim_create_autocmd("TextYankPost", {
     callback = function() vim.highlight.on_yank() end,
-    group = custom_hl_group,
+    group = vim.api.nvim_create_augroup("CustomYankHighlightGroup", { clear = true }),
     pattern = "*",
     desc = "Highlight yanked text",
 })
 
-local is_normal_buffer = function()
-    return vim.bo.buftype == "" and vim.bo.filetype ~= "help"
-end
-
 --
 -- Trailing whitespaces
 --
+
+local trailing_ws_group = vim.api.nvim_create_augroup("TrailingWhitespaceGroup", { clear = true })
 
 local TrailingWS = {
     match_group = "TrailingWhitespace",
 }
 
 TrailingWS.enable_hl = function(self)
+    local function is_normal_buffer()
+        return vim.bo.buftype == "" and vim.bo.filetype ~= "help"
+    end
+
     if not TrailingWS.is_enabled() or vim.fn.mode() ~= "n" then
         TrailingWS.disable_hl()
         return
@@ -56,7 +59,6 @@ TrailingWS.get_match_id = function()
     end
 end
 
-
 TrailingWS.trim_whitespaces_eol = function()
     for index, line in ipairs(vim.fn.getline(1, "$")) do
         vim.fn.setline(index, vim.fn.substitute(line, [[\s\+$]], "", ""))
@@ -87,14 +89,14 @@ vim.api.nvim_set_hl(0, TrailingWS.match_group, { bg = "#560D0F", ctermbg = "Red"
 
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "InsertLeave", "TermClose" }, {
     callback = function() TrailingWS.enable_hl() end,
-    group = custom_hl_group,
+    group = trailing_ws_group,
     pattern = "*",
     desc = "Enable trailing whitespace highlights",
 })
 
 vim.api.nvim_create_autocmd({ "WinLeave", "BufLeave", "InsertEnter", "TermOpen" }, {
     callback = function() TrailingWS.disable_hl() end,
-    group = custom_hl_group,
+    group = trailing_ws_group,
     pattern = "*",
     desc = "Disable trailing whitespace highlights",
 })
@@ -103,12 +105,11 @@ vim.api.nvim_create_user_command("TrimWhitespaces", TrailingWS.trim_whitespaces,
 vim.api.nvim_create_user_command("TrimWhitespacesEOL", TrailingWS.trim_whitespaces_eol, {})
 vim.api.nvim_create_user_command("TrimWhitespacesEOF", TrailingWS.trim_whitespaces_eof, {})
 
--- Use the same group for all utils
-local utils_augroup = vim.api.nvim_create_augroup("SamUtils", { clear = true })
-
 --
 -- Auto-reload files on change
 --
+
+local file_reload_group = vim.api.nvim_create_augroup("AutoReloadFiles", { clear = true })
 
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
     callback = function()
@@ -116,7 +117,7 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
             vim.cmd.checktime()
         end
     end,
-    group = utils_augroup,
+    group = file_reload_group,
     pattern = "*",
     desc = "Check for file modifications outside neovim",
 })
@@ -125,34 +126,15 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
     callback = function()
         vim.notify("File changed on disk, reloading", vim.log.levels.INFO, {})
     end,
-    group = utils_augroup,
+    group = file_reload_group,
     pattern = "*",
     desc = "Notify user when a file has changed and gets reloaded",
 })
 
 --
--- Clean up terminal buffers
---
-vim.api.nvim_create_autocmd("TermOpen", {
-    callback = function()
-        vim.cmd.set "filetype=term"
-        vim.wo.number = false
-    end,
-    group = utils_augroup,
-    desc = "Set terminal filetype and disable numbers",
-})
-
-vim.api.nvim_create_autocmd("TermClose", {
-    callback = function()
-        vim.wo.number = vim.o.number
-    end,
-    group = utils_augroup,
-    desc = "Restore settings on terminal close",
-})
-
---
 -- Create scratch buffers
 --
+
 vim.api.nvim_create_user_command("ScratchNew", function()
     local bufnr = vim.api.nvim_create_buf(true, true)
     if bufnr == 0 then
@@ -187,6 +169,7 @@ end , {})
 --
 -- Better terminal and help drawing
 --
+
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnter" }, {
     callback = function()
         if vim.bo.buftype      == "terminal"
@@ -203,7 +186,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
             vim.opt.list = true
         end
     end,
-    group = utils_augroup,
+    group = vim.api.nvim_create_augroup("TerminalAndHelp", { clear = true }),
     desc = "Remove line number and whitechars from terminal and help buffers",
 })
 
@@ -296,4 +279,5 @@ end
 
 vim.api.nvim_create_user_command("LuaEval", eval_lua_inline, { range = true })
 vim.keymap.set({ "n", "v" }, "<leader>xe", eval_lua_inline, { desc = "e[x]ecute lua [e]xpression" })
+
 

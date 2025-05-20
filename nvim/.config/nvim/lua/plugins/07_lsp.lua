@@ -1,23 +1,34 @@
 return {
+    -- mason: Install LSPs, linter and similar tools
+    {
+        "williamboman/mason.nvim",
+        config = true,
+    },
+
+    -- mason-lspconfig: Bridges lspconfig and mason
+    {
+        "williamboman/mason-lspconfig.nvim",
+        config = true,
+        dependencies = {
+            "williamboman/mason.nvim",
+            "neovim/nvim-lspconfig",
+        },
+    },
+
+    -- neodev: lsp for neovim
+    {
+        "folke/neodev.nvim",
+        config = true,
+    },
+
+    -- lspconfig: lsp configuration
     {
         "neovim/nvim-lspconfig",
         dependencies = {
-            {
-                "williamboman/mason.nvim",
-                build = ":MasonUpdate",
-                config = true,
-            },
+            "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
-            {
-                "WhoIsSethDaniel/mason-tool-installer.nvim",
-                opts = {
-                    auto_update = true,
-                    debounce_hours = 24,
-                },
-            },
-            { "folke/neodev.nvim", opts = {} },
-            -- { 'saghen/blink.cmp' },
-            { "hrsh7th/nvim-cmp" },
+            "folke/neodev.nvim",
+            "hrsh7th/nvim-cmp",
         },
 
         event = "BufEnter",
@@ -113,7 +124,7 @@ return {
                     cmd = {
                         "clangd",
                         "--background-index",
-                        "--j=4",
+                        "--j=8",
                         "--suggest-missing-includes",
                         "--clang-tidy",
                         "--clang-tidy-checks=performance-*,bugprone-*",
@@ -142,9 +153,7 @@ return {
                 end
             end
 
-
             require("mason").setup()
-            require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
             require("mason-lspconfig").setup({
                 automatic_installation = true,
                 handlers = {
@@ -156,6 +165,6 @@ return {
                     end
                 },
             })
-        end
-    }
+        end,
+    },
 }

@@ -86,7 +86,7 @@ M.open = function(opts)
     vim.api.nvim_set_current_buf(bufnr)
 
     if needs_new_term then
-        vim.fn.termopen(cmd or "")
+        vim.cmd.terminal(cmd)
     end
 
     vim.cmd "startinsert"

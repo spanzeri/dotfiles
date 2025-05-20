@@ -1,4 +1,5 @@
 return {
+    -- rustaceanvim: rust language
     {
         'mrcjkb/rustaceanvim',
         version = '^4',
@@ -8,6 +9,7 @@ return {
         end,
     },
 
+    -- zig: zig language
     {
         "ziglang/zig.vim",
         ft = { "zig" },
@@ -21,12 +23,7 @@ return {
         end
     },
 
-    {
-        "iamcco/markdown-preview.nvim",
-        ft = "markdown",
-        build = function() vim.fn["mkdp#util#install"]() end,
-    },
-
+    -- copilot: completion
     {
         "github/copilot.vim",
         event = "BufEnter",
@@ -41,6 +38,7 @@ return {
         end,
     },
 
+    -- CopilotChat: in-editor copilot chat support
     {
         "CopilotC-Nvim/CopilotChat.nvim",
         dependencies = {
@@ -48,8 +46,7 @@ return {
             { "nvim-lua/plenary.nvim" },
         },
         build = "make tiktoken",
-        opts = {
-        },
+        opts = {},
         event = "VeryLazy",
     },
 }

@@ -1,17 +1,21 @@
 return {
+    -- fzf-native: use fzf fuzzy pattern matching in telescope
+    {
+        "nvim-telescope/telescope-fzf-native.nvim",
+        enabled = vim.fn.executable("cmake") == 1,
+        build = {
+            "cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5",
+            "cmake --build build --config Release",
+            "cmake --install build --prefix build",
+        },
+    },
+
+    -- telescope: picker
     {
         "nvim-telescope/telescope.nvim",
 
         dependencies = {
-            {
-                "nvim-telescope/telescope-fzf-native.nvim",
-                enabled = vim.fn.executable("cmake") == 1,
-                build = {
-                    "cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release",
-                    "cmake --build build --config Release",
-                    "cmake --install build --prefix build",
-                },
-            },
+            "nvim-telescope/telescope-fzf-native.nvim",
             "nvim-telescope/telescope-ui-select.nvim",
         },
 

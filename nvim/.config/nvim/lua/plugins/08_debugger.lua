@@ -1,29 +1,32 @@
 return {
+    -- nvim-dap-ui: UI for debugger in neovim
+    {
+        "rcarriga/nvim-dap-ui",
+        dependencies = { "nvim-neotest/nvim-nio" },
+        opts = {
+            controls = {
+                icons = {
+                    pause = "",
+                    play = "",
+                    step_into = "󰆹",
+                    step_over = "",
+                    step_out = "󰆸",
+                    step_back = "",
+                    run_last = "",
+                    terminate = "",
+                    disconnect = "",
+                },
+            },
+        },
+    },
+
+    -- nvim-dap: Debug Adapter Protocol
     {
         "mfussenegger/nvim-dap",
 
         dependencies = {
-            {
-                "rcarriga/nvim-dap-ui",
-                dependencies = { "nvim-neotest/nvim-nio" },
-                opts = {
-                    controls = {
-                        icons = {
-                            pause = "",
-                            play = "",
-                            step_into = "󰆹",
-                            step_over = "",
-                            step_out = "󰆸",
-                            step_back = "",
-                            run_last = "",
-                            terminate = "",
-                            disconnect = "",
-                        },
-                    },
-                },
-            },
+            "rcarriga/nvim-dap-ui",
             "williamboman/mason.nvim",
-            "jay-babu/mason-nvim-dap.nvim",
             "theHamsta/nvim-dap-virtual-text",
         },
 
@@ -34,12 +37,7 @@ return {
             local dapui = require("dapui")
 
             local dap_ext_vscode = require("dap.ext.vscode")
-            dap_ext_vscode.json_decode = require("json").decode
-
-            require("mason-nvim-dap").setup({
-                automatic_installation = true,
-                handlers = {},
-            })
+            dap_ext_vscode.json_decode = require("misc.json").decode
 
             require("nvim-dap-virtual-text").setup({})
 
