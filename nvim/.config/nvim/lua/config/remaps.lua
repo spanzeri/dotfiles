@@ -38,6 +38,11 @@ local diagnostic_float = function(count)
     end
 end
 
+local open_qf_list_botright = function()
+    vim.cmd [[botright copen]]
+    vim.cmd [[wincmd p]]
+end
+
 vim.keymap.set("n", "[d", diagnostic_float(-1), { desc = "Go to previous [d]iagnistic message" })
 vim.keymap.set("n", "]d", diagnostic_float( 1), { desc = "Go to next [d]iagnistic message" })
 vim.keymap.set("n", "<leader>ef", vim.diagnostic.open_float, { desc = "Show diagnostic [f]loat" })
@@ -45,15 +50,15 @@ vim.keymap.set("n", "<leader>el", vim.diagnostic.setloclist, { desc = "Move diag
 vim.keymap.set("n", "<leader>ee", vim.cmd.cc, { desc = "go to first [e]rror" })
 vim.keymap.set("n", "<leader>en", vim.cmd.cn, { desc = "go to [e]rror [n]ext" })
 vim.keymap.set("n", "<leader>ep", vim.cmd.cp, { desc = "go to [e]rror [p]rev" })
-vim.keymap.set("n", "<leader>eo", vim.cmd.copen, { desc = "[e]rrors [o]pen" })
+vim.keymap.set("n", "<leader>eo", open_qf_list_botright, { desc = "[e]rrors [o]pen" })
 vim.keymap.set("n", "<leader>ec", vim.cmd.cclose, { desc = "[e]rrors [c]lose" })
 
 local toggle_errors = function()
     local ewinid = vim.fn.getqflist({ winid = 0 }).winid
     if ewinid == 0 then
-        vim.cmd.copen()
+        vim.cmd [[botright copen | wincmd p]]
     else
-        vim.cmd.cclose()
+        vim.cmd [[cclose]]
     end
 end
 

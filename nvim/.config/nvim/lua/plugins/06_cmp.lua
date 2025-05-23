@@ -64,9 +64,9 @@ return {
                 }),
                 sources = {
                     { name = "nvim_lsp" },
-                    { name = 'org' },
                     { name = "path" },
                     { name = "buffer", keyword_length = 4 },
+                    { name = 'org' },
                 },
             })
         end,

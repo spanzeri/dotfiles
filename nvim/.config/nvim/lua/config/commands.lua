@@ -280,4 +280,50 @@ end
 vim.api.nvim_create_user_command("LuaEval", eval_lua_inline, { range = true })
 vim.keymap.set({ "n", "v" }, "<leader>xe", eval_lua_inline, { desc = "e[x]ecute lua [e]xpression" })
 
+--
+-- Copy path to clipboard
+--
 
+vim.api.nvim_create_user_command("PathToClipboard", function()
+    local path = vim.fn.expand("%:p")
+    vim.fn.setreg("+", path)
+    vim.api.nvim_echo({{"Path copied to clipboard: " .. path, "None"}}, false, {})
+end, { desc = "Copy the current file path to clipboard" })
+
+vim.api.nvim_create_user_command("PathRelativeToClipboard", function()
+    local path = vim.fn.expand("%:~:.")
+    vim.fn.setreg("+", path)
+    vim.api.nvim_echo({{"Path copied to clipboard: " .. path, "None"}}, false, {})
+end, { desc = "Copy the current file relative path to clipboard" })
+
+--
+-- Auto-time builds
+--
+
+local time_make_group = vim.api.nvim_create_augroup("AutoTimeMake", { clear = true })
+local make_start = nil
+
+vim.api.nvim_create_autocmd("QuickFixCmdPre", {
+    pattern = "make",
+    group = time_make_group,
+    callback = function()
+        make_start = vim.loop.hrtime()
+    end,
+})
+
+vim.api.nvim_create_autocmd("QuickFixCmdPost", {
+    pattern = "make",
+    group = time_make_group,
+    callback = function()
+        if make_start then
+            local elapsed = (vim.loop.hrtime() - make_start) / 1e6
+            local min = math.floor(elapsed / 60000)
+            local sec = math.floor((elapsed % 60000) / 1000)
+            local ms  = math.floor(elapsed % 1000)
+            vim.api.nvim_echo({{ " > Compilation took: " .. min .. "m:" .. sec .. "s." .. ms .. "ms" }}, true, {})
+            -- This is needed or we get "press enter to continue" twice
+            vim.api.nvim_feedkeys("<CR>", "n", false)
+            make_start = nil
+        end
+    end,
+})
