@@ -79,8 +79,8 @@ vim.keymap.set("n", "<leader>xx", [[<cmd>w | so<CR>]], { desc = "Write and sourc
 local set_mkprg = function()
     local prev_mp = vim.o.makeprg
     local mp = vim.fn.input({
-        prompt = "Make command: ",
-        default = prev_mp,
+        prompt     = "Make command: ",
+        default    = prev_mp,
         completion = "compiler"
     })
     if mp ~= nil and mp ~= "" then
@@ -91,14 +91,17 @@ end
 local make_and_open_quickfix = function()
     -- Save all buffers and run makeprg
     vim.cmd [[silent! wa | make]]
-    local qflist = vim.fn.getqflist({ items = 0 }).items
+
+    local items = vim.fn.getqflist({ items = 0 }).items
     local has_valid_errors = false
-    for _, item in ipairs(qflist) do
+    for _, item in pairs(items) do
         if item.valid == 1 then
             has_valid_errors = true
             break
         end
     end
+
+    -- print("Quickfix list has " .. #items .. " items, valid: " .. tostring(has_valid_errors))
     if has_valid_errors then
         local qf_winid = vim.fn.getqflist({ winid = 0 }).winid
         if qf_winid == 0 then

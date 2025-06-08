@@ -55,7 +55,6 @@
   :custom
   (column-number-mode t)                      ;; Enable column number in the modeline
   (delete-selection-mode 1)                   ;; Replace selected text when typing
-  (display-line-numbers-type 'relative)       ;; Show relative line number
   (display-fill-column-indicator-column 100)  ;; Display fill column indicator at the 100th column
   (display-line-numbers-grow-only t)          ;; Keep the maximum line number size to avoid gutter size changes
   (display-line-numbers-width-start t)        ;; Display enough spaces to fit the line number for the entire buffer
@@ -91,7 +90,7 @@
   (load-theme 'gruber-darker t)
 
   ;; Set the default font.
-  (set-face-attribute 'default nil :family "Iosevka Term" :height 150))
+  (set-face-attribute 'default nil :family "Iosevka Sam" :height 140)
 
   ;; Set the frame transparency options
   (set-frame-parameter (selected-frame) 'alpha (list sam-active-frame-opacity sam-active-frame-opacity))
@@ -140,7 +139,7 @@
 ;;======================================
 "
 						 (emacs-init-time)
-						 (number-to-string (length package-activated-list)))))))
+						 (number-to-string (length package-activated-list))))))))
 
 ;;; ANSI COLOR
 ;; Color compilation output

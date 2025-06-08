@@ -55,7 +55,6 @@ return {
             vim.keymap.set("n", "<leader>sF", function()
                 builtin.find_files({ no_ignore = true })
             end, { desc = "[s]earch [f]iles" })
-            vim.keymap.set("n", "<leader>so", builtin.oldfiles, { desc = "[s]earch [o]ld files" })
             vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "[s]earch [b]uffers" })
             vim.keymap.set("n", "<leader>sn", function()
                 builtin.find_files({ cwd = vim.fn.stdpath("config") })
