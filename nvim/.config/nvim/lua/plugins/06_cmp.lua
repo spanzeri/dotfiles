@@ -65,6 +65,7 @@ return {
                 sources = {
                     { name = "nvim_lsp" },
                     { name = "path" },
+                    { name = "lazydev", group_index = 0 },
                     { name = "buffer", keyword_length = 4 },
                     { name = 'org' },
                 },

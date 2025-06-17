@@ -32,6 +32,7 @@ return {
                 { "<leader>x", group = "execute" },
                 { "<leader>e", group = "errors" },
                 { "<leader>m", group = "make" },
+                { "<leader>t", group = "terminal|table|tab" },
                 { "g", group = "goto" },
             })
         end

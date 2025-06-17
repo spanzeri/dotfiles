@@ -28,10 +28,10 @@ return {
             vim.api.nvim_set_hl(0, "String", { fg = green })
             vim.api.nvim_set_hl(0, "GruberDarkerBrown", { fg = brown })
             vim.api.nvim_set_hl(0, "Comment", { fg = brown })
-            vim.api.nvim_set_hl(0, "Normal", { bg = nil })
-            vim.api.nvim_set_hl(0, "NormalNC", { bg = nil })
-            vim.api.nvim_set_hl(0, "VertSplit", { bg = nil })
-            vim.api.nvim_set_hl(0, "Float", { bg = nil })
+            -- vim.api.nvim_set_hl(0, "Normal", { bg = nil })
+            -- vim.api.nvim_set_hl(0, "NormalNC", { bg = nil })
+            -- vim.api.nvim_set_hl(0, "VertSplit", { bg = nil })
+            -- vim.api.nvim_set_hl(0, "Float", { bg = nil })
         end,
         lazy = false,
         priority = 1000,
@@ -47,13 +47,19 @@ return {
     -- todo-comments: Highlights for todo comments in code
     {
         "folke/todo-comments.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "folke/snacks.nvim",
+        },
         event = "BufEnter",
         opts = {
             highlight = {
                 pattern = [[.*([@]<(KEYWORDS)(\(.*\))?)\s*:]],
                 keyword = "bg",
             },
+        },
+        keys = {
+            { "<leader>st", function() Snacks.picker.todo_comments() end, desc = "[s]earch [t]odo comments" },
         },
     },
 
@@ -68,24 +74,6 @@ return {
                 delete = { text = "_" },
                 topdelete = { text = "‾" },
                 changedelete = { text = "~" },
-            },
-        },
-    },
-
-    -- indent-blankline: Indentation guidelines
-    {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        event = "BufEnter",
-        opts = {
-            exclude = {
-                buftypes = { "nofile", "terminal", "quickfix", "prompt" },
-                filetypes = { "help", "TelescopePrompt", "TelescopeResult", "man", "lazy", "lspinfo" },
-            },
-            scope = {
-                enabled = true,
-                show_start = false,
-                show_end = false,
             },
         },
     },

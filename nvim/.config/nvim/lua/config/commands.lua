@@ -28,6 +28,16 @@ TrailingWS.enable_hl = function(self)
         return
     end
 
+    if not vim.api.nvim_buf_is_valid(vim.api.nvim_get_current_buf()) then
+        return
+    end
+
+    if vim.api.nvim_get_current_buf() == 1 then
+        -- This is hack-y, but we don't want to highlight the dashboard buffer
+        -- and buftype/filetype are not set yet.
+        return
+    end
+
     if not is_normal_buffer() or TrailingWS.get_match_id() ~= nil then
         return
     end
@@ -138,7 +148,7 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
 vim.api.nvim_create_user_command("ScratchNew", function()
     local bufnr = vim.api.nvim_create_buf(true, true)
     if bufnr == 0 then
-        vim.api.nvim_notify("Error creating scratch buffer", vim.log.levels.ERROR, {})
+        vim.notify("Error creating scratch buffer", vim.log.levels.ERROR, {})
     end
 
     local scratch_names = {}
@@ -178,6 +188,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
             or vim.bo.buftype  == "quickfix"
             or vim.bo.filetype == "man"
             or vim.bo.filetype:find("dapui_", 1, true) == 1
+            or vim.bo.filetype == "snacks_dashboard"
         then
             vim.opt.number = false
             vim.opt.list = false

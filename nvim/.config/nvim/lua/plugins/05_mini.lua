@@ -34,9 +34,9 @@ return {
 
             require("mini.align").setup()
 
-            require("mini.trailspace").setup()
-
-            require("mini.notify").setup()
+            require("mini.trailspace").setup {
+                only_in_normal_buffers = true,
+            }
 
             require("mini.bufremove").setup()
             pcall(require("which-key").add, { "<leader>b", group = "buffer" })

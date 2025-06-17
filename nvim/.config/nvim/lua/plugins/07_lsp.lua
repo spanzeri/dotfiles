@@ -15,9 +15,10 @@ return {
         },
     },
 
-    -- neodev: lsp for neovim
     {
-        "folke/neodev.nvim",
+        "folke/lazydev.nvim",
+        ft = "lua",
+        event = "BufEnter",
         config = true,
     },
 
@@ -27,7 +28,6 @@ return {
         dependencies = {
             "williamboman/mason.nvim",
             "williamboman/mason-lspconfig.nvim",
-            "folke/neodev.nvim",
             "hrsh7th/nvim-cmp",
         },
 
@@ -41,14 +41,13 @@ return {
                         vim.keymap.set("n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
                     end
 
-                    local has_ts, tsbuiltin = pcall(require, "telescope.builtin")
-                    if has_ts then
-                        map("gd", tsbuiltin.lsp_definitions, "[g]oto [d]efinition")
-                        map("gr", tsbuiltin.lsp_references, "[g]oto [r]eferences")
-                        map("gi", tsbuiltin.lsp_implementations, "[g]oto [i]mplementation")
-                        map("<leader>ss", tsbuiltin.lsp_document_symbols, "[s]earch document [s]ymbols")
-                        map("<leader>sS", tsbuiltin.lsp_dynamic_workspace_symbols, "[s]earch workspace [S]ymbols")
-                        map("<leader>D", tsbuiltin.lsp_type_definitions, "goto type [d]efinitions")
+                    if Snacks then
+                        map("gd", Snacks.picker.lsp_definitions, "[g]oto [d]efinition")
+                        map("gr", Snacks.picker.lsp_references, "[g]oto [r]eferences")
+                        map("gi", Snacks.picker.lsp_implementations, "[g]oto [i]mplementation")
+                        map("<leader>ss", Snacks.picker.lsp_symbols, "[s]earch document [s]ymbols")
+                        map("<leader>sS", Snacks.picker.lsp_workspace_symbols, "[s]earch workspace [S]ymbols")
+                        map("<leader>D", Snacks.picker.lsp_type_definitions, "goto type [d]efinitions")
                     end
                     map("gD", vim.lsp.buf.declaration, "[g]oto [D]eclaration")
 

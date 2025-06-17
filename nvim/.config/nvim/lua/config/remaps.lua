@@ -115,9 +115,11 @@ end
 vim.keymap.set("n", "<leader>ms", set_mkprg, { desc = "[m]ake [s]et" })
 vim.keymap.set("n", "<leader>mm", make_and_open_quickfix, { desc = "[m]ake [m]ake" })
 
-vim.keymap.set("n", "<leader>tc", vim.cmd.tabnew, { desc = "[t]ab [c]reate" })
-vim.keymap.set("n", "<leader>to", vim.cmd.tabonly, { desc = "[t]ab [o]nly" })
-vim.keymap.set("n", "<leader>tn", vim.cmd.tabnext, { desc = "[t]ab [n]ext" })
-vim.keymap.set("n", "<leader>tp", vim.cmd.tabprevious, { desc = "[t]ab [p]revious" })
-vim.keymap.set("n", "<leader>td", vim.cmd.tabclose, { desc = "[t]ab [d]elete" })
+vim.keymap.set("n", "<leader>Tc", vim.cmd.tabnew,       { desc = "[t]ab [c]reate" })
+vim.keymap.set("n", "<leader>To", vim.cmd.tabonly,      { desc = "[t]ab [o]nly" })
+vim.keymap.set("n", "<leader>Tn", vim.cmd.tabnext,      { desc = "[t]ab [n]ext" })
+vim.keymap.set("n", "<leader>Tp", vim.cmd.tabprevious,  { desc = "[t]ab [p]revious" })
+vim.keymap.set("n", "<leader>Td", vim.cmd.tabclose,     { desc = "[t]ab [d]elete" })
+
+pcall(require("which-key").add, { "<leader>T", group = "tabs" })
 

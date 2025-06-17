@@ -16,4 +16,3 @@ require 'config.lazy'       -- Plugin manager
 require 'config.commands'   -- Custom commands
 require 'config.remaps'     -- Key bindings
 
-

@@ -59,7 +59,6 @@ set.spell = true
 
 -- Conceal
 set.conceallevel = 2        -- Conceal level for syntax highlighting
-set.concealcursor = "nc"    -- Conceal in normal mode
 
 -- Quickfix: add gcc and clang formats.
 -- NOTE: The builder object is needed due to a bug in nvim when using the
