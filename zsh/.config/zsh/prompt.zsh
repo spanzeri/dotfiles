@@ -31,68 +31,22 @@ function parse_git_status {
 
 	status_msg+=" on (git  ${branch_msg}" # @%F{magenta}${g_short_sha}%f"
 
-	# Local
-	# if [[ -n $g_status ]]; then
-	#
-	# 	local modified=0
-	# 	local added=0
-	# 	local deleted=0
-	# 	local renamed=0
-	# 	local untracked=0
-	#
-	# 	while IFS= read -r line; do
-	# 		index_status=${line:0:1}
-	# 		wdir_status=${line:1:1}
-	# 		if [[ $index_status == "M" || $wdir_status == "M" ]]; then
-	# 			((modified++))
-	# 		fi
-	# 		if [[ $index_status == "?" ]]; then
-	# 			((untracked++))
-	# 		fi
-	# 		if [[ $index_status == "D" || $wdir_status == "D" ]]; then
-	# 			((deleted++))
-	# 		fi
-	# 		if [[ $index_status == "A" ]]; then
-	# 			((added++))
-	# 		fi
-	# 		if [[ $index_status == "R" || $wdir_status == "R" ]]; then
-	# 			((renamed++))
-	# 		fi
-	# 	done <<< "$g_status"
-	# 	if [[ $modified > 0 || $added > 0 || $deleted > 0 || $renamed > 0 || $untracked > 0 ]]; then
-	# 		status_msg+=" "
-	# 		if [[ $added > 0 || $deleted > 0 ]]; then
-	# 			status_msg+="%K{red}󰦒 $((added+deleted))%k "
-	# 		fi
-	# 		if [[ $modified > 0 ]]; then
-	# 			status_msg+="%K{green}󰏫 ${modified}%k "
-	# 		fi
-	# 		if [[ $untracked > 0 ]]; then
-	# 			status_msg+="%K{yellow}? ${untracked}%k "
-	# 		fi
-	# 		if [[ $renamed > 0 ]]; then
-	# 			status_msg+="%K{white} ${renamed}%k "
-	# 		fi
-	# 	fi
-	# 	if [[ -n $1 ]]; then
-	# 		status_msg+=" [$1]"
-	# 	fi
-	# fi
-
 	# Remote
 	if [[ -n $g_upstream ]]; then
 		local remotes="$(git remote | tr -s ' ')"
 		if [[ -n $remotes ]]; then
 			while read -r remote; do
-				rev_parse=$(git rev-list --left-right --count ${remote}/${g_branch}..${g_branch})
-				if [[ $? -eq 0 ]]; then
-					behind_ahead=($rev_parse)
-					behind=${behind_ahead[0]}
-					ahead=${behind_ahead[2]}
-					if [[ $behind > 0 || $ahead > 0 ]]; then
-						status_msg+=" 󰒍 ${remote}%F{red}↓${behind}%f %F{green}↑${ahead}%f "
-					else
-						status_msg+=" 󰒍 ${remote} %F{green}✔%f "
+				if git rev-parse --verify --quiet ${remote}/${g_branch} &> /dev/null; then
+					rev_parse=$(git rev-list --left-right --count ${remote}/${g_branch}..${g_branch})
+					if [[ $? -eq 0 ]]; then
+						behind_ahead=($rev_parse)
+						behind=${behind_ahead[0]}
+						ahead=${behind_ahead[2]}
+						if [[ $behind > 0 || $ahead > 0 ]]; then
+							status_msg+=" 󰒍 ${remote}%F{red}↓${behind}%f %F{green}↑${ahead}%f "
+						else
+							status_msg+=" 󰒍 ${remote} %F{green}✔%f "
+						fi
 					fi
 				fi
 			done <<< "$remotes"
