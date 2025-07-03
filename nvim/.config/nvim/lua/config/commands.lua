@@ -189,6 +189,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
             or vim.bo.filetype == "man"
             or vim.bo.filetype:find("dapui_", 1, true) == 1
             or vim.bo.filetype == "snacks_dashboard"
+            or vim.bo.filetype == "codecompanion"
         then
             vim.opt.number = false
             vim.opt.list = false

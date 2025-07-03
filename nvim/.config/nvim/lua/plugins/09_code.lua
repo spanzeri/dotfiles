@@ -38,26 +38,47 @@ return {
         end,
     },
 
-    -- CopilotChat: in-editor copilot chat support
+    -- codecompanion: AI assistant
     {
-        "CopilotC-Nvim/CopilotChat.nvim",
+        "olimorris/codecompanion.nvim",
         dependencies = {
-            { "github/copilot.vim" },
-            { "nvim-lua/plenary.nvim" },
+            "github/copilot.vim",
+            "nvim-lua/plenary.nvim",
+            "nvim-treesitter/nvim-treesitter",
+            "MeanderingProgrammer/render-markdown.nvim",    -- better chat rendering
+            "echasnovski/mini.nvim",                        -- for mini.diff
         },
-        build = "make tiktoken",
-        opts = {},
+        opts = {
+            strategies = {
+                chat = {
+                    completion_provider = "cmp",
+                },
+            },
+            display = {
+                chat = {
+                    window = {
+                        layout = "float",
+                        height = 0.8,
+                        width = 0.6,
+                    },
+                },
+                diff = {
+                    enabled = true,
+                    provider = "mini_diff",
+                },
+            },
+        },
+        keys = {
+            { "<leader>cc", "<cmd>CodeCompanion<cr>", desc = "Open CodeCompanion" },
+            { "<leader>ct", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion: Toggle chat" },
+        },
         event = "VeryLazy",
     },
 
     -- Markdown preview
     {
-        "iamcco/markdown-preview.nvim",
-        cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
-        build = "cd app && yarn install",
-        init = function()
-            vim.g.mkdp_filetypes = { "markdown" }
-        end,
-        ft = { "markdown" },
+        "MeanderingProgrammer/render-markdown.nvim",
+        ft = { "markdown", "codecompanion" },
+        opts = {},
     },
 }
