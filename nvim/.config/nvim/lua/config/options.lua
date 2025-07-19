@@ -103,6 +103,11 @@ ErrFormat_Builder
     :prepend("%f(%l\\,%c): %tarning: %m")
     :prepend("%f(%l\\,%c): %tote: %m")
     :prepend("%f(%l\\,%c): %m")
+    -- Those are for odin
+    :prepend("%f(%l:%c) %trror: %m")
+    :prepend("%f(%l:%c) Syntax %trror: %m")
+    :prepend("%f(%l:%c) %tarning: %m")
+    :prepend("%f(%l:%c) %tote: %m")
     :set()
 
 -- QuickFix improvements

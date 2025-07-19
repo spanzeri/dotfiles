@@ -22,6 +22,7 @@ return {
             "hrsh7th/cmp-nvim-lsp",
             "hrsh7th/cmp-path",
             "hrsh7th/cmp-buffer",
+            "hrsh7th/cmp-nvim-lsp-signature-help",
             "onsails/lspkind.nvim",
         },
         config = function()
@@ -65,6 +66,7 @@ return {
                 sources = {
                     { name = "nvim_lsp" },
                     { name = "path" },
+                    { name = "nvim_lsp_signature_help" },
                     { name = "lazydev", group_index = 0 },
                     { name = "buffer", keyword_length = 4 },
                     { name = 'org' },

@@ -31,6 +31,7 @@ return {
                 main = {
                     current = true,
                 },
+                ui_select = true,
             },
             quickfile =     { enabled = true },
             scope =         { enabled = true },
@@ -93,7 +94,7 @@ return {
             pcall(require("which-key").add, { "<leader>sv", group = "git" })
 
             vim.keymap.set("n", "<leader>tl", Snacks.lazygit.open, { desc = "[t]erm [l]azygit" })
-            vim.keymap.set("n", "<leader>tt", Snacks.terminal.toggle, { desc = "[t]erminal [t]oggle" })
+            vim.keymap.set("n", "<leader>tt", Snacks.terminal.toggle, { desc = "[t]erminal [o]pen" })
 
             pcall(require("which-key").add, { "<leader>t", group = "terminal" })
         end

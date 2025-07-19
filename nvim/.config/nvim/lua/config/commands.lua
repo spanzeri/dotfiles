@@ -196,10 +196,24 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
         else
             vim.opt.number = true
             vim.opt.list = true
+            vim.opt.colorcolumn = "81,111"
         end
     end,
     group = vim.api.nvim_create_augroup("TerminalAndHelp", { clear = true }),
     desc = "Remove line number and whitechars from terminal and help buffers",
+})
+
+--
+-- Stop inserting comments on o/O
+
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter" }, {
+    callback = function()
+        if vim.bo.commentstring and vim.bo.commentstring ~= "" then
+            vim.bo.formatoptions = vim.bo.formatoptions:gsub("o", "")
+        end
+    end,
+    group = vim.api.nvim_create_augroup("StopInsertingComments", { clear = true }),
+    desc = "Stop inserting comments on o/O in buffers with commentstring",
 })
 
 -- ==============================================================================

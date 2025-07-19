@@ -55,22 +55,26 @@ return {
                 },
             },
             display = {
-                chat = {
-                    window = {
-                        layout = "float",
-                        height = 0.8,
-                        width = 0.6,
-                    },
-                },
                 diff = {
                     enabled = true,
                     provider = "mini_diff",
                 },
+                action_palette = {
+                    provider = "default",
+                },
             },
         },
+        config = function(_, opts)
+            require("codecompanion").setup(opts)
+            local ok, wk = pcall(require, "which-key")
+            if ok then
+                wk.add({ "<leader>a", group = "AI" })
+            end
+        end,
         keys = {
-            { "<leader>cc", "<cmd>CodeCompanion<cr>", desc = "Open CodeCompanion" },
-            { "<leader>ct", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion: Toggle chat" },
+            { "<leader>ai", "<cmd>CodeCompanion<cr>", desc = "Open CodeCompanion", mode = { "n", "v" }},
+            { "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion: Toggle chat" },
+            { "<leader>aa", "<cmd>CodeCompanionAction<cr>", desc = "CodeCompanion: Action" },
         },
         event = "VeryLazy",
     },
