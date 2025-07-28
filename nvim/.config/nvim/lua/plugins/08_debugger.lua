@@ -146,6 +146,17 @@ return {
                 pid = require("dap.utils").pick_process,
                 args = {},
             })
+            table.insert(dap.configurations.cpp, {
+                name = "Pause at start (codelldb)",
+                type = "codelldb",
+                request = "launch",
+                program = get_program,
+                args = get_args,
+                cwd = function()
+                    return cwd or "${workspaceFolder}"
+                end,
+                stopOnEntry = true,
+            })
 
             dap.configurations.c = dap.configurations.cpp
             dap.configurations.rust = dap.configurations.cpp

@@ -4,7 +4,6 @@ return {
         dependencies = {
             "nvim-treesitter/nvim-treesitter-textobjects",
             "nvim-treesitter/nvim-treesitter-context",
-            "nvim-treesitter/playground",
             "nvim-treesitter/nvim-treesitter-context",
         },
         build = ":TSUpdate",
@@ -71,26 +70,20 @@ return {
                     },
                 },
             },
-
-            playground = {
-                enable = true,
-                updatetime = 25,
-                persist_queries = true,
-                keybindings = {
-                    toggle_query_editor = "o",
-                    toggle_hl_groups = "i",
-                    toggle_injected_languages = "t",
-                    toggle_anonymous_nodes = "a",
-                    toggle_language_display = "I",
-                    focus_language = "f",
-                    unfocus_language = "F",
-                    update = "R",
-                    goto_node = "<cr>",
-                    show_help = "?",
-                },
-            },
         },
         config = function(_, opts)
+            local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+            parser_config.jai = {
+                install_info = {
+                    url = "https://github.com/constantitus/tree-sitter-jai",
+                    files = { "src/parser.c", "src/scanner.c" },
+                },
+                maintainers = { "@constantitus" },
+            }
+            vim.treesitter.language.register("jai", "jai")
+
+            vim.filetype.add({ extension = { jai = "jai" } })
+
             require("nvim-treesitter.configs").setup(opts)
         end,
     },

@@ -86,6 +86,14 @@ return {
                         })
                     end
 
+                    if client then
+                        vim.keymap.set(
+                            { "n", "v" },
+                            "<leader>cf",
+                            vim.lsp.buf.format,
+                            { desc = "[c]ode [f]ormat" })
+                    end
+
                     -- Clangd extensions
                     local function on_clangd_switch_source_header(err, uri)
                         if not uri or uri == "" then
@@ -167,9 +175,10 @@ return {
                     filetypes = { "zig", "zon" },
                 },
                 gdscript = {},
+                ["Github Copilot"] = {},
             }
 
-            local skip_install = { "gdscript" }
+            local skip_install = { "gdscript", "jails", "Github Copilot" }
 
             local ensure_installed = {}
             for server, _ in pairs(servers) do
@@ -190,6 +199,18 @@ return {
                     end
                 },
             })
+
+            -- Jai setup
+            vim.lsp.config.jails = {
+                cmd = { "jails" },
+                root_markers = { "jail.json", "build.jai", "first.jai" },
+                filetypes = { "jai" },
+            }
+            vim.lsp.enable("jails")
+            vim.filetype.add({ extension = { jai = "jai" } })
+
+            -- Fix github copilot error
+            vim.lsp.config["Github Copilot"] = {}
         end,
     },
 }

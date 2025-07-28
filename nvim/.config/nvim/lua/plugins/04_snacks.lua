@@ -24,8 +24,8 @@ return {
             },
             input =         { enabled = true },
             lazygit =       { enabled = true },
-            notify =        { enabled = true },
-            notifier =      { enabled = true },
+            -- notify =        { enabled = true },
+            -- notifier =      { enabled = true },
             picker =        {
                 enabled = true,
                 main = {

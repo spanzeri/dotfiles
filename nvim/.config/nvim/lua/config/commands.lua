@@ -196,7 +196,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
         else
             vim.opt.number = true
             vim.opt.list = true
-            vim.opt.colorcolumn = "81,111"
         end
     end,
     group = vim.api.nvim_create_augroup("TerminalAndHelp", { clear = true }),

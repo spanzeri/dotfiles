@@ -6,6 +6,7 @@ local set = vim.opt
 local setg = vim.g
 
 set.number = true           -- Line number
+set.relativenumber = true   -- Relative line number
 set.mouse = "a"             -- Enable mouse in every mode
 set.showmode = false        -- Don't show mode in the command line
 set.undofile = true         -- Save undo history
@@ -103,6 +104,12 @@ ErrFormat_Builder
     :prepend("%f(%l\\,%c): %tarning: %m")
     :prepend("%f(%l\\,%c): %tote: %m")
     :prepend("%f(%l\\,%c): %m")
+    -- JAI error format
+    :prepend("%f:%l\\,%c: %trror: %m")
+    :prepend("%f:%l\\,%c: %tarning: %m")
+    :prepend("%f:%l\\,%c: %tote: %m")
+    -- Makefile specific format
+    :prepend("make: *** [%f:%l:%t] %m")
     -- Those are for odin
     :prepend("%f(%l:%c) %trror: %m")
     :prepend("%f(%l:%c) Syntax %trror: %m")

@@ -63,6 +63,11 @@ return {
             },
             commentStyle = { italic = false, },
             keywordStyle = { italic = false, },
+            overrides = function(colors)
+                return {
+                    Whitespace = { fg = "#3A3937" },
+                }
+            end,
         },
         config = function(_, opts)
             require("kanagawa").setup(opts)
@@ -70,13 +75,6 @@ return {
         end,
         lazy = false,
         priority = 1000,
-    },
-
-    -- nvim-notify: better notifications as a pop-up
-    {
-        "rcarriga/nvim-notify",
-        event = "VeryLazy",
-        opts = {}
     },
 
     -- todo-comments: Highlights for todo comments in code

@@ -48,6 +48,7 @@ return {
                 c = "// %s",
                 cpp = "// %s",
                 gdscript = "# %s",
+                jai = "// %s",
             }
 
             require("mini.comment").setup({
