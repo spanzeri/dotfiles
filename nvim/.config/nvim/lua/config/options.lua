@@ -27,6 +27,8 @@ set.wrap = true             -- Word wrap
 set.wildignore:append({ "*.o", "*~", "*.lock", "~*" })
 setg.netrw_banner = 0       -- Remove banner from netrw
 
+set.autoread = true         -- Automatically read files changed outside of Vim
+
 -- Tab behaviour
 set.tabstop = 4
 set.softtabstop = 4

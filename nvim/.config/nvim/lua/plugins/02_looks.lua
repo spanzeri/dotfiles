@@ -38,22 +38,6 @@ return {
     -- },
 
     {
-        "cdmill/neomodern.nvim",
-        opts = {
-            theme = "roseprime",
-            variant = "dark",
-            term_colors = true,
-            -- transparent = true,
-        },
-        config = function(_, opts)
-            -- require("neomodern").setup(opts)
-            -- require("neomodern").load()
-        end,
-        lazy = false,
-        priority = 1000,
-    },
-
-    {
         "rebelot/kanagawa.nvim",
         opts = {
             theme = "dragon",
@@ -63,6 +47,7 @@ return {
             },
             commentStyle = { italic = false, },
             keywordStyle = { italic = false, },
+            transparent = true,
             overrides = function(colors)
                 return {
                     Whitespace = { fg = "#3A3937" },

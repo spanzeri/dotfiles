@@ -14,3 +14,4 @@ framebuffer
 Swapchain
 swapchain
 struct
+Config

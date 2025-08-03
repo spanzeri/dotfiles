@@ -197,7 +197,13 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
             vim.opt.number = true
             vim.opt.list = true
         end
+
+        if vim.bo.buftype == "terminal" then
+            vim.opt.spell = false
+            vim.opt.wrap = true
+        end
     end,
+
     group = vim.api.nvim_create_augroup("TerminalAndHelp", { clear = true }),
     desc = "Remove line number and whitechars from terminal and help buffers",
 })
@@ -352,3 +358,5 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
         end
     end,
 })
+
+vim.filetype.add({ extension = { jai = "jai" } })

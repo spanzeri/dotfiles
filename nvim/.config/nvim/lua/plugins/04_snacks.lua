@@ -71,17 +71,41 @@ return {
                 }
             end
 
+            local grep_location
+            local search_grep_at_location = function()
+                if grep_location == nil or #grep_location == 0  then
+                    grep_location = vim.fn.expand("%:p:h")
+                end
+                grep_location = vim.fn.input("Grep location: ", grep_location, "dir")
+
+                if grep_location == nil or #grep_location == 0 then
+                    vim.notify("No location provided for grep", vim.log.levels.WARN)
+                    return
+                end
+
+                Snacks.picker.grep {
+                    cwd = grep_location,
+                    prompt = "Grep at location: ",
+                }
+            end
+
+            local search_man = function()
+                Snacks.picker.man { layout = "ivy" }
+            end
+
             vim.keymap.set("n", "<leader>/",  Snacks.picker.lines,      { desc = "[s]earch in current buffer" })
             vim.keymap.set("n", "<leader><space>",  Snacks.picker.smart,{ desc = "[s]earch smart" })
             vim.keymap.set("n", "<leader>sF", search_hidden_files,      { desc = "[s]earch [f]iles (including hidden)" })
             vim.keymap.set("n", "<leader>sP", search_dir(vim.fn.stdpath("data") .. "/lazy"), { desc = "[s]earch [P]lugins" })
             vim.keymap.set("n", "<leader>sb", Snacks.picker.buffers,    { desc = "[s]earch [b]uffers" })
-            vim.keymap.set("n", "<leader>sc", Snacks.picker.command_history, { desc = "[s]earch [c]ommand history" })
+            vim.keymap.set("n", "<leader>sc", Snacks.picker.resume,     { desc = "[s]earch [c]ontinue" })
             vim.keymap.set("n", "<leader>sf", Snacks.picker.files,      { desc = "[s]earch [f]iles" })
             vim.keymap.set("n", "<leader>sg", Snacks.picker.grep,       { desc = "[s]earch [g]rep" })
+            vim.keymap.set("n", "<leader>sG", search_grep_at_location,  { desc = "[s]earch [g]rep" })
             vim.keymap.set("n", "<leader>sh", Snacks.picker.help,       { desc = "[s]earch [h]elp" })
             vim.keymap.set("n", "<leader>sk", Snacks.picker.keymaps,    { desc = "[s]earch [k]eymaps" })
-            vim.keymap.set("n", "<leader>sm", Snacks.picker.man,        { desc = "[s]earch [m]an" })
+            vim.keymap.set("n", "<leader>sm", Snacks.picker.marks,      { desc = "[s]earch [m]arks" })
+            vim.keymap.set("n", "<leader>sM", search_man,               { desc = "[s]earch [M]an" })
             vim.keymap.set("n", "<leader>sn", search_dir(vim.fn.stdpath("config")), { desc = "[s]earch [n]eoVim config files" })
             vim.keymap.set("n", "<leader>sp", search_projects,          { desc = "[s]earch [p]rojects" })
             vim.keymap.set("n", "<leader>sr", Snacks.picker.registers,  { desc = "[s]earch [r]egisters" })

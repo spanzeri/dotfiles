@@ -163,6 +163,7 @@ return {
             dap.configurations.zig = dap.configurations.cpp
             dap.configurations.odin = dap.configurations.cpp
             dap.configurations.d = dap.configurations.cpp
+            dap.configurations.jai = dap.configurations.cpp
 
             dap.adapters.godot = {
                 type = "server",
@@ -219,10 +220,18 @@ return {
                 dap.continue()
             end
 
+            local dap_terminate_or_toggle_ui = function()
+                if dap.session() ~= nil then
+                    dap.terminate()
+                else
+                    dapui.close()
+                end
+            end
+
             vim.keymap.set("n", "<leader>dc", dap.continue, { desc = "[d]ebug [c]ontinue" })
             vim.keymap.set("n", "<leader>dC", set_program_and_run, { desc = "[d]ebug [C]ontinue setup" })
             vim.keymap.set("n", "<leader>dl", dap.run_last, { desc = "[d]ebug run [l]ast" })
-            vim.keymap.set("n", "<leader>dt", dap.terminate, { desc = "[d]ebug [t]erminate" })
+            vim.keymap.set("n", "<leader>dt", dap_terminate_or_toggle_ui, { desc = "[d]ebug [t]erminate" })
             vim.keymap.set("n", "<leader>dr", dap.restart, { desc = "[d]ebug [r]estart" })
             vim.keymap.set("n", "<leader>di", dap.step_into, { desc = "[d]ebug step [i]nto" })
             vim.keymap.set("n", "<leader>ds", dap.step_over, { desc = "[d]ebug [s]tep over" })

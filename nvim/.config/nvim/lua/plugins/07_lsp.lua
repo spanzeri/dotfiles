@@ -207,7 +207,6 @@ return {
                 filetypes = { "jai" },
             }
             vim.lsp.enable("jails")
-            vim.filetype.add({ extension = { jai = "jai" } })
 
             -- Fix github copilot error
             vim.lsp.config["Github Copilot"] = {}
