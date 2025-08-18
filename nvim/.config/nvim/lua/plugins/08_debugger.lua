@@ -17,6 +17,33 @@ return {
                     disconnect = "",
                 },
             },
+            layouts = { {
+                elements = { {
+                    id = "scopes",
+                    size = 0.25
+                }, {
+                    id = "breakpoints",
+                    size = 0.25
+                }, {
+                    id = "stacks",
+                    size = 0.25
+                }, {
+                    id = "watches",
+                    size = 0.25
+                } },
+                position = "left",
+                size = 50,
+            }, {
+                elements = { {
+                    id = "repl",
+                    size = 0.5
+                }, {
+                    id = "console",
+                    size = 0.5
+                } },
+                position = "bottom",
+                size = 20,
+            } },
         },
     },
 
@@ -183,7 +210,7 @@ return {
             }
 
             local dapui_open = function()
-                dapui.open()
+                dapui.open({ reset = true })
                 vim.cmd("wincmd=")
             end
             local dapui_close = function()
@@ -192,7 +219,7 @@ return {
                 vim.cmd("wincmd=")
             end
             local dapui_toggle = function()
-                dapui.toggle()
+                dapui.toggle({ reset = true })
                 vim.cmd("wincmd=")
             end
 

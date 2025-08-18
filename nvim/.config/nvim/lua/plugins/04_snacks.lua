@@ -93,13 +93,29 @@ return {
                 Snacks.picker.man { layout = "ivy" }
             end
 
+            local other_search_location = ""
+            local search_other_files = function()
+                local loc = #other_search_location == 0 and vim.fn.getcwd() or other_search_location
+                loc = vim.fn.input("Search location: ", loc, "dir")
+                if loc == nil or #loc == 0 then
+                    vim.notify("No location provided for search", vim.log.levels.WARN)
+                    return
+                end
+                other_search_location = loc
+                Snacks.picker.files {
+                    dirs = { loc },
+                    prompt = "Search files in: " .. loc,
+                }
+            end
+
             vim.keymap.set("n", "<leader>/",  Snacks.picker.lines,      { desc = "[s]earch in current buffer" })
             vim.keymap.set("n", "<leader><space>",  Snacks.picker.smart,{ desc = "[s]earch smart" })
-            vim.keymap.set("n", "<leader>sF", search_hidden_files,      { desc = "[s]earch [f]iles (including hidden)" })
             vim.keymap.set("n", "<leader>sP", search_dir(vim.fn.stdpath("data") .. "/lazy"), { desc = "[s]earch [P]lugins" })
             vim.keymap.set("n", "<leader>sb", Snacks.picker.buffers,    { desc = "[s]earch [b]uffers" })
             vim.keymap.set("n", "<leader>sc", Snacks.picker.resume,     { desc = "[s]earch [c]ontinue" })
             vim.keymap.set("n", "<leader>sf", Snacks.picker.files,      { desc = "[s]earch [f]iles" })
+            vim.keymap.set("n", "<leader>sF", search_hidden_files,      { desc = "[s]earch [f]iles (including hidden)" })
+            vim.keymap.set("n", "<leader>so", search_other_files,       { desc = "[s]earch files [o]ther" })
             vim.keymap.set("n", "<leader>sg", Snacks.picker.grep,       { desc = "[s]earch [g]rep" })
             vim.keymap.set("n", "<leader>sG", search_grep_at_location,  { desc = "[s]earch [g]rep" })
             vim.keymap.set("n", "<leader>sh", Snacks.picker.help,       { desc = "[s]earch [h]elp" })
