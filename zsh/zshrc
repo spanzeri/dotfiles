@@ -30,7 +30,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 alias ll="ls -lha --color"
 alias vim="nvim"
 export EDITOR=nvim
-export CMAKE_GENERATOR=Ninja
+export CMAKE_GENERATOR="Ninja Multi-Config"
 export ANDROID_HOME=$HOME/Android/Sdk
 export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.0.12433566
 
