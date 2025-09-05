@@ -32,7 +32,7 @@ alias vim="nvim"
 export EDITOR=nvim
 export CMAKE_GENERATOR="Ninja Multi-Config"
 export ANDROID_HOME=$HOME/Android/Sdk
-export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/28.0.12433566
+export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.13846066
 
 alias wrenderdoc="WAYLAND_DISPLAY= QT_QA_PLATFORM=xcb qrenderdoc"
 

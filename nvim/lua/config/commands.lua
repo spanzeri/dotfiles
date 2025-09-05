@@ -180,7 +180,7 @@ end , {})
 -- Better terminal and help drawing
 --
 
-vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnter" }, {
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermOpen", "BufAdd", "BufWinEnter", "InsertEnter" }, {
     callback = function()
         if vim.bo.buftype      == "terminal"
             or vim.bo.buftype  == "prompt"
@@ -191,16 +191,18 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "BufWinEnter", "InsertEnte
             or vim.bo.filetype == "snacks_dashboard"
             or vim.bo.filetype == "codecompanion"
         then
-            vim.opt.number = false
-            vim.opt.list = false
+            vim.o.number = false
+            vim.o.relativenumber = false
+            vim.o.list = false
         else
-            vim.opt.number = true
-            vim.opt.list = true
+            vim.o.number = true
+            vim.o.relativenumber = true
+            vim.o.list = true
         end
 
         if vim.bo.buftype == "terminal" then
-            vim.opt.spell = false
-            vim.opt.wrap = true
+            vim.o.spell = false
+            vim.o.wrap = false
         end
     end,
 

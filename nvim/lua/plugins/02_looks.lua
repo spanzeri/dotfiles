@@ -38,28 +38,17 @@ return {
     -- },
 
     {
-        "rebelot/kanagawa.nvim",
-        opts = {
-            theme = "dragon",
-            background = {
-                dark = "dragon",
-                light = "lotus",
-            },
-            commentStyle = { italic = false, },
-            keywordStyle = { italic = false, },
-            transparent = true,
-            overrides = function(colors)
-                return {
-                    Whitespace = { fg = "#3A3937" },
-                }
-            end,
-        },
-        config = function(_, opts)
-            require("kanagawa").setup(opts)
-            vim.cmd.colorscheme "kanagawa"
-        end,
-        lazy = false,
-        priority = 1000,
+        {
+            "sainnhe/sonokai",
+            lazy = false,
+            priority = 1000,
+            config = function()
+                vim.g.sonokai_enable_italic = false
+                vim.g.sonokai_transparent_background = true
+                vim.g.sonokai_style = "shusia"
+                vim.cmd.colorscheme("sonokai")
+            end
+        }
     },
 
     -- todo-comments: Highlights for todo comments in code
