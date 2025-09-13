@@ -62,19 +62,24 @@ return {
                 action_palette = {
                     provider = "default",
                 },
+                chat = {
+                    window = {
+                        width = 0.4,
+                    }
+                }
             },
         },
         config = function(_, opts)
             require("codecompanion").setup(opts)
             local ok, wk = pcall(require, "which-key")
             if ok then
-                wk.add({ "<leader>a", group = "AI" })
+                wk.add({ "<leader>i", group = "A[I]" })
             end
         end,
         keys = {
-            { "<leader>ai", "<cmd>CodeCompanion<cr>", desc = "Open CodeCompanion", mode = { "n", "v" }},
-            { "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion: Toggle chat" },
-            { "<leader>aa", "<cmd>CodeCompanionAction<cr>", desc = "CodeCompanion: Action" },
+            { "<leader>ip", "<cmd>CodeCompanion<cr>", desc = "Open CodeCompanion", mode = { "n", "v" }},
+            { "<leader>ic", "<cmd>CodeCompanionChat Toggle<cr>", desc = "CodeCompanion: Toggle chat" },
+            { "<leader>ia", "<cmd>CodeCompanionAction<cr>", desc = "CodeCompanion: Action" },
         },
         event = "VeryLazy",
     },

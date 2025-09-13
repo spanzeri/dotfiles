@@ -71,18 +71,32 @@ return {
                 }
             end
 
+            local get_custom_search_location = function(search_location)
+                if search_location ~= nil and #search_location > 0 then
+                    return search_location
+                end
+                local loc = vim.fn.expand("%:p:h")
+                if loc == nil or #loc == 0 then
+                    loc = vim.fn.getcwd()
+                end
+                local oil_prefix = "oil://"
+                if loc:sub(1, #oil_prefix) == oil_prefix then
+                    loc = loc:sub(#oil_prefix + 1)
+                end
+                return loc
+            end
+
             local grep_location
             local search_grep_at_location = function()
-                if grep_location == nil or #grep_location == 0  then
-                    grep_location = vim.fn.expand("%:p:h")
-                end
-                grep_location = vim.fn.input("Grep location: ", grep_location, "dir")
+                local loc = get_custom_search_location(grep_location)
+                loc = vim.fn.input("Grep location: ", loc, "dir")
 
-                if grep_location == nil or #grep_location == 0 then
+                if loc == nil or #loc == 0 then
                     vim.notify("No location provided for grep", vim.log.levels.WARN)
                     return
                 end
 
+                grep_location = loc
                 Snacks.picker.grep {
                     cwd = grep_location,
                     prompt = "Grep at location: ",
@@ -93,9 +107,9 @@ return {
                 Snacks.picker.man { layout = "ivy" }
             end
 
-            local other_search_location = ""
+            local other_search_location
             local search_other_files = function()
-                local loc = #other_search_location == 0 and vim.fn.getcwd() or other_search_location
+                local loc = get_custom_search_location(other_search_location)
                 loc = vim.fn.input("Search location: ", loc, "dir")
                 if loc == nil or #loc == 0 then
                     vim.notify("No location provided for search", vim.log.levels.WARN)
@@ -117,7 +131,7 @@ return {
             vim.keymap.set("n", "<leader>sF", search_hidden_files,      { desc = "[s]earch [f]iles (including hidden)" })
             vim.keymap.set("n", "<leader>so", search_other_files,       { desc = "[s]earch files [o]ther" })
             vim.keymap.set("n", "<leader>sg", Snacks.picker.grep,       { desc = "[s]earch [g]rep" })
-            vim.keymap.set("n", "<leader>sG", search_grep_at_location,  { desc = "[s]earch [g]rep" })
+            vim.keymap.set("n", "<leader>sG", search_grep_at_location,  { desc = "[s]earch [g]rep at location" })
             vim.keymap.set("n", "<leader>sh", Snacks.picker.help,       { desc = "[s]earch [h]elp" })
             vim.keymap.set("n", "<leader>sk", Snacks.picker.keymaps,    { desc = "[s]earch [k]eymaps" })
             vim.keymap.set("n", "<leader>sm", Snacks.picker.marks,      { desc = "[s]earch [m]arks" })
