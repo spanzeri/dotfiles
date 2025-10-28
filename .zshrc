@@ -17,3 +17,9 @@ SAVEHIST=10000
 ## Move the main config over to XDG_CONFIG_HOME
 # All the settigs should be in there.
 source $XDG_CONFIG_HOME/zsh/zshrc
+
+## [Completion]
+## Completion scripts setup. Remove the following line to uninstall
+[[ -f /home/sam/.config/.dart-cli-completion/zsh-config.zsh ]] && . /home/sam/.config/.dart-cli-completion/zsh-config.zsh || true
+## [/Completion]
+

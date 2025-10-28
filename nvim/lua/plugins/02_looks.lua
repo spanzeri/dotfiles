@@ -1,5 +1,4 @@
 return {
-    -- gruber-darker: colorscheme
     -- {
     --     "blazkowolf/gruber-darker.nvim",
     --     config = function()
@@ -10,6 +9,10 @@ return {
     --                 operators = false,
     --                 folds     = false,
     --             },
+    --             bold = false,
+    --             underline = false,
+    --             undercurl = false,
+    --             invert = {},
     --         }
     --
     --         local yellow = "#f9de3e"
@@ -17,6 +20,8 @@ return {
     --         local brown = "#9b7d46"
     --
     --         vim.cmd.colorscheme "gruber-darker"
+    --         vim.api.nvim_set_hl(0, "Normal", { bg = nil })
+    --         vim.api.nvim_set_hl(0, "NormalNC", { bg = nil })
     --         vim.api.nvim_set_hl(0, "GruberDarkerYellow", { fg = yellow })
     --         vim.api.nvim_set_hl(0, "GruberDarkerYellowBold", { fg = yellow })
     --         vim.api.nvim_set_hl(0, "GruberDarkerYellowSign", { fg = yellow })
