@@ -2,11 +2,8 @@ return {
     -- rustaceanvim: rust language
     {
         'mrcjkb/rustaceanvim',
-        version = '^4',
-        ft = { 'rust' },
-        config = function()
-            vim.notify('Rustacean init', vim.log.levels.INFO, {})
-        end,
+        version = '^6',
+        lazy = false,
     },
 
     -- zig: zig language
@@ -47,30 +44,45 @@ return {
             "nvim-treesitter/nvim-treesitter",
             "MeanderingProgrammer/render-markdown.nvim",    -- better chat rendering
             "echasnovski/mini.nvim",                        -- for mini.diff
+            "ravitemer/codecompanion-history.nvim",
         },
-        opts = {
-            strategies = {
-                chat = {
-                    completion_provider = "cmp",
+        config = function(_, _)
+            require("codecompanion").setup {
+                strategies = {
+                    chat = {
+                        adapter = {
+                            name = "copilot",
+                            model = "gpt-5-mini",
+                        },
+                        completion_provider = "cmp",
+                    },
                 },
-            },
-            display = {
-                diff = {
-                    enabled = true,
-                    provider = "mini_diff",
-                },
-                action_palette = {
-                    provider = "default",
-                },
-                chat = {
-                    window = {
-                        width = 0.4,
+                display = {
+                    diff = {
+                        enabled = true,
+                        provider = "mini_diff",
+                    },
+                    action_palette = {
+                        provider = "default",
+                    },
+                    chat = {
+                        window = {
+                            width = 0.4,
+                        }
                     }
-                }
-            },
-        },
-        config = function(_, opts)
-            require("codecompanion").setup(opts)
+                },
+                extensions = {
+                    history = {
+                        enabled = true,
+                        opts = {
+                            picker = "snacks",
+                            delete_on_clearing_chat = true,
+                            continue_last_chat = true,
+                        }
+                    },
+                },
+            }
+
             local ok, wk = pcall(require, "which-key")
             if ok then
                 wk.add({ "<leader>i", group = "A[I]" })

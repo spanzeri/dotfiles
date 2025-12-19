@@ -144,13 +144,18 @@ return {
             vim.keymap.set("n", "<leader>sw", Snacks.picker.grep_word,  { desc = "[s]earch current [w]ord" })
             vim.keymap.set("n", "<leader>sx", Snacks.picker.pickers,    { desc = "[s]earch picker sources" })
 
-            pcall(require("which-key").add, { "<leader>s", group = "search" })
-            pcall(require("which-key").add, { "<leader>sv", group = "git" })
+            local ok, wk = pcall(require, "which-key")
+            if ok then
+                wk.add({ "<leader>s", group = "search" })
+                wk.add({ "<leader>sv", group = "git" })
+            end
 
             vim.keymap.set("n", "<leader>tl", Snacks.lazygit.open, { desc = "[t]erm [l]azygit" })
             vim.keymap.set("n", "<leader>tt", Snacks.terminal.toggle, { desc = "[t]erminal [o]pen" })
 
-            pcall(require("which-key").add, { "<leader>t", group = "terminal" })
+            if ok then
+                wk.add({ "<leader>t", group = "terminal" })
+            end
         end
     },
 }

@@ -180,6 +180,8 @@ end , {})
 -- Better terminal and help drawing
 --
 
+local prev_relativenumber = nil
+
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermOpen", "BufAdd", "BufWinEnter", "InsertEnter" }, {
     callback = function()
         if vim.bo.buftype      == "terminal"
@@ -191,12 +193,14 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermOpen", "BufAdd", "Buf
             or vim.bo.filetype == "snacks_dashboard"
             or vim.bo.filetype == "codecompanion"
         then
+            prev_relativenumber = vim.o.relativenumber
+
             vim.o.number = false
             vim.o.relativenumber = false
             vim.o.list = false
         else
             vim.o.number = true
-            vim.o.relativenumber = true
+            vim.o.relativenumber = prev_relativenumber or false
             vim.o.list = true
         end
 

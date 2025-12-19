@@ -121,5 +121,8 @@ vim.keymap.set("n", "<leader>Tn", vim.cmd.tabnext,      { desc = "[t]ab [n]ext" 
 vim.keymap.set("n", "<leader>Tp", vim.cmd.tabprevious,  { desc = "[t]ab [p]revious" })
 vim.keymap.set("n", "<leader>Td", vim.cmd.tabclose,     { desc = "[t]ab [d]elete" })
 
-pcall(require("which-key").add, { "<leader>T", group = "tabs" })
+local ok, wk = pcall(require, "which-key")
+if ok then
+    wk.add({ "<leader>T", group = "tabs" })
+end
 

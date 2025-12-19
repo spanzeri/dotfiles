@@ -10,7 +10,7 @@ else
 	return 1
 fi
 
-load_file "prompt.zsh"
+# load_file "prompt.zsh"
 
 load_plugin "zsh-users" "zsh-syntax-highlighting"
 load_plugin "zsh-users" "zsh-autosuggestions"
@@ -23,7 +23,7 @@ compinit
 export PATH=~/jai/bin/:~/.local/bin:~/.cargo/bin:$PATH
 
 export LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH
-export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/lib:~/.local/lib:$LD_LIBRARY_PATH
 
 # Aliases and env
 #
@@ -56,4 +56,5 @@ function fix_cursor_shape() {
 
 precmd_function+=(fix_cursor_shape)
 zle -N zle-keymap-select fix_cursor_shape
-
+eval $(ssh-agent) >/dev/null
+eval "$(starship init zsh)"

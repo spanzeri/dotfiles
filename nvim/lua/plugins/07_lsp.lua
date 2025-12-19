@@ -176,6 +176,7 @@ return {
                 },
                 gdscript = {},
                 ["Github Copilot"] = {},
+                rust_analyzer = {},
             }
 
             local skip_install = { "gdscript", "jails", "Github Copilot" }

@@ -39,7 +39,10 @@ return {
             }
 
             require("mini.bufremove").setup()
-            pcall(require("which-key").add, { "<leader>b", group = "buffer" })
+            local ok, wk = pcall(require, "which-key")
+            if ok then
+                wk.add({ "<leader>b", group = "buffer" })
+            end
             vim.keymap.set("n", "<leader>bd", MiniBufremove.delete, { desc = "[b]uffer [d]elete" })
             vim.keymap.set("n", "<leader>bh", MiniBufremove.unshow, { desc = "[b]uffer [h]ide" })
 
@@ -60,10 +63,14 @@ return {
                 },
             })
 
-            local diff = require("mini.diff")
-            diff.setup({
-                source = diff.gen_source.none(),
+            local diff = require("mini.diff").setup({
+                view = {
+                    style = "sign",
+                    signs = { add = "+", delete = "-", change = "~" },
+                },
             })
+
+            require("mini.git").setup({})
         end,
-    }
+    },
 }

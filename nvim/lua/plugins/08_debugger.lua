@@ -84,6 +84,21 @@ return {
                 cwd = new_dir
             end
 
+            if vim.fn.executable("gdb") == 1 then
+                local cpptools_ext = (is_windows and ".cmd") or ""
+                dap.adapters.cpptools = {
+                    type = "executable";
+                    name = "cpptools",
+                    --command = vim.fn.stdpath("data") .. "/mason/bin/OpenDebugAD7" .. cpptools_ext,
+                    command = "OpenDebugAD7",
+                    args = {},
+                    attach = {
+                        pidProperty = "processId",
+                        pidSelect = "ask"
+                    },
+                }
+            end
+
             dap.adapters.codelldb = {
                 type = "server",
                 port = "${port}",
@@ -92,20 +107,6 @@ return {
                     args = { "--port", "${port}" },
                 },
             }
-
-            if vim.fn.executable("gdb") == 1 then
-                local cpptools_ext = (is_windows and ".cmd") or ""
-                dap.adapters.cpptools = {
-                    type = "executable";
-                    name = "cpptools",
-                    command = vim.fn.stdpath("data") .. "/mason/bin/OpenDebugAD7" .. cpptools_ext,
-                    args = {},
-                    attach = {
-                        pidProperty = "processId",
-                        pidSelect = "ask"
-                    },
-                }
-            end
 
             local exe_launch_opts = {}
             local make_launch_opts = function()
@@ -144,16 +145,6 @@ return {
             end
 
             dap.configurations.cpp = {}
-            table.insert(dap.configurations.cpp, {
-                name = "Launch program (codelldb)",
-                type = "codelldb",
-                request = "launch",
-                program = get_program,
-                args = get_args,
-                cwd = function()
-                    return cwd or "${workspaceFolder}"
-                end,
-            })
             if vim.fn.executable("gdb") == 1 then
                 table.insert(dap.configurations.cpp, {
                     name = "Launch program (gdb)",
@@ -166,6 +157,16 @@ return {
                     end,
                 })
             end
+            table.insert(dap.configurations.cpp, {
+                name = "Launch program (codelldb)",
+                type = "codelldb",
+                request = "launch",
+                program = get_program,
+                args = get_args,
+                cwd = function()
+                    return cwd or "${workspaceFolder}"
+                end,
+            })
             table.insert(dap.configurations.cpp, {
                 name = "Attach ot process",
                 type = "codellldb",
@@ -230,7 +231,10 @@ return {
 
             local dap_ui_widgets = require("dap.ui.widgets")
 
-            pcall(require("which-key").add, { "<leader>d", group = "debug" })
+            local ok, wk = pcall(require, "which-key")
+            if ok then
+                wk.add({ "<leader>d", group = "debug" })
+            end
 
             local toggle_conditional_breakpoint = function()
                 local condition = vim.fn.input({
@@ -268,6 +272,7 @@ return {
             vim.keymap.set("n", "<leader>dB", toggle_conditional_breakpoint, { desc = "[d]ebug toggle conditional [B]reakpoint" })
             vim.keymap.set("n", "<leader>dh", dap_ui_widgets.hover, { desc = "[d]ebug [h]over" })
             vim.keymap.set("n", "<leader>dw", set_dap_cwd, { desc = "[d]ebug [w]orking d]irectory" })
+            vim.keymap.set("n", "<leader>drc", dap.run_to_cursor, { desc = "[d]ebug [r]un to [c]ursor" })
 
             vim.keymap.set("n", "<F5>", dap.continue, { desc = "debug continue" })
             vim.keymap.set("n", "<S-F5>", dap.terminate, { desc = "debug terminate" })

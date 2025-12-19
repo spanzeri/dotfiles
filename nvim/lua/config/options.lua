@@ -6,23 +6,23 @@ local set = vim.opt
 local setg = vim.g
 
 set.number = true           -- Line number
-set.relativenumber = true   -- Relative line number
+-- set.relativenumber = true   -- Relative line number
 set.mouse = "a"             -- Enable mouse in every mode
 set.showmode = false        -- Don't show mode in the command line
 set.undofile = true         -- Save undo history
 set.undodir = vim.fn.stdpath("data") .. "/unoddir"
 set.swapfile = false        -- No swap file
-set.signcolumn = "yes:1"    -- Always show sign column with a width of 1
+set.signcolumn = "auto:1"   -- Always show sign column with a width of 1
 set.updatetime = 250        -- Faster update time
 set.timeoutlen = 300        -- Decrease mapped sequence wait
 set.showmatch = true        -- Show matching paren on insertion
 set.list = true             -- Display whitespace characters (see below)
-set.listchars = { tab = "» ", trail = "·", nbsp = "␣", lead = "." }
+set.listchars = { tab = "» ", trail = "·", nbsp = "␣", lead = "·" }
 set.inccommand = "split"    -- Preview substituion while typing
 set.cursorline = true       -- Set which line the cursor is on
 set.scrolloff = 10          -- Keep a number of lines below and above the cursor while scrolling
 set.termguicolors = true    -- Enable term colors
-set.colorcolumn = "81,111"  -- Highlight columns
+set.colorcolumn = "81,121"  -- Highlight columns
 set.wrap = true             -- Word wrap
 set.wildignore:append({ "*.o", "*~", "*.lock", "~*" })
 setg.netrw_banner = 0       -- Remove banner from netrw
