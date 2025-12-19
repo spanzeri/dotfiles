@@ -36,6 +36,9 @@ export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.13846066
 
 alias wrenderdoc="WAYLAND_DISPLAY= QT_QA_PLATFORM=xcb qrenderdoc"
 
+# Make sure we compile in parallel using make
+export MAKEFLAGS=-j$(($(grep -c "^processor" /proc/cpuinfo) - 1))
+
 ## ZVM stuff
 if [[ -d "$HOME/.zvm" ]]; then
 	export ZVM_INSTALL="$HOME/.zvm/self"
