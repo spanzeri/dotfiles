@@ -20,6 +20,8 @@ return {
         end
     },
 
+--[[
+
     -- copilot: completion
     {
         "github/copilot.vim",
@@ -95,6 +97,8 @@ return {
         },
         event = "VeryLazy",
     },
+
+--]]
 
     -- Markdown preview
     {

@@ -61,9 +61,6 @@ return {
         opts = {},
     },
 
-    -- vim-sleuth: identation auto-detection and support for .editorconfig
-    { "tpope/vim-sleuth", event = "VeryLazy" },
-
     -- vim-repeat: better repeat behaviour
     { "tpope/vim-repeat", event = "VeryLazy" },
 }

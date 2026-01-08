@@ -145,6 +145,16 @@ return {
             end
 
             dap.configurations.cpp = {}
+            table.insert(dap.configurations.cpp, {
+                name = "Launch program (codelldb)",
+                type = "codelldb",
+                request = "launch",
+                program = get_program,
+                args = get_args,
+                cwd = function()
+                    return cwd or "${workspaceFolder}"
+                end,
+            })
             if vim.fn.executable("gdb") == 1 then
                 table.insert(dap.configurations.cpp, {
                     name = "Launch program (gdb)",
@@ -157,16 +167,6 @@ return {
                     end,
                 })
             end
-            table.insert(dap.configurations.cpp, {
-                name = "Launch program (codelldb)",
-                type = "codelldb",
-                request = "launch",
-                program = get_program,
-                args = get_args,
-                cwd = function()
-                    return cwd or "${workspaceFolder}"
-                end,
-            })
             table.insert(dap.configurations.cpp, {
                 name = "Attach ot process",
                 type = "codellldb",

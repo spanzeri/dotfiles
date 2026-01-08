@@ -18,6 +18,34 @@ load_plugin "zsh-users" "zsh-autosuggestions"
 autoload -Uz compinit
 compinit
 
+# Tree implementation using lsd
+#
+tree() {
+    local args=()
+    local depth=""
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -L*)
+                # Handle both -L2 and -L 2 syntax
+                if [[ ${#1} -gt 2 ]]; then
+                    depth="${1#?L}"
+                else
+                    shift
+                    depth="$1"
+                fi
+                args+=("--depth" "$depth")
+                ;;
+            *)
+                args+=("$1")
+                ;;
+        esac
+        shift
+    done
+
+    lsd --tree "${args[@]}"
+}
+
 # Path
 #
 export PATH=~/jai/bin/:~/.local/bin:~/.cargo/bin:$PATH
@@ -27,7 +55,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:~/.local/lib:$LD_LIBRARY_PATH
 
 # Aliases and env
 #
-alias ll="ls -lha --color"
+alias ls="lsd"
 alias vim="nvim"
 export EDITOR=nvim
 export CMAKE_GENERATOR="Ninja"
