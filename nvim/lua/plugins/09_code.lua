@@ -36,36 +36,44 @@ return {
             vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#555555", italic = true })
         end,
     },
+--]]
 
     -- codecompanion: AI assistant
     {
         "olimorris/codecompanion.nvim",
         dependencies = {
-            "github/copilot.vim",
             "nvim-lua/plenary.nvim",
             "nvim-treesitter/nvim-treesitter",
             "MeanderingProgrammer/render-markdown.nvim",    -- better chat rendering
             "echasnovski/mini.nvim",                        -- for mini.diff
-            "ravitemer/codecompanion-history.nvim",
         },
         config = function(_, _)
-            require("codecompanion").setup {
-                strategies = {
+            local providers = require("codecompanion.providers")
+            require("codecompanion").setup({
+                interactions = {
                     chat = {
                         adapter = {
-                            name = "copilot",
-                            model = "gpt-5-mini",
+                            name = "ollama",
+                            model = "qwen3-coder:30b",
                         },
-                        completion_provider = "cmp",
+                    },
+                    inline = {
+                        adapter = {
+                            name = "ollama",
+                            model = "qwen3-coder:30b",
+                        }
+                    },
+                    cmd = {
+                        adapter = {
+                            name = "ollama",
+                            model = "qwen3-coder:30b",
+                        }
                     },
                 },
                 display = {
                     diff = {
                         enabled = true,
-                        provider = "mini_diff",
-                    },
-                    action_palette = {
-                        provider = "default",
+                        provider = providers.mini_diff,
                     },
                     chat = {
                         window = {
@@ -73,22 +81,20 @@ return {
                         }
                     }
                 },
-                extensions = {
-                    history = {
-                        enabled = true,
-                        opts = {
-                            picker = "snacks",
-                            delete_on_clearing_chat = true,
-                            continue_last_chat = true,
-                        }
-                    },
-                },
-            }
+            })
 
             local ok, wk = pcall(require, "which-key")
             if ok then
                 wk.add({ "<leader>i", group = "A[I]" })
             end
+        end,
+        init = function()
+            require("nvim-treesitter.install").ensure_installed({
+                "lua",
+                "markdown",
+                "markdown_inline",
+                "yaml",
+            })
         end,
         keys = {
             { "<leader>ip", "<cmd>CodeCompanion<cr>", desc = "Open CodeCompanion", mode = { "n", "v" }},
@@ -97,8 +103,6 @@ return {
         },
         event = "VeryLazy",
     },
-
---]]
 
     -- Markdown preview
     {

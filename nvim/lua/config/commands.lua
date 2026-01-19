@@ -180,8 +180,6 @@ end , {})
 -- Better terminal and help drawing
 --
 
-local prev_relativenumber = nil
-
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermOpen", "BufAdd", "BufWinEnter", "InsertEnter" }, {
     callback = function()
         if vim.bo.buftype      == "terminal"
@@ -192,21 +190,16 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermOpen", "BufAdd", "Buf
             or vim.bo.filetype:find("dapui_", 1, true) == 1
             or vim.bo.filetype == "snacks_dashboard"
             or vim.bo.filetype == "codecompanion"
+            or vim.bo.filetype == ""
         then
-            prev_relativenumber = vim.o.relativenumber
-
-            vim.o.number = false
-            vim.o.relativenumber = false
-            vim.o.list = false
-        else
-            vim.o.number = true
-            vim.o.relativenumber = prev_relativenumber or false
-            vim.o.list = true
+            vim.api.nvim_set_option_value("number", false, { scope = "local" })
+            vim.api.nvim_set_option_value("relativenumber", false, { scope = "local" })
+            vim.api.nvim_set_option_value("list", false, { scope = "local" })
+            vim.b.minitrailspace_disable = true
         end
 
         if vim.bo.buftype == "terminal" then
-            vim.o.spell = false
-            vim.o.wrap = false
+            vim.api.nvim_set_option_value("spell", false, { scope = "local" })
         end
     end,
 

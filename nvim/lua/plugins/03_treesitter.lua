@@ -7,7 +7,7 @@ return {
             "nvim-treesitter/nvim-treesitter-context",
         },
         build = ":TSUpdate",
-        event = "BufEnter",
+        lazy = false,
         opts = {
             ensure_installed = { "c", "lua", "luadoc", "cpp", "c", "glsl" },
             ignore_install = { 'org' },

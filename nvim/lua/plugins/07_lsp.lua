@@ -87,11 +87,7 @@ return {
                     end
 
                     if client then
-                        vim.keymap.set(
-                            { "n", "v" },
-                            "<leader>cf",
-                            vim.lsp.buf.format,
-                            { desc = "[c]ode [f]ormat" })
+                        vim.keymap.set({"n", "v"}, "<leader>cf", vim.lsp.buf.format, {desc = "[c]ode [f]ormat"})
                     end
 
                     -- Clangd extensions

@@ -71,6 +71,8 @@ return {
             })
 
             require("mini.git").setup({})
+
+            require("mini.colors").setup({})
         end,
     },
 }
