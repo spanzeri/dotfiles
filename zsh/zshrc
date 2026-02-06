@@ -10,6 +10,12 @@ else
 	return 1
 fi
 
+if [[ -f $XDG_DATA_HOME/.env ]]; then
+    source $XDG_DATA_HOME/.env
+else
+    echo "Missing ENV file. Make sure this is intentional"
+fi
+
 # load_file "prompt.zsh"
 
 load_plugin "zsh-users" "zsh-syntax-highlighting"
@@ -17,34 +23,6 @@ load_plugin "zsh-users" "zsh-autosuggestions"
 
 autoload -Uz compinit
 compinit
-
-# Tree implementation using lsd
-#
-tree() {
-    local args=()
-    local depth=""
-
-    while [[ $# -gt 0 ]]; do
-        case "$1" in
-            -L*)
-                # Handle both -L2 and -L 2 syntax
-                if [[ ${#1} -gt 2 ]]; then
-                    depth="${1#?L}"
-                else
-                    shift
-                    depth="$1"
-                fi
-                args+=("--depth" "$depth")
-                ;;
-            *)
-                args+=("$1")
-                ;;
-        esac
-        shift
-    done
-
-    lsd --tree "${args[@]}"
-}
 
 # Path
 #
@@ -55,7 +33,6 @@ export LD_LIBRARY_PATH=/usr/local/lib:~/.local/lib:$LD_LIBRARY_PATH
 
 # Aliases and env
 #
-alias ls="lsd"
 alias vim="nvim"
 export EDITOR=nvim
 export CMAKE_GENERATOR="Ninja"

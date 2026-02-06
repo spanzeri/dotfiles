@@ -2,7 +2,6 @@ return {
     -- rustaceanvim: rust language
     {
         'mrcjkb/rustaceanvim',
-        version = '^6',
         lazy = false,
     },
 
@@ -52,22 +51,13 @@ return {
             require("codecompanion").setup({
                 interactions = {
                     chat = {
-                        adapter = {
-                            name = "ollama",
-                            model = "qwen3-coder:30b",
-                        },
+                        adapter = "ollama",
                     },
                     inline = {
-                        adapter = {
-                            name = "ollama",
-                            model = "qwen3-coder:30b",
-                        }
+                        adapter = "ollama",
                     },
                     cmd = {
-                        adapter = {
-                            name = "ollama",
-                            model = "qwen3-coder:30b",
-                        }
+                        adapter = "ollama",
                     },
                 },
                 display = {
