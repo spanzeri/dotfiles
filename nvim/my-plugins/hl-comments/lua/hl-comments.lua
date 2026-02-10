@@ -25,6 +25,23 @@ local function compile_regexes(cfg)
     end
 end
 
+local function make_hl_name(cat)
+    return "HLComments_" .. cat
+end
+
+local function make_highlights(cfg)
+    for cat, hl in pairs(cfg.highlights) do
+        local ok, base = pcall(vim.api.nvim_get_hl, 0, { name = hl, link = false })
+        if not ok then
+            error("hl-comments: failed to resolve highlight group: " .. tostring(hl))
+        end
+        local spec = vim.deepcopy(base)
+        spec.underline = cfg.underline
+        spec.link = nil
+        vim.api.nvim_set_hl(0, make_hl_name(cat), spec)
+    end
+end
+
 local function get_comment_ranges(bufnr, start_row, end_row)
     local ok_parser, parser = pcall(vim.treesitter.get_parser, bufnr)
     if not ok_parser or not parser then
@@ -70,34 +87,31 @@ local function update_range(bufnr, start_row, end_row, cfg)
             local row = range.srow + (line_idx - 1)
             local base_col = (line_idx == 1) and range.scol or 0
             for _, spec in ipairs(regexes) do
-                local hs = cfg.highlights[spec.category]
-                local hl_group = hs and hs[1]
-                if hl_group then
-                    local at = 0
-                    while true do
-                        local chunk = line:sub(at + 1)
-                        if chunk == "" then
-                            break
-                        end
-                        local s, e = spec.regex:match_str(chunk)
-                        if not s then
-                            break
-                        end
-                        s = s + at
-                        e = e + at
-                        if e <= s then
-                            break
-                        end
-
-                        vim.api.nvim_buf_set_extmark(bufnr, hl_ns, row, base_col + s, {
-                            end_row = row,
-                            end_col = base_col + e,
-                            hl_group = hl_group,
-                            priority = cfg.priority,
-                        })
-
-                        at = e
+                local hl_group = make_hl_name(spec.category)
+                local at = 0
+                while true do
+                    local chunk = line:sub(at + 1)
+                    if chunk == "" then
+                        break
                     end
+                    local s, e = spec.regex:match_str(chunk)
+                    if not s then
+                        break
+                    end
+                    s = s + at
+                    e = e + at
+                    if e <= s then
+                        break
+                    end
+
+                    vim.api.nvim_buf_set_extmark(bufnr, hl_ns, row, base_col + s, {
+                        end_row = row,
+                        end_col = base_col + e,
+                        hl_group = hl_group,
+                        priority = cfg.priority,
+                    })
+
+                    at = e
                 end
             end
         end
@@ -337,9 +351,9 @@ local default_config = {
         },
     },
     highlights = {
-        ["todo"] = { "DiagnosticError" },
-        ["warn"] = { "DiagnosticWarn" },
-        ["note"] = { "DiagnosticNote" },
+        ["todo"] = "DiagnosticError",
+        ["warn"] = "DiagnosticWarn",
+        ["note"] = "DiagnosticNote",
     },
     patterns = {
         [[\zs(<KEYWORDS>)\ze\(.*\):]],
@@ -347,12 +361,14 @@ local default_config = {
     },
     debounce_ms = 40,
     priority = 200,
+    underline = true,
 }
 
 return {
     setup = function(opt)
         local cfg = merge(vim.deepcopy(default_config), opt or {})
         compile_regexes(cfg)
+        make_highlights(cfg)
 
         vim.api.nvim_create_autocmd({ "BufWinEnter", "BufReadPost", "BufNewFile" }, {
             group = hl_comments_group,
