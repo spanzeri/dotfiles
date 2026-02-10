@@ -19,24 +19,6 @@ return {
         end
     },
 
---[[
-
-    -- copilot: completion
-    {
-        "github/copilot.vim",
-        event = "BufEnter",
-        init = function()
-            vim.api.nvim_set_keymap("i", "<C-f>", 'copilot#Accept("CR")', { expr = true, silent = true, noremap = true })
-            vim.api.nvim_set_keymap("i", "<C-t>", 'copilot#AcceptLine()', { expr = true, silent = true, noremap = true })
-            vim.g.copilot_no_tab_map = true
-            vim.g.copilot_assume_mapped = true
-        end,
-        config = function(_, _)
-            vim.api.nvim_set_hl(0, "CopilotSuggestion", { fg = "#555555", italic = true })
-        end,
-    },
---]]
-
     -- codecompanion: AI assistant
     {
         "olimorris/codecompanion.nvim",

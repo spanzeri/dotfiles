@@ -39,5 +39,8 @@ require("lazy").setup("plugins", {
     defaults = {
         lazy = true,
     },
+    dev = {
+        path = vim.fn.stdpath("config") .. "/my-plugins",
+    },
 })
 
