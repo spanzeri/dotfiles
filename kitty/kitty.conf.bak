@@ -2,11 +2,11 @@
 
 # font_family             family="Berkeley Mono"
 # font_family             family="Codelia"
-font_family             family="RobotoMono Nerd Font"
-# font_family             family="Comic Mono"
+font_family             family="Roboto Mono" style="Light"
+# font_family             family="Jetbrains Mono"
 # font_family             family="Iosevka" style="Light Extended"
 # font_family             family="Hurmit Nerd Font" style="Light"
-font_size               13
+font_size               14
 
 # bold_font               family="Iosevka" style="Bold Extended"
 bold_font               auto
@@ -28,7 +28,7 @@ cursor_trail_start_threshold 25
 
 # Close the terminal without confirmation
 confirm_os_window_close 0
-background_opacity      0.94
+background_opacity      0.98
 
 # Default size
 initial_window_width    1280
@@ -39,7 +39,7 @@ map kitty_mod+r load_config_file
 map kitty_mod+, edit_config_file
 
 # BEGIN_KITTY_THEME
-# Dark One Nuanced
+# Night Lion V2
 include current-theme.conf
 # END_KITTY_THEME
 

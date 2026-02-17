@@ -37,6 +37,7 @@ local function make_highlights(cfg)
         end
         local spec = vim.deepcopy(base)
         spec.underline = cfg.underline
+        spec.bold = cfg.bold
         spec.link = nil
         vim.api.nvim_set_hl(0, make_hl_name(cat), spec)
     end
@@ -343,7 +344,7 @@ local default_config = {
         },
         {
             category = "warn",
-            keywords = { "HACK", "Hack", "WARNING", "Warning", "WARN", "Warn", "IMPORTANT", "Important" },
+            keywords = { "HACK", "Hack", "WARNING", "Warning", "WARN", "Warn", "IMPORTANT", "Important", "STUDY", "Study" },
         },
         {
             category = "note",
@@ -362,6 +363,7 @@ local default_config = {
     debounce_ms = 40,
     priority = 200,
     underline = true,
+    bold = true,
 }
 
 return {
