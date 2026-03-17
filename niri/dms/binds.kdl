@@ -22,7 +22,7 @@ binds {
     Mod+Shift+S { spawn "dms" "screenshot" "--no-file"; }
 
     // Security
-    Mod+Alt+L hotkey-overlay-title="Lock Screen" {
+    Mod+Shift+L hotkey-overlay-title="Lock Screen" {
         spawn "dms" "ipc" "call" "lock" "lock";
     }
 
@@ -44,5 +44,5 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true {
        spawn "dms" "ipc" "call" "brightness" "decrement" "5" "";
     }
-
 }
+

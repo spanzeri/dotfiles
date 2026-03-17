@@ -6,7 +6,7 @@ return {
         event = "VeryLazy",
         config = function()
             require("oil").setup({
-                columns = { "icon", "size", "mtime" },
+                columns = { "icon", "permissions", "size", "mtime" },
                 keymaps = {
                     ["<C-h>"] = false,
                     ["<M-h>"] = "actions.select_split",

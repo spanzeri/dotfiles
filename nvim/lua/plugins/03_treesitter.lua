@@ -13,7 +13,10 @@ return {
             ignore_install = { 'org' },
             auto_install = true,
             highlight = { enable = true },
-            indent = { enable = true },
+            indent = {
+                enable = true,
+                disable = { "c", "cpp" }
+            },
 
             incremental_selection = {
                 enable = true,

@@ -15,9 +15,9 @@ return {
     {
         "hl-comments",
         dev = true,
-        event = "BufEnter",
+        lazy = false,
         config = function()
-            vim.api.nvim_set_hl(0, "Normal", { bg = nil })
+            vim.cmd.colorscheme "default"
             vim.api.nvim_set_hl(0, "DiagnosticError", { fg = "#C80000" })
             vim.api.nvim_set_hl(0, "DiagnosticWarn", { fg = "#DDDD10" })
             vim.api.nvim_set_hl(0, "DiagnosticNote", { fg = "#108810" })

@@ -55,6 +55,12 @@ return {
             "rcarriga/nvim-dap-ui",
             "williamboman/mason.nvim",
             "theHamsta/nvim-dap-virtual-text",
+            {
+                "leoluz/nvim-dap-go",
+                config = function(_, opts)
+                    require("dap-go").setup(opts)
+                end,
+            }
         },
 
         event = "VeryLazy",

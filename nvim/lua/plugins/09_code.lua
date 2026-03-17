@@ -76,10 +76,40 @@ return {
         event = "VeryLazy",
     },
 
+    {
+        "yetone/avante.nvim",
+        build = vim.fn.has("win32") ~= 0
+            and "powershell -ExecutionPolicy Bypass -File Build.ps1 -BuildFromSource false"
+            or "make",
+        event = "VeryLazy",
+        version = false,
+        opts = {
+            instructions_file = "AGENT.md",
+            provider = "ollama",
+            providers = {
+                ollama = {
+                    model = "qwen3.5:9b-q8_0",
+                },
+            },
+            input = {
+                provider = "snacks",
+                proiver_opts = {
+                    title       = "Avante Input",
+                    icons       = " ",
+                    placeholder = "Enter your API key..."
+                }
+            }
+        },
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+            "MunifTanjim/nui.nvim",
+        },
+    },
+
     -- Markdown preview
     {
         "MeanderingProgrammer/render-markdown.nvim",
-        ft = { "markdown", "codecompanion" },
+        ft = { "markdown", "codecompanion", "Avante" },
         opts = {},
     },
 }
