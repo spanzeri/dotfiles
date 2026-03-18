@@ -112,4 +112,18 @@ return {
         ft = { "markdown", "codecompanion", "Avante" },
         opts = {},
     },
+
+    -- Compilation
+    {
+        "make-away",
+        dev = true,
+        lazy = false,
+        opts = {
+            window = {
+                height = 20,
+            },
+            autoclose = true,
+            dismiss_time_ms = 2000,
+        },
+    }
 }

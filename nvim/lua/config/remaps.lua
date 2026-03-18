@@ -38,11 +38,6 @@ local diagnostic_float = function(count)
     end
 end
 
-local open_qf_list_botright = function()
-    vim.cmd [[botright copen]]
-    vim.cmd [[wincmd p]]
-end
-
 vim.keymap.set("n", "[d", diagnostic_float(-1), { desc = "Go to previous [d]iagnistic message" })
 vim.keymap.set("n", "]d", diagnostic_float( 1), { desc = "Go to next [d]iagnistic message" })
 vim.keymap.set("n", "<leader>ef", vim.diagnostic.open_float, { desc = "Show diagnostic [f]loat" })
@@ -50,7 +45,7 @@ vim.keymap.set("n", "<leader>el", vim.diagnostic.setloclist, { desc = "Move diag
 vim.keymap.set("n", "<leader>ee", vim.cmd.cc, { desc = "go to first [e]rror" })
 vim.keymap.set("n", "<leader>en", vim.cmd.cn, { desc = "go to [e]rror [n]ext" })
 vim.keymap.set("n", "<leader>ep", vim.cmd.cp, { desc = "go to [e]rror [p]rev" })
-vim.keymap.set("n", "<leader>eo", open_qf_list_botright, { desc = "[e]rrors [o]pen" })
+vim.keymap.set("n", "<leader>eo", [[<cmd>botright copen 30 | wincmd p<CR>]], { desc = "[e]rrors [o]pen" })
 vim.keymap.set("n", "<leader>ec", vim.cmd.cclose, { desc = "[e]rrors [c]lose" })
 
 local toggle_errors = function()
@@ -88,38 +83,24 @@ local set_mkprg = function()
     end
 end
 
-local make_and_open_quickfix = function()
-    -- Save all buffers and run makeprg
-    vim.cmd [[silent! wa | make]]
-
-    local items = vim.fn.getqflist({ items = 0 }).items
-    local has_valid_errors = false
-    for _, item in pairs(items) do
-        if item.valid == 1 then
-            has_valid_errors = true
-            break
-        end
-    end
-
-    -- print("Quickfix list has " .. #items .. " items, valid: " .. tostring(has_valid_errors))
-    if has_valid_errors then
-        local qf_winid = vim.fn.getqflist({ winid = 0 }).winid
-        if qf_winid == 0 then
-            vim.cmd [[botright copen | wincmd p]]
-        end
-    else
-        vim.cmd [[cclose]]
-    end
-end
-
 vim.keymap.set("n", "<leader>ms", set_mkprg, { desc = "[m]ake [s]et" })
-vim.keymap.set("n", "<leader>mm", make_and_open_quickfix, { desc = "[m]ake [m]ake" })
 
-vim.keymap.set("n", "<leader>Tc", vim.cmd.tabnew,       { desc = "[t]ab [c]reate" })
-vim.keymap.set("n", "<leader>To", vim.cmd.tabonly,      { desc = "[t]ab [o]nly" })
-vim.keymap.set("n", "<leader>Tn", vim.cmd.tabnext,      { desc = "[t]ab [n]ext" })
-vim.keymap.set("n", "<leader>Tp", vim.cmd.tabprevious,  { desc = "[t]ab [p]revious" })
-vim.keymap.set("n", "<leader>Td", vim.cmd.tabclose,     { desc = "[t]ab [d]elete" })
+local has_make_plugin, make_away = pcall(require, "make-away")
+if not has_make_plugin then
+    local make_and_qf_open_on_error = function()
+        -- Save the current window so we can make sure to re-select it
+        local curr_win = vim.api.nvim_get_current_win()
+        -- This saves all files (wa), runs the make command and open the qf list if
+        -- there are errors, closes it otherwise.
+        vim.cmd [[silent! wa | make | botright cwindow 32]]
+        vim.api.nvim_set_current_win(curr_win)
+    end
+    vim.keymap.set("n", "<leader>mm", make_and_qf_open_on_error, { desc = "[m]ake [m]ake" })
+else
+    -- Use my make-away plugin
+    vim.keymap.set("n", "<leader>mm", make_away.make,   { desc = "[m]ake" })
+    vim.keymap.set("n", "<leader>mt", make_away.toggle, { desc = "[m]ake [t]oggle window" })
+end
 
 local ok, wk = pcall(require, "which-key")
 if ok then

@@ -350,9 +350,10 @@ vim.api.nvim_create_autocmd("QuickFixCmdPost", {
             local min = math.floor(elapsed / 60000)
             local sec = math.floor((elapsed % 60000) / 1000)
             local ms  = math.floor(elapsed % 1000)
-            vim.api.nvim_echo({{ " > Compilation took: " .. min .. "m:" .. sec .. "s." .. ms .. "ms" }}, true, {})
-            -- This is needed or we get "press enter to continue" twice
-            vim.api.nvim_feedkeys("<CR>", "n", false)
+            local msg = " > Compilation took: " .. min .. "m:" .. sec .. "s." .. ms .. "ms"
+            vim.schedule(function()
+                vim.api.nvim_echo({{ msg, "DiagnosticWarn" }}, false, {})
+            end)
             make_start = nil
         end
     end,
