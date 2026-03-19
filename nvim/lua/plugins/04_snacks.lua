@@ -5,7 +5,6 @@ return {
         lazy = false,
         opts = {
             bigfile =       { enabled = true },
-            dashboard =     { enabled = true },
             debug =         { enabled = true },
             image =         {
                 enabled = true,

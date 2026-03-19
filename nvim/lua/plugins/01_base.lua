@@ -44,16 +44,6 @@ return {
         event = "VeryLazy",
     },
 
-    -- nvim-window: Fast switching over multiple windows
-    {
-        "yorickpeterse/nvim-window",
-        config = true,
-        event = "VimEnter",
-        keys = {
-            { "<leader>j", function() require("nvim-window").pick() end, desc = "[j]ump to window" },
-        },
-    },
-
     -- tmux: seamless nvim-tmux navigation
     {
         "aserowy/tmux.nvim",
@@ -63,4 +53,12 @@ return {
 
     -- vim-repeat: better repeat behaviour
     { "tpope/vim-repeat", event = "VeryLazy" },
+
+    {
+        "lewis6991/gitsigns.nvim",
+        opts = {
+            current_line_blame = true,
+        },
+        event = "VeryLazy",
+    }
 }

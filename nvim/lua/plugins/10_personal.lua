@@ -1,4 +1,0 @@
-return {
-    -- My own plugins
-}
-

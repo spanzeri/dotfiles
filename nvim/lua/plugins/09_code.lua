@@ -120,7 +120,15 @@ return {
         lazy = false,
         opts = {
             window = {
-                height = 20,
+                width = 1.0,
+                height = 10,
+                position = "float",
+                compute_position = function(width, height)
+                    local row = vim.o.lines - 4 - height
+                    print(("Lines: %d - Height: %d - Row: %d"):format(vim.o.lines, height, row))
+                    local col = math.max(0, vim.o.columns - width) / 2
+                    return row, col
+                end,
             },
             autoclose = true,
             dismiss_time_ms = 2000,

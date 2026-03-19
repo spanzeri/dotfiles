@@ -4,6 +4,14 @@ local M = {}
 -- Configuration
 --
 
+local function compute_win_center_position(width, height)
+    local row = math.floor((vim.o.lines - height) / 2)
+    local col = math.floor((vim.o.columns - width) / 2)
+
+    return row, col, width, height
+end
+
+
 ---@class MakeAwayConfig.window
 ---@field title string Title that will be displayed for the compilation window
 ---@field border "none"|"single"|"double"|"rounded" Border style
@@ -11,6 +19,7 @@ local M = {}
 ---@field width number <=1 percentage of the editor window height. > 1 amount of rows.
 --- This value is ignored unless the position is "float"
 ---@field position "bottom"|"float" where the window should appear (default: "bottom")
+---@field compute_position function For float window, return row, col
 
 ---@class MakeAwayConfig
 ---@field window MakeAwayConfig.window Window appearance options
@@ -18,20 +27,22 @@ local M = {}
 ---@field dismiss_time_ms number Number of milliseconds to wait before closing
 --- the compilation window (default: 3000)
 ---@field autosave_before boolean Save all (named) open buffers before compiling (default: true)
-
+---@field close_qlist_on_success boolean Close qlist automatically if compilation has no errors
 
 ---@type MakeAwayConfig
 M.config = {
     window = {
-        title    = " *compilation* ",
-        border   = "rounded",
-        height   = 30,
-        width    = 0.8,
+        title = " *compilation* ",
+        border = "rounded",
+        height = 30,
+        width = 0.8,
         position = "bottom",
+        compute_position = compute_win_center_position,
     },
     autoclose = false,
     dismiss_time_ms = 3000,
     autosave_before = true,
+    close_qlist_on_success = true,
 }
 
 ---Setup make-away configuration.
@@ -62,20 +73,13 @@ local function compute_size(value, total)
     return value
 end
 
-local function compute_window_rect()
+local function create_compile_window()
     local width = compute_size(M.config.window.width, vim.o.columns)
     local height = compute_size(M.config.window.height, vim.o.lines)
 
-    local row = math.floor((vim.o.lines - height) / 2)
-    local col = math.floor((vim.o.columns - width) / 2)
-
-    return row, col, width, height
-end
-
-local function create_compile_window()
-    local row, col, width, height = compute_window_rect()
 
     if M.config.window.position == "float" then
+        local row, col = M.config.window.compute_position(width, height)
         return vim.api.nvim_open_win(state.bufnr, false, {
             relative = "editor",
             row       = row,
@@ -248,7 +252,7 @@ function M.make()
     vim.api.nvim_command("doautocmd QuickFixCmdPre")
     start_make_time()
     job_state.job = vim.system(
-        { cmd },
+        vim.split(cmd, " ", { trimempty = true }),
         {
             stdout = append_fast_context,
             stderr = append_fast_context,
@@ -272,6 +276,10 @@ function M.make()
                     return string.lower(item.type) == "e" or string.lower(item.type) == "w"
                 end)
 
+                if not has_errors and M.config.close_qlist_on_success then
+                    vim.cmd("cclose")
+                end
+
                 local elapsed_m, elapsed_s, elapsed_ms = get_make_total_time()
                 local time_str = ("%d min %d sec %d ms"):format(elapsed_m, elapsed_s, elapsed_ms)
 
@@ -280,7 +288,7 @@ function M.make()
                     vim.schedule(function()
                         M.close()
                         local curr_win = vim.api.nvim_get_current_win()
-                        vim.cmd([[botright cwindow]] .. compute_size(M.config.window.height, vim.o.lines))
+                        vim.cmd("botright "..tostring(compute_size(M.config.window.height, vim.o.lines)).." cwindow | cc")
                         vim.api.nvim_set_current_win(curr_win)
                     end)
                 else
