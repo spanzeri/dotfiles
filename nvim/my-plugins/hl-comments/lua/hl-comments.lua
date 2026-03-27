@@ -31,14 +31,29 @@ end
 
 local function make_highlights(cfg)
     for cat, hl in pairs(cfg.highlights) do
-        local ok, base = pcall(vim.api.nvim_get_hl, 0, { name = hl, link = false })
-        if not ok then
-            error("hl-comments: failed to resolve highlight group: " .. tostring(hl))
+        local spec = {}
+
+         -- Inherit from parent highlight group if specified
+        if hl.parent and hl.parent ~= "" then
+            local ok, base = pcall(vim.api.nvim_get_hl, 0, { name = hl.parent, link = false })
+            if ok and base then
+                -- Carry over fg/bg/sp and style flags from the base group
+                spec.fg        = base.fg
+                spec.bg        = base.bg
+                spec.sp        = base.sp
+                spec.bold      = base.bold
+                spec.italic    = base.italic
+                spec.underline = base.underline
+                spec.undercurl = base.undercurl
+                spec.strikethrough = base.strikethrough
+            end
         end
-        local spec = vim.deepcopy(base)
-        spec.underline = cfg.underline
-        spec.bold = cfg.bold
-        spec.link = nil
+
+        -- User overrides
+        spec.underline = hl.underline
+        spec.bold      = hl.bold
+        spec.link      = nil
+        spec.fg        = hl.fg
         vim.api.nvim_set_hl(0, make_hl_name(cat), spec)
     end
 end
@@ -352,9 +367,9 @@ local default_config = {
         },
     },
     highlights = {
-        ["todo"] = "DiagnosticError",
-        ["warn"] = "DiagnosticWarn",
-        ["note"] = "DiagnosticNote",
+        ["todo"] = { parent = "DiagnosticError", fg = "#C80000", underline = true, bold = false, },
+        ["warn"] = { parent = "DiagnosticWarn",  fg = "#DDDD10", underline = true, bold = false, },
+        ["note"] = { parent = "DiagnosticInfo",  fg = "#108810", underline = true, bold = false, },
     },
     patterns = {
         [[\zs(<KEYWORDS>)\ze\(.*\):]],
@@ -362,8 +377,6 @@ local default_config = {
     },
     debounce_ms = 40,
     priority = 200,
-    underline = true,
-    bold = true,
 }
 
 return {
@@ -383,6 +396,13 @@ return {
             group = hl_comments_group,
             callback = function(ev)
                 cleanup_buffer(ev.buf)
+            end,
+        })
+
+        vim.api.nvim_create_autocmd("ColorScheme", {
+            group = hl_comments_group,
+            callback = function()
+                make_highlights(cfg)
             end,
         })
 

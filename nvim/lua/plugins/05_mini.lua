@@ -20,19 +20,6 @@ return {
 
             require("mini.splitjoin").setup()
 
-            local starter = require("mini.starter")
-            starter.setup({
-                items = {
-                    {
-                        { action = 'lua Snacks.picker.files()', name = 'Find files', section = 'Snacks' }
-                    }
-                },
-                content_hooks = {
-                    starter.gen_hook.adding_bullet(),
-                    starter.gen_hook.aligning('center', 'center'),
-                },
-            })
-
             -- Mini icons
             require "mini.icons".setup()
             -- Simple and easy statusline.
