@@ -302,7 +302,7 @@ function M.make()
                 end
 
                 vim.api.nvim_echo(
-                    {{ "Compilation completed in:" .. time_str, has_errors and "DiagnosticWarn" or "DiagnosticNote" }},
+                    {{ "Compilation completed in: " .. time_str, has_errors and "DiagnosticWarn" or "DiagnosticNote" }},
                     false,
                     {})
             end)

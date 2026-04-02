@@ -6,7 +6,7 @@ local set = vim.opt
 local setg = vim.g
 
 set.number = true           -- Line number
--- set.relativenumber = true   -- Relative line number
+set.relativenumber = true   -- Relative line number
 set.mouse = "a"             -- Enable mouse in every mode
 set.showmode = false        -- Don't show mode in the command line
 set.undofile = true         -- Save undo history
@@ -23,7 +23,7 @@ set.cursorline = true       -- Set which line the cursor is on
 set.scrolloff = 10          -- Keep a number of lines below and above the cursor while scrolling
 set.termguicolors = true    -- Enable term colors
 set.colorcolumn = "81,121"  -- Highlight columns
-set.wrap = true             -- Word wrap
+set.wrap = false            -- Word wrap
 set.wildignore:append({ "*.o", "*~", "*.lock", "~*" })
 setg.netrw_banner = 0       -- Remove banner from netrw
 

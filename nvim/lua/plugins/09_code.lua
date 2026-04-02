@@ -130,7 +130,7 @@ return {
                     return row, col
                 end,
             },
-            autoclose = true,
+            autoclose = false,
             dismiss_time_ms = 2000,
         },
     }

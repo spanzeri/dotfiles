@@ -16,7 +16,7 @@ require 'config.lazy'       -- Plugin manager
 require 'config.commands'   -- Custom commands
 require 'config.remaps'     -- Key bindings
 
-vim.cmd.colorscheme "miniautumn"
+vim.cmd "colorscheme gruber-darker"
 vim.api.nvim_set_hl(0, "Normal", { bg = nil })
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "WinEnter" },
     {
