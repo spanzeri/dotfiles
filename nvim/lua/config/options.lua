@@ -26,6 +26,7 @@ set.colorcolumn = "81,121"  -- Highlight columns
 set.wrap = false            -- Word wrap
 set.wildignore:append({ "*.o", "*~", "*.lock", "~*" })
 setg.netrw_banner = 0       -- Remove banner from netrw
+set.confirm = true          -- Ask for confirmation on certain actions (e.g. save before quit)
 
 set.autoread = true         -- Automatically read files changed outside of Vim
 

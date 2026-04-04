@@ -16,6 +16,7 @@ require 'config.lazy'       -- Plugin manager
 require 'config.commands'   -- Custom commands
 require 'config.remaps'     -- Key bindings
 
+require('gruber-darker').setup({ transparent = true, italic = false })
 vim.cmd "colorscheme gruber-darker"
 vim.api.nvim_set_hl(0, "Normal", { bg = nil })
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "WinEnter" },

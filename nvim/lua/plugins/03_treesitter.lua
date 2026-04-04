@@ -15,7 +15,6 @@ return {
             highlight = { enable = true },
             indent = {
                 enable = true,
-                disable = { "c", "cpp" }
             },
 
             incremental_selection = {

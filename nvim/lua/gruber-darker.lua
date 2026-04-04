@@ -6,6 +6,7 @@ local M = {}
 
 M.config = {
     transparent = false,
+    italic = true,
 }
 
 function M.setup(opts)
@@ -60,6 +61,10 @@ function M.load()
         vim.api.nvim_set_hl(0, group, { link = target })
     end
 
+    local function italic()
+        return M.config.italic and "italic" or nil
+    end
+
     -- ── Editor ──────────────────────────────────────────────────────────
     hi("Normal",        c.fg,     bg)
     hi("NormalFloat",   c.fg,     bg_float)
@@ -72,7 +77,7 @@ function M.load()
     hi("ColorColumn",   c.none,   c.bg1)
     hi("VertSplit",     c.bg3,    bg)
     hi("WinSeparator",  c.bg3,    bg)
-    hi("Folded",        c.blue,   c.bg2,    "italic")
+    hi("Folded",        c.blue,   c.bg2,    italic())
     hi("FoldColumn",    c.bg3,    bg_sign)
     hi("EndOfBuffer",   c.bg2,    c.none)
     hi("NonText",       c.bg3,    c.none)
@@ -111,10 +116,10 @@ function M.load()
     hi("DiagnosticHint",             c.steel,  c.none)
     hi("DiagnosticUnderlineError",   c.none,   c.none, "undercurl")
     hi("DiagnosticUnderlineWarn",    c.none,   c.none, "undercurl")
-    hi("DiagnosticVirtualTextError", c.red,    c.none, "italic")
-    hi("DiagnosticVirtualTextWarn",  c.yellow, c.none, "italic")
-    hi("DiagnosticVirtualTextInfo",  c.blue,   c.none, "italic")
-    hi("DiagnosticVirtualTextHint",  c.steel,  c.none, "italic")
+    hi("DiagnosticVirtualTextError", c.red,    c.none, italic())
+    hi("DiagnosticVirtualTextWarn",  c.yellow, c.none, italic())
+    hi("DiagnosticVirtualTextInfo",  c.blue,   c.none, italic())
+    hi("DiagnosticVirtualTextHint",  c.steel,  c.none, italic())
 
     -- ── Misc UI ─────────────────────────────────────────────────────────
     hi("Question",   c.green,  c.none, "bold")
@@ -138,7 +143,7 @@ function M.load()
     hi("Removed",    c.red,    c.none)
 
     -- ── Syntax (classic vim) ────────────────────────────────────────────
-    hi("Comment",       c.yellow_d, c.none, "italic")
+    hi("Comment",       c.yellow_d, c.none, italic())
     hi("String",        c.green,    c.none)
     hi("Character",     c.green,    c.none)
     hi("Number",        c.steel,    c.none)
@@ -163,7 +168,7 @@ function M.load()
     hi("Structure",     c.steel,    c.none)
     hi("Typedef",       c.steel,    c.none)
     hi("Special",       c.yellow,   c.none)
-    hi("SpecialComment",c.yellow_d, c.none, "italic")
+    hi("SpecialComment",c.yellow_d, c.none, italic())
     hi("Tag",           c.blue,     c.none)
     hi("Delimiter",     c.fg,       c.none)
     hi("Debug",         c.red,      c.none)
@@ -227,7 +232,7 @@ function M.load()
 
     hi("@markup.heading",          c.blue,  c.none, "bold")
     hi("@markup.strong",           c.fg1,   c.none, "bold")
-    hi("@markup.italic",           c.fg1,   c.none, "italic")
+    hi("@markup.italic",           c.fg1,   c.none, italic())
     hi("@markup.strikethrough",    c.steel, c.none, "strikethrough")
     link("@markup.raw",            "String")
     link("@markup.link",           "Underlined")

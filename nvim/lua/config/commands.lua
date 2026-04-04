@@ -198,6 +198,10 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter", "TermOpen", "BufAdd", "Buf
             vim.b.minitrailspace_disable = true
         end
 
+        if vim.bo.filetype == "dapui_console" or vim.bo.filetype == "dap-repl" then
+            vim.wo.wrap = true
+        end
+
         if vim.bo.buftype == "terminal" then
             vim.api.nvim_set_option_value("spell", false, { scope = "local" })
         end
