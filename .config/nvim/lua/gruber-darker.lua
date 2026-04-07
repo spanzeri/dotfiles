@@ -28,7 +28,7 @@ function M.load()
         fg        = "#efeff4",
         fg1       = "#f4f4ff",
         yellow    = "#ffdd33",
-        yellow_d  = "#cc8c3c",
+        yellow_d  = "#be9057",
         green     = "#73c936",
         blue      = "#aabfdd",
         purple    = "#9e95c7",
@@ -206,7 +206,8 @@ function M.load()
     link("@function.builtin",      "Special")
     link("@function.macro",        "Macro")
     link("@function.method",       "Function")
-    link("@function.method.call",  "Function")
+    hi("@function.method.call",    c.fg1, c.none)
+    hi("@function.call",           c.fg1, c.none)
     link("@constructor",           "Function")
 
     link("@keyword",               "Keyword")
@@ -248,6 +249,7 @@ function M.load()
     link("@lsp.type.parameter",   "@variable.parameter")
     link("@lsp.type.property",    "@variable.member")
     link("@lsp.type.function",    "@function")
+    link("@lsp.type.function.call", "@function.call")
     link("@lsp.type.method",      "@function.method")
     link("@lsp.type.macro",       "@function.macro")
     link("@lsp.type.keyword",     "@keyword")

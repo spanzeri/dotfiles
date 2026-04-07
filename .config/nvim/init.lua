@@ -7,17 +7,21 @@
 ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝    ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝
 --]]
 
--- Use space as leader
-vim.g.mapleader = " "
-vim.g.maplocalleader = " "
+vim.g.mapleader      = ' '
+vim.g.maplocalleader = ' '
 
-require 'config.options'    -- Neovim options setup
-require 'config.lazy'       -- Plugin manager
-require 'config.commands'   -- Custom commands
-require 'config.remaps'     -- Key bindings
+require('options')
+require('plugins')
+require('keybinds')
 
-require('gruber-darker').setup({ transparent = true, italic = false })
-vim.cmd "colorscheme gruber-darker"
+local command_group = vim.api.nvim_create_augroup('SamConfig-Init', { clear = true })
+
+vim.api.nvim_create_autocmd('TextYankPost', {
+    callback = function() vim.highlight.on_yank() end,
+    group = command_group,
+})
+
+vim.cmd('colorscheme gruber-darker')
 vim.api.nvim_set_hl(0, "Normal", { bg = nil })
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "WinEnter" },
     {
@@ -28,3 +32,4 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "WinEnter" },
         pattern = "*",
         desc = "Ensure the background is transparent",
     })
+
