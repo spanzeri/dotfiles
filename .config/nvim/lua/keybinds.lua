@@ -33,9 +33,9 @@ vim.keymap.set('v', '<', '<gv', { desc = 'Indent left and reselect' })
 vim.keymap.set('v', '>', '>gv', { desc = 'Indent right and reselect' })
 
 -- Copy to clipboard
-vim.keymap.set('v', '<leader>y', [['+y]],  { desc = 'Copy to system clipboard' })
-vim.keymap.set('x', '<leader>p', [['_dP]], { desc = 'Paste without yanking' })
-vim.keymap.set({ 'n', 'v' }, '<leader>x', [['_d]], { desc = 'Delete without yanking' })
+vim.keymap.set('v', '<leader>y', [["+y]],  { desc = 'Copy to system clipboard' })
+vim.keymap.set('x', '<leader>p', [["_dP]], { desc = 'Paste without yanking' })
+vim.keymap.set({ 'n', 'v' }, '<leader>x', [["_d]], { desc = 'Delete without yanking' })
 
 -- Diagnostic keymaps
 
@@ -69,10 +69,11 @@ vim.keymap.set('n', '<leader>et', toggle_errors, { desc = '[e]rrors [t]oggle' })
 
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
-vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
-vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+local tmux = require('tmux')
+vim.keymap.set('n', '<C-h>', tmux.move_left,   { desc = 'Move focus left (nvim/tmux)' })
+vim.keymap.set('n', '<C-l>', tmux.move_right,  { desc = 'Move focus right (nvim/tmux)' })
+vim.keymap.set('n', '<C-j>', tmux.move_bottom, { desc = 'Move focus down (nvim/tmux)' })
+vim.keymap.set('n', '<C-k>', tmux.move_top,    { desc = 'Move focus up (nvim/tmux)' })
 
 -- Save and source lua
 vim.keymap.set('n', '<leader>xx', [[<cmd>w | so<CR>]], { desc = 'Write and source file' })
@@ -96,12 +97,23 @@ vim.keymap.set('n', '<leader>ms', set_mkprg, { desc = '[m]ake [s]et' })
 local has_make_plugin, make_away = pcall(require, 'make-away')
 if not has_make_plugin then
     local make_and_qf_open_on_error = function()
+        -- Time the execution time
+        local start_time = vim.loop.hrtime()
         -- Save the current window so we can make sure to re-select it
         local curr_win = vim.api.nvim_get_current_win()
         -- This saves all files (wa), runs the make command and open the qf list if
         -- there are errors, closes it otherwise.
         vim.cmd [[silent! wa | make | botright cwindow 32]]
         vim.api.nvim_set_current_win(curr_win)
+        -- Time end
+        local elapsed    = (vim.loop.hrtime() - start_time) * 1e-6
+        local elapsed_m  = math.floor(elapsed / 60000)
+        local elapsed_s  = math.floor((elapsed % 60000) / 1000)
+        local elapsed_ms = math.floor(elapsed % 1000)
+        vim.notify(
+            string.format('Compilation completed in: %02d:%02d.%03d', elapsed_m, elapsed_s, elapsed_ms),
+            vim.log.levels.WARNING,
+            {})
     end
     vim.keymap.set('n', '<leader>mm', make_and_qf_open_on_error, { desc = '[m]ake [m]ake' })
 else
@@ -207,4 +219,3 @@ local function lazygit_toggle()
 end
 
 vim.keymap.set('n', '<leader>tl', lazygit_toggle, { desc = '[t]oggle [l]azygit' })
-

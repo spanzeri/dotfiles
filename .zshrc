@@ -23,3 +23,8 @@ source $XDG_CONFIG_HOME/zsh/zshrc
 [[ -f /home/sam/.config/.dart-cli-completion/zsh-config.zsh ]] && . /home/sam/.config/.dart-cli-completion/zsh-config.zsh || true
 ## [/Completion]
 
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/sam/.lmstudio/bin"
+# End of LM Studio CLI section
+

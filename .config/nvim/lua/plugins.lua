@@ -75,17 +75,17 @@ vim.pack.add({
     'https://github.com/MunifTanjim/nui.nvim',
     'https://github.com/yetone/avante.nvim',
     'https://github.com/lewis6991/gitsigns.nvim',
+    'https://github.com/esmuellert/codediff.nvim',
 })
 
--- Built-in plugins
+-- Load built-in and personal plugins
+
 vim.cmd.packadd('nvim.undotree')
 vim.cmd.packadd('nvim.difftool')
 vim.cmd.packadd('nohlsearch')
 vim.cmd.packadd('hl-comments')
 
--- =====================================
--- Mini
--- =====================================
+-- Mini (collection of plugins)
 
 require('mini.ai').setup({ n_lines = 500 })
 require('mini.surround').setup()
@@ -104,12 +104,18 @@ vim.api.nvim_create_user_command('TrimWhitespaces', mini_trailspace.trim, {})
 require('mini.bufremove').setup()
 vim.keymap.set('n', '<leader>bd', MiniBufremove.delete, { desc = '[b]uffer [d]elete' })
 
--- =====================================
--- FZF
--- =====================================
+-- FZF (fuzzy finder)
 
 local fzf = require('fzf-lua')
-fzf.setup({})
+fzf.setup({
+    ui_select = true,
+    keymap = {
+        builtin = {
+            ['<C-d>'] = 'preview-page-down',
+            ['<C-u>'] = 'preview-page-up',
+        },
+    },
+})
 
 -- Query for a custom location or try to infer it from the previuos
 -- value or the current buffer path. Supports OIL paths as well.
@@ -187,9 +193,7 @@ vim.keymap.set('n', '<leader>sc',       fzf.resume,       { desc = '[s]earch [c]
 vim.keymap.set('n', '<leader>sx',       fzf.builtin,      { desc = '[s]earch [x]: all available pickers' })
 vim.keymap.set('n', '<leader><leader>', fzf.global,       { desc = 'Global search' })
 
--- =====================================
--- OIL
--- =====================================
+-- OIL (manage files and directories like a text buffer)
 
 require('oil').setup({
     columns = { 'icon', 'permissions', 'size', 'mtime' },
@@ -204,14 +208,7 @@ require('oil').setup({
 
 vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open file browser' })
 
-
--- =====================================
--- Treesitter
--- =====================================
-
-if vim.fn.executable('tree-sitter') == 0 then
-    vim.notify('Missing executable for tree-sitter-cli', vim.log.levels.WARN, {})
-end
+-- Treesitter (parser)
 
 vim.api.nvim_create_autocmd('FileType', {
     callback = function()
@@ -259,16 +256,17 @@ ts_select('ac', '@class.outer')
 ts_select('ic', '@class.outer')
 ts_select('as', '@local.scope')
 
--- =====================================
--- Blink
--- =====================================
+-- Blink (auto-completion)
 
-require('blink.cmp').setup({ fuzzy = { implementation = "prefer_rust_with_warning" } })
+require('blink.cmp').setup({
+    fuzzy = { implementation = "prefer_rust_with_warning" },
+    completion = {
+        list = { selection = { preselect = false } },
+    },
+})
 
 
--- =====================================
--- LSP and Mason
--- =====================================
+-- LSP and Mason (manage language server protocols)
 
 vim.api.nvim_create_autocmd('LspAttach', {
     group = command_group,
@@ -285,7 +283,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         map('<leader>sS', FzfLua.lsp_workspace_symbols, '[s]earch workspace [S]ymbols')
         map('<leader>D',  FzfLua.lsp_typedefs,          'goto type [d]efinitions')
         map('<leader>cr', vim.lsp.buf.rename,           '[c]ode [r]ename')
-        map('<leader>cr', vim.lsp.buf.code_action,      '[c]ode [a]ction')
+        map('<leader>ca', vim.lsp.buf.code_action,      '[c]ode [a]ction')
 
         map('K', vim.lsp.buf.hover,          'hover documentation')
         map('S', vim.lsp.buf.signature_help, '[S]ignature help')
@@ -381,16 +379,20 @@ vim.lsp.config('jsonls', {
 })
 vim.lsp.config('cmake', {})
 
+vim.lsp.enable({
+    'clangd',
+    'lua_ls',
+    'ols',
+    'slang',
+    'zls',
+    'jsonls',
+    'cmake',
+})
 
--- =====================================
--- TMUX
--- =====================================
+-- TMUX (better integration with the terminal session)
+require('tmux').setup({})
 
-require('tmux').setup()
-
--- =====================================
--- DAP
--- =====================================
+-- DAP (integrated debugger)
 
 local dap = require('dap') local dapui = require('dapui') dapui.setup({ controls = { icons = { pause = '', play = '', step_into = '󰆹', step_over = '',
             step_out = '󰆸',
@@ -434,6 +436,7 @@ local dap = require('dap') local dapui = require('dapui') dapui.setup({ controls
 })
 
 local dap_ext_vscode = require('dap.ext.vscode')
+dap_ext_vscode.json_decode = require('json').decode
 
 require('nvim-dap-virtual-text').setup({})
 
@@ -443,8 +446,8 @@ local cwd = nil
 
 local function set_dap_cwd()
     local new_dir = vim.fn.input({
-        prompt = 'Directory: ',
-        default = vim.fn.getcwd(),
+        prompt     = 'Directory: ',
+        default    = vim.fn.getcwd(),
         completion = 'dir',
     })
     if new_dir == nil or new_dir == '' then
@@ -456,12 +459,11 @@ end
 if vim.fn.executable('gdb') == 1 then
     local cpptools_ext = (is_windows and '.cmd') or ''
     dap.adapters.cpptools = {
-        type = 'executable';
-        name = 'cpptools',
-        --command = vim.fn.stdpath('data') .. '/mason/bin/OpenDebugAD7' .. cpptools_ext,
+        type    = 'executable';
+        name    = 'cpptools',
         command = 'OpenDebugAD7',
-        args = {},
-        attach = {
+        args    = {},
+        attach  = {
             pidProperty = 'processId',
             pidSelect = 'ask'
         },
@@ -480,11 +482,7 @@ dap.adapters.codelldb = {
 local exe_launch_opts = {}
 local make_launch_opts = function()
     exe_launch_opts.cmd = exe_launch_opts.cmd or vim.fn.getcwd() .. '/'
-    local new_cmd = vim.fn.input({
-        prompt = 'Command: ',
-        default = exe_launch_opts.cmd,
-        completion = 'shellcmdline'
-    })
+    local new_cmd = vim.fn.input('Command: ', exe_launch_opts.cmd, 'file')
     if new_cmd == nil or new_cmd == '' then
         return dap.ABORT
     end
@@ -515,52 +513,52 @@ end
 
 dap.configurations.cpp = {}
 table.insert(dap.configurations.cpp, {
-    name = 'Launch program (codelldb)',
-    type = 'codelldb',
+    name    = 'launch program (codelldb)',
+    type    = 'codelldb',
     request = 'launch',
     program = get_program,
-    args = get_args,
-    cwd = function()
+    args    = get_args,
+    cwd     = function()
         return cwd or '${workspaceFolder}'
     end,
 })
 if vim.fn.executable('gdb') == 1 then
     table.insert(dap.configurations.cpp, {
-        name = 'Launch program (gdb)',
-        type = 'cpptools',
+        name =    'Launch program (gdb)',
+        type =    'cpptools',
         request = 'launch',
         program = get_program,
-        args = get_args,
-        cwd = function()
+        args =    get_args,
+        cwd =     function()
             return cwd or '${workspaceFolder}'
         end,
     })
 end
 table.insert(dap.configurations.cpp, {
-    name = 'Attach ot process',
-    type = 'codellldb',
+    name    = 'Attach ot process',
+    type    = 'codellldb',
     request = 'attach',
-    pid = require('dap.utils').pick_process,
-    args = {},
+    pid     = require('dap.utils').pick_process,
+    args    = {},
 })
 table.insert(dap.configurations.cpp, {
-    name = 'Pause at start (codelldb)',
-    type = 'codelldb',
-    request = 'launch',
-    program = get_program,
-    args = get_args,
-    cwd = function()
+    name        = 'Pause at start (codelldb)',
+    type        = 'codelldb',
+    request     = 'launch',
+    program     = get_program,
+    args        = get_args,
+    cwd         = function()
         return cwd or '${workspaceFolder}'
     end,
     stopOnEntry = true,
 })
 
-dap.configurations.c = dap.configurations.cpp
+dap.configurations.c    = dap.configurations.cpp
 dap.configurations.rust = dap.configurations.cpp
-dap.configurations.zig = dap.configurations.cpp
+dap.configurations.zig  = dap.configurations.cpp
 dap.configurations.odin = dap.configurations.cpp
-dap.configurations.d = dap.configurations.cpp
-dap.configurations.jai = dap.configurations.cpp
+dap.configurations.d    = dap.configurations.cpp
+dap.configurations.jai  = dap.configurations.cpp
 
 dap.adapters.godot = {
     type = 'server',
@@ -571,11 +569,11 @@ dap.adapters.godot = {
 dap.configurations.gdscript = {
     {
         launch_game_instance = false,
-        launch_scene = false,
-        name = 'Launch scene',
-        project = '${workspaceFolder}',
-        request = 'launch',
-        type = 'godot',
+        launch_scene         = false,
+        name                 = 'Launch scene',
+        project              = '${workspaceFolder}',
+        request              = 'launch',
+        type                 = 'godot',
     },
 }
 
@@ -606,10 +604,7 @@ if ok then
 end
 
 local toggle_conditional_breakpoint = function()
-    local condition = vim.fn.input({
-        prompt = 'Condition: ',
-        default = '',
-    })
+    local condition = vim.fn.input('Condition: ')
     if condition then
         dap.toggle_breakpoint(condition)
     end
@@ -665,23 +660,18 @@ vim.keymap.set('n', '<leader>du', dapui_toggle, { desc = '[d]ebug [u]i toggle' }
 vim.keymap.set('n', '<leader>de', eval_at_cursor, { desc = '[d]ebug [e]val under the cursor' })
 vim.keymap.set('n', '<leader>dx', eval_expr, { desc = '[d]ebug eval e[x]pression' })
 
--- =====================================
--- Markdown
--- =====================================
-
+-- Terminal based markdown rendering
 require('render-markdown').setup({
     completions = { lsp = { enabled = true } },
     file_types = { 'markdown', 'Avante', 'codecompanion' }
 })
 
--- =====================================
--- Gitsigns
--- =====================================
-
+-- Gitsigns (git info in the gutter and inline)
 require('gitsigns').setup({ current_line_blame = true })
 
--- =====================================
--- Gitsigns
--- =====================================
+-- Codediff (better diff views)
+require('codediff').setup({})
 
+-- HL-comments (my own plugin to highlight TODO comments)
 require('hl-comments').setup({})
+

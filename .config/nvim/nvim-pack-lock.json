@@ -8,6 +8,10 @@
       "rev": "b4b7cbb52bab6c716b317433fa9348a070cccee5",
       "src": "https://github.com/Saghen/blink.cmp"
     },
+    "codediff.nvim": {
+      "rev": "832f1ecc5f8b15a44cf7537e31d3266d657775b1",
+      "src": "https://github.com/esmuellert/codediff.nvim"
+    },
     "friendly-snippets.nvim": {
       "rev": "52dc9ce5e4c491aa98b79a0cec791a0400169bb6",
       "src": "https://github.com/sar/friendly-snippets.nvim"
@@ -75,6 +79,10 @@
     "render-markdown.nvim": {
       "rev": "4ae2f2e8e8c66d070f33cfb57cb6f867e3baf5d9",
       "src": "https://github.com/MeanderingProgrammer/render-markdown.nvim"
+    },
+    "snacks.nvim": {
+      "rev": "ad9ede6a9cddf16cedbd31b8932d6dcdee9b716e",
+      "src": "https://github.com/folke/snacks.nvim"
     },
     "tmux.nvim": {
       "rev": "2c1c3be0ef287073cef963f2aefa31a15c8b9cd8",
