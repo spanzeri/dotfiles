@@ -54,9 +54,14 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     group = command_group,
 })
 
+require('gruber-darker').setup({
+    transparent = true,
+    italic = false,
+})
 vim.cmd('colorscheme gruber-darker')
+
 vim.api.nvim_set_hl(0, "Normal", { bg = nil })
-vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "WinEnter" },
+vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" },
     {
         callback = function()
             vim.api.nvim_set_hl(0, "Normal", { bg = nil })
@@ -64,5 +69,14 @@ vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "WinEnter" },
         group = vim.api.nvim_create_augroup("hl-fix", { clear = true }),
         pattern = "*",
         desc = "Ensure the background is transparent",
+    })
+
+vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' },
+    {
+        callback = function()
+            vim.bo.formatoptions = 'tcqjr'
+        end,
+        group = command_group,
+        desc = 'Options to set when opening or entering a buffer',
     })
 

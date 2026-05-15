@@ -34,7 +34,7 @@ vim.o.smartcase         = true
 vim.o.splitright        = true                        -- Make sure new split opens below and right
 vim.o.splitbelow        = true
 
-vim.o.completeopt       = "menuone,fuzzy,noselect"    -- Completion options
+vim.o.completeopt       = "menuone,fuzzy,noinsert"    -- Completion options
 vim.o.showmode          = false                       -- Do not show the mode, instead have it in statusline
 vim.o.pumheight         = 10                          -- Popup menu height
 vim.o.pumblend          = 10                          -- Popup menu transparency

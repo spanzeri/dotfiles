@@ -58,6 +58,7 @@ vim.api.nvim_create_autocmd('PackChanged', {
 vim.pack.add({
     'https://github.com/nvim-lua/plenary.nvim',
     'https://github.com/nvim-mini/mini.nvim',
+    'https://github.com/folke/snacks.nvim',
     'https://github.com/ibhagwan/fzf-lua',
     'https://github.com/stevearc/oil.nvim',
     'https://github.com/nvim-treesitter/nvim-treesitter',
@@ -72,6 +73,7 @@ vim.pack.add({
     'https://github.com/theHamsta/nvim-dap-virtual-text',
     'https://github.com/mfussenegger/nvim-dap',
     'https://github.com/MeanderingProgrammer/render-markdown.nvim',
+    'https://github.com/richardbizik/nvim-toc',
     'https://github.com/MunifTanjim/nui.nvim',
     'https://github.com/yetone/avante.nvim',
     'https://github.com/lewis6991/gitsigns.nvim',
@@ -103,6 +105,31 @@ vim.api.nvim_create_user_command('TrimWhitespaces', mini_trailspace.trim, {})
 
 require('mini.bufremove').setup()
 vim.keymap.set('n', '<leader>bd', MiniBufremove.delete, { desc = '[b]uffer [d]elete' })
+
+-- Snacks (QOL plugins)
+
+require('snacks').setup({
+    image = {
+        math = {
+            latex = {
+                font_size = 'small',
+                packages = { 'amsmath', 'amssymb', 'amsfonts', 'amscd', 'mathtools' },
+            },
+        },
+
+        convert = {
+            magick = {
+                math = {
+                    '-density', '600',
+                    '{src}[{page}]',
+                    '-trim',
+                    '+repage',
+                    '-scale', '150%',
+                },
+            },
+        },
+    }
+})
 
 -- FZF (fuzzy finder)
 
@@ -158,7 +185,7 @@ local function get_custom_search_location(opts)
     return loc
 end
 
-local other_file_dir
+local other_search_dir
 local function search_other_dir()
     other_search_dir = get_custom_search_location({ default = other_search_dir })
     if other_search_dir ~= nil then
@@ -170,7 +197,7 @@ local other_grep_dir
 local function grep_other_dir()
     other_grep_dir = get_custom_search_location({ default = other_grep_dir, prompt = '> Grep location:' })
     if other_grep_dir ~= nil then
-        fzf.live_grep({ cwd = other_search_dir })
+        fzf.live_grep({ cwd = other_grep_dir })
     end
 end
 
@@ -377,7 +404,6 @@ vim.lsp.config('zls', {
 vim.lsp.config('jsonls', {
     settings = { json = { validate = { enable = true } } },
 })
-vim.lsp.config('cmake', {})
 
 vim.lsp.enable({
     'clangd',
@@ -386,7 +412,8 @@ vim.lsp.enable({
     'slang',
     'zls',
     'jsonls',
-    'cmake',
+    'marksman',
+    'pyright',
 })
 
 -- TMUX (better integration with the terminal session)
@@ -535,8 +562,8 @@ if vim.fn.executable('gdb') == 1 then
     })
 end
 table.insert(dap.configurations.cpp, {
-    name    = 'Attach ot process',
-    type    = 'codellldb',
+    name    = 'Attach to process',
+    type    = 'codelldb',
     request = 'attach',
     pid     = require('dap.utils').pick_process,
     args    = {},
@@ -662,9 +689,14 @@ vim.keymap.set('n', '<leader>dx', eval_expr, { desc = '[d]ebug eval e[x]pression
 
 -- Terminal based markdown rendering
 require('render-markdown').setup({
-    completions = { lsp = { enabled = true } },
+    completions = {
+        blink = { enabled = true },
+        lsp = { enabled = true },
+    },
     file_types = { 'markdown', 'Avante', 'codecompanion' }
 })
+
+require('nvim-toc').setup({})
 
 -- Gitsigns (git info in the gutter and inline)
 require('gitsigns').setup({ current_line_blame = true })
