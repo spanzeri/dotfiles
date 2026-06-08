@@ -8,15 +8,6 @@ local function plugin_hook(ev)
     local name, kind = ev.data.spec.name, ev.data.kind
     local update_infos = {
         { name = 'nvim-treesitter', command = 'TSUpdate' },
-        {
-            name = 'avante',
-            syscommand = function()
-                return vim.fn.has('win32') == 0
-                    and { 'powershell', '-ExecutionPolicy', 'Bypass', '-File', 'Build.ps1', '-BuildFromSource', 'false'}
-                    or { 'make' }
-            end
-        },
-        { name = 'blink.cmp', syscommand = { 'cargo', 'build', '--release' } },
     }
     local function get_cmd(cmd)
         if cmd == nil then
@@ -64,7 +55,7 @@ vim.pack.add({
     'https://github.com/nvim-treesitter/nvim-treesitter',
     'https://github.com/nvim-treesitter/nvim-treesitter-textobjects',
     'https://github.com/sar/friendly-snippets.nvim',
-    'https://github.com/Saghen/blink.cmp',
+    { src = 'https://github.com/Saghen/blink.cmp', version = 'v1' },
     'https://github.com/neovim/nvim-lspconfig',
     'https://github.com/williamboman/mason.nvim',
     'https://github.com/aserowy/tmux.nvim',
@@ -75,9 +66,9 @@ vim.pack.add({
     'https://github.com/MeanderingProgrammer/render-markdown.nvim',
     'https://github.com/richardbizik/nvim-toc',
     'https://github.com/MunifTanjim/nui.nvim',
-    'https://github.com/yetone/avante.nvim',
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/esmuellert/codediff.nvim',
+    'https://github.com/milanglacier/minuet-ai.nvim',
 })
 
 -- Load built-in and personal plugins
@@ -94,6 +85,8 @@ require('mini.surround').setup()
 require('mini.splitjoin').setup()
 require('mini.icons').setup()
 require('mini.align').setup()
+require('mini.notify').setup()
+require('mini.cmdline').setup()
 
 local mini_statusline = require('mini.statusline')
 mini_statusline.setup({ use_icons = true })
@@ -130,6 +123,7 @@ require('snacks').setup({
         },
     }
 })
+
 
 -- FZF (fuzzy finder)
 
@@ -286,10 +280,16 @@ ts_select('as', '@local.scope')
 -- Blink (auto-completion)
 
 require('blink.cmp').setup({
-    fuzzy = { implementation = "prefer_rust_with_warning" },
+    cmdline    = { enabled        = true, },
     completion = {
         list = { selection = { preselect = false } },
     },
+    sources    = {
+        default = { 'lsp', 'path', 'buffer', 'snippets' },
+    },
+    accept = {
+        auto_brackets = { enabled = true },
+    }
 })
 
 
@@ -404,6 +404,14 @@ vim.lsp.config('zls', {
 vim.lsp.config('jsonls', {
     settings = { json = { validate = { enable = true } } },
 })
+
+vim.diagnostic.config({
+    virtual_lines = true,
+})
+vim.keymap.set('n', 'gK', function()
+    local new_config = not vim.diagnostic.config().virtual_lines
+    vim.diagnostic.config({ virtual_lines = new_config })
+end, { desc = 'Toggle diagnostic virtual lines' })
 
 vim.lsp.enable({
     'clangd',
@@ -693,7 +701,7 @@ require('render-markdown').setup({
         blink = { enabled = true },
         lsp = { enabled = true },
     },
-    file_types = { 'markdown', 'Avante', 'codecompanion' }
+    file_types = { 'markdown', 'codecompanion' }
 })
 
 require('nvim-toc').setup({})
@@ -703,6 +711,46 @@ require('gitsigns').setup({ current_line_blame = true })
 
 -- Codediff (better diff views)
 require('codediff').setup({})
+
+-- Minuet (local AI autocompletion)
+require('minuet').setup({
+    -- Use virtual text for AI
+    virtualtext = {
+        auto_trigger_ft = {'go', 'c', 'cpp', 'python', 'rust', 'odin'},
+        keymap = {
+            accept_line = '<A-y>',
+            accept = '<A-a>',
+            dismiss = '<A-e>',
+        },
+    },
+
+    -- Local provider (llama.cpp)
+    provider = 'openai_fim_compatible',
+    n_completions = 1, -- recommend for local model for resource saving
+    context_window = 4096,
+    provider_options = {
+        openai_fim_compatible = {
+            api_key = 'TERM',
+            name = 'llama.cpp',
+            end_point = 'http://localhost:8001/v1/completions',
+            model = 'PLACEHOLDER',
+            optional = {
+                max_tokens = 56,
+                top_p = 0.9,
+            },
+            template = {
+                prompt = function(context_before_cursor, context_after_cursor, _)
+                    return '<|fim_prefix|>'
+                        .. context_before_cursor
+                        .. '<|fim_suffix|>'
+                        .. context_after_cursor
+                        .. '<|fim_middle|>'
+                end,
+                suffix = false,
+            },
+        },
+    },
+})
 
 -- HL-comments (my own plugin to highlight TODO comments)
 require('hl-comments').setup({})

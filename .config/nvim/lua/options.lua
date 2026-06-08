@@ -1,7 +1,5 @@
 -- =============================================================================
--- Options
--- =============================================================================
-
+-- Options =============================================================================
 vim.o.number            = true
 vim.o.relativenumber    = true
 vim.o.mouse             = 'a'                         -- Enable mouse
@@ -34,7 +32,7 @@ vim.o.smartcase         = true
 vim.o.splitright        = true                        -- Make sure new split opens below and right
 vim.o.splitbelow        = true
 
-vim.o.completeopt       = "menuone,fuzzy,noinsert"    -- Completion options
+vim.o.completeopt       = "menuone,noselect,fuzzy,nosort" -- Completion options
 vim.o.showmode          = false                       -- Do not show the mode, instead have it in statusline
 vim.o.pumheight         = 10                          -- Popup menu height
 vim.o.pumblend          = 10                          -- Popup menu transparency
@@ -43,6 +41,6 @@ vim.o.conceallevel      = 0                           -- Do not hide markup
 vim.o.concealcursor     = ""                          -- Do not hide cursorline in markup
 vim.o.synmaxcol         = 300                         -- Syntax highlighting limit
 
--- Enable the new experimental UI
-require('vim._core.ui2').enable({})
+local odin_error_format = '%f(%l:%c) %t%*[^:]: %m,%f(%l:%c) %m'
+vim.o.errorformat = vim.o.errorformat .. ',' .. odin_error_format
 

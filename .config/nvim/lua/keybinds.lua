@@ -39,15 +39,6 @@ vim.keymap.set({ 'n', 'v' }, '<leader>x', [["_d]], { desc = 'Delete without yank
 
 -- Diagnostic keymaps
 
-local diagnostic_float = function(count)
-    return function()
-        vim.diagnostic.jump {
-            count = count,
-            float = true,
-        }
-    end
-end
-
 vim.keymap.set('n', '<leader>ef', vim.diagnostic.open_float, { desc = 'Show diagnostic [f]loat' })
 vim.keymap.set('n', '<leader>el', vim.diagnostic.setloclist, { desc = 'Move diagnostics to [l]oclist' })
 vim.keymap.set('n', '<leader>ee', vim.cmd.cc, { desc = 'go to first [e]rror' })
@@ -88,6 +79,7 @@ local set_mkprg = function()
         completion = 'compiler'
     })
     if mp ~= nil and mp ~= '' then
+        mp:gsub('\\+', '\\\\+')
         vim.o.makeprg = mp
     end
 end
@@ -103,7 +95,7 @@ if not has_make_plugin then
         local curr_win = vim.api.nvim_get_current_win()
         -- This saves all files (wa), runs the make command and open the qf list if
         -- there are errors, closes it otherwise.
-        vim.cmd [[silent! wa | make | botright cwindow 24]]
+        vim.cmd [[silent! wa | make | botright cwindow 20]]
         vim.api.nvim_set_current_win(curr_win)
         -- Time end
         local elapsed    = (vim.loop.hrtime() - start_time) * 1e-6

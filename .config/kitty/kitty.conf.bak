@@ -1,18 +1,17 @@
 # font_family         family="Berkeley Mono"
-# font_family         family="Codelia" style="Light"
-# font_family         family="Roboto Mono" style="Light"
-# font_family         family="Jetbrains Mono"
-font_family         family="Iosevka" style="Light Extended"
-# font_family         family="Hurmit Nerd Font"
-# font_family         family="BlexMono Nerd Font"
-# font_family         family="SF Mono"
-# font_family         family="Monaco"
-font_size           14
-
-bold_font           auto
-italic_font         auto
-bold_italic_font    auto
-disable_ligatures   always
+# font_family         family="Codelia"
+# font_family         family="Comic Code"
+# font_family         family="Hurmit Nerd Font" style="Light"
+# font_family         family="Monofur Nerd Font"
+# font_family         family="Roboto Mono"
+# font_family         family="Cascadia Code" style="Light"
+# font_family         family="RobotoMono Nerd Font"
+font_family         family="Iosevka" style="Extended"
+font_size           12
+# bold_font           auto
+# italic_font         auto
+# bold_italic_font    auto
+# disable_ligatures   always
 
 mouse_hide_wait     2.0
 url_style           dotted
@@ -28,7 +27,7 @@ cursor_trail_start_threshold    25
 
 # Close the terminal without confirmation
 confirm_os_window_close 0
-background_opacity      0.98
+background_opacity      0.99
 
 # Default size
 initial_window_width    1280
@@ -55,6 +54,7 @@ symbol_map U+e000-U+e00a,U+ea60-U+ebeb,U+e0a1-U+e0c8,U+e0ca,U+e0cc-U+e0d7,U+e200
 
 
 # BEGIN_KITTY_THEME
-# Solarized Darcula
+# One Dark
 include current-theme.conf
 # END_KITTY_THEME
+

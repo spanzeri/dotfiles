@@ -1,12 +1,9 @@
 {
   "plugins": {
-    "avante.nvim": {
-      "rev": "8c84af0f09e5d9058362ac58401a8e7b047d826e",
-      "src": "https://github.com/yetone/avante.nvim"
-    },
     "blink.cmp": {
-      "rev": "b4b7cbb52bab6c716b317433fa9348a070cccee5",
-      "src": "https://github.com/Saghen/blink.cmp"
+      "rev": "78336bc89ee5365633bcf754d93df01678b5c08f",
+      "src": "https://github.com/Saghen/blink.cmp",
+      "version": "'v1'"
     },
     "codediff.nvim": {
       "rev": "832f1ecc5f8b15a44cf7537e31d3266d657775b1",
@@ -35,6 +32,10 @@
     "mini.nvim": {
       "rev": "402ee6c6ec8ea44b22330446c8fb4e615fd3953e",
       "src": "https://github.com/nvim-mini/mini.nvim"
+    },
+    "minuet-ai.nvim": {
+      "rev": "d29dec4c36be2b41aa10e70938b7b09a03f0bdba",
+      "src": "https://github.com/milanglacier/minuet-ai.nvim"
     },
     "nui.nvim": {
       "rev": "de740991c12411b663994b2860f1a4fd0937c130",

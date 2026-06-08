@@ -7,6 +7,9 @@
 ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝    ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝
 --]]
 
+-- Enable the new experimental UI
+require('vim._core.ui2').enable({})
+
 vim.g.mapleader      = ' '
 vim.g.maplocalleader = ' '
 
@@ -80,3 +83,14 @@ vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' },
         desc = 'Options to set when opening or entering a buffer',
     })
 
+
+vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' },
+    {
+        callback = function()
+            if vim.bo.filetype == 'dapui_console' then
+                vim.wo.wrap = true
+            end
+        end,
+        group = command_group,
+        desc = 'Options to set when opening or entering a buffer',
+    })

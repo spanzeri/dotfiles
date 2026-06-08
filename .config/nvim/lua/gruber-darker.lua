@@ -352,6 +352,9 @@ function M.load()
     hi("CmpItemKindKeyword",    c.yellow, c.none)
     hi("CmpItemKindText",       c.fg,     c.none)
     hi("CmpItemKindModule",     c.steel,  c.none)
+
+    -- ── Plugin: minuet ──────────────────────────────────────────────────
+    link("MinuetVirtualText", "NonText")
 end
 
 return M
