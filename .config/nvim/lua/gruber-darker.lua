@@ -267,6 +267,7 @@ function M.load()
     link("@lsp.type.decorator",   "@attribute")
     link("@lsp.mod.deprecated",   "DiagnosticUnderlineError")
     link("@lsp.mod.readonly",     "@constant")
+    link("@lsp.typemod.method.readonly",    "@function.method")
 
     -- ── Plugin: gitsigns ────────────────────────────────────────────────
     hi("GitSignsAdd",    c.green, c.none)

@@ -68,7 +68,8 @@ vim.pack.add({
     'https://github.com/MunifTanjim/nui.nvim',
     'https://github.com/lewis6991/gitsigns.nvim',
     'https://github.com/esmuellert/codediff.nvim',
-    'https://github.com/milanglacier/minuet-ai.nvim',
+    'https://github.com/lukas-reineke/indent-blankline.nvim',
+    'https://github.com/rluba/jai.vim',
 })
 
 -- Load built-in and personal plugins
@@ -232,11 +233,12 @@ vim.keymap.set('n', '-', '<CMD>Oil<CR>', { desc = 'Open file browser' })
 -- Treesitter (parser)
 
 vim.api.nvim_create_autocmd('FileType', {
-    callback = function()
-        -- Enable treesitter highlighting
-        pcall(vim.treesitter.start)
-        -- Enable treesitter indentation
-        vim.bo.indentexpr = 'v:lua.require(\'nvim-treesitter\').indentexpr()'
+    callback = function(args)
+        -- Enable treesitter highlighting; only take over indentation when a
+        -- parser exists, so filetypes with their own indent (e.g. jai) keep it.
+        if pcall(vim.treesitter.start) then
+            vim.bo[args.buf].indentexpr = 'v:lua.require(\'nvim-treesitter\').indentexpr()'
+        end
     end,
     group = command_group,
 })
@@ -282,14 +284,12 @@ ts_select('as', '@local.scope')
 require('blink.cmp').setup({
     cmdline    = { enabled        = true, },
     completion = {
-        list = { selection = { preselect = false } },
+        list   = { selection = { preselect = false } },
+        accept = { auto_brackets = { enabled = false }, },
     },
     sources    = {
         default = { 'lsp', 'path', 'buffer', 'snippets' },
     },
-    accept = {
-        auto_brackets = { enabled = true },
-    }
 })
 
 
@@ -302,13 +302,13 @@ vim.api.nvim_create_autocmd('LspAttach', {
             vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
         end
 
-        map('gd',         FzfLua.lsp_definitions,       '[g]oto [d]efinition')
-        map('gD',         FzfLua.lsp_declarations,      '[g]oto [D]eclaration')
-        map('gr',         FzfLua.lsp_references,        '[g]oto [r]eferences')
-        map('gi',         FzfLua.lsp_implementations,   '[g]oto [i]mplementation')
-        map('<leader>ss', FzfLua.lsp_document_symbols,  '[s]earch document [s]ymbols')
-        map('<leader>sS', FzfLua.lsp_workspace_symbols, '[s]earch workspace [S]ymbols')
-        map('<leader>D',  FzfLua.lsp_typedefs,          'goto type [d]efinitions')
+        map('gd',         fzf.lsp_definitions,       '[g]oto [d]efinition')
+        map('gD',         fzf.lsp_declarations,      '[g]oto [D]eclaration')
+        map('gr',         fzf.lsp_references,        '[g]oto [r]eferences')
+        map('gi',         fzf.lsp_implementations,   '[g]oto [i]mplementation')
+        map('<leader>ss', fzf.lsp_document_symbols,  '[s]earch document [s]ymbols')
+        map('<leader>sS', fzf.lsp_workspace_symbols, '[s]earch workspace [S]ymbols')
+        map('<leader>D',  fzf.lsp_typedefs,          'goto type [d]efinitions')
         map('<leader>cr', vim.lsp.buf.rename,           '[c]ode [r]ename')
         map('<leader>ca', vim.lsp.buf.code_action,      '[c]ode [a]ction')
 
@@ -344,7 +344,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end
 
         -- Clangd extensions
-        local function on_clangd_switch_source_header(err, uri)
+        local function on_clangd_switch_source_header(_, uri)
             if not uri or uri == '' then
                 vim.api.nvim_echo({ { 'No source/header found', 'WarningMsg' } }, true, {})
                 return
@@ -404,6 +404,11 @@ vim.lsp.config('zls', {
 vim.lsp.config('jsonls', {
     settings = { json = { validate = { enable = true } } },
 })
+vim.lsp.config('jails', {
+    cmd = { 'jails' },
+    filetypes = { 'jai' },
+    root_markers = { 'first.jai', 'build.jai', '.git' },
+})
 
 vim.diagnostic.config({
     virtual_lines = true,
@@ -420,6 +425,7 @@ vim.lsp.enable({
     'slang',
     'zls',
     'jsonls',
+    'jails',
     'marksman',
     'pyright',
 })
@@ -712,43 +718,20 @@ require('gitsigns').setup({ current_line_blame = true })
 -- Codediff (better diff views)
 require('codediff').setup({})
 
--- Minuet (local AI autocompletion)
-require('minuet').setup({
-    -- Use virtual text for AI
-    virtualtext = {
-        auto_trigger_ft = {'go', 'c', 'cpp', 'python', 'rust', 'odin'},
-        keymap = {
-            accept_line = '<A-y>',
-            accept = '<A-a>',
-            dismiss = '<A-e>',
-        },
-    },
+-- Ident guidelines
+local ibl_hooks = require('ibl.hooks')
+ibl_hooks.register(ibl_hooks.type.HIGHLIGHT_SETUP, function()
+    vim.api.nvim_set_hl(0, 'IBLActiveScope', { fg = '#999999' })
+end)
 
-    -- Local provider (llama.cpp)
-    provider = 'openai_fim_compatible',
-    n_completions = 1, -- recommend for local model for resource saving
-    context_window = 4096,
-    provider_options = {
-        openai_fim_compatible = {
-            api_key = 'TERM',
-            name = 'llama.cpp',
-            end_point = 'http://localhost:8001/v1/completions',
-            model = 'PLACEHOLDER',
-            optional = {
-                max_tokens = 56,
-                top_p = 0.9,
-            },
-            template = {
-                prompt = function(context_before_cursor, context_after_cursor, _)
-                    return '<|fim_prefix|>'
-                        .. context_before_cursor
-                        .. '<|fim_suffix|>'
-                        .. context_after_cursor
-                        .. '<|fim_middle|>'
-                end,
-                suffix = false,
-            },
-        },
+require('ibl').setup({
+    indent = {
+        smart_indent_cap = true,
+    },
+    scope = {
+        show_start = false,
+        show_end = false,
+        highlight = { 'IBLActiveScope' },
     },
 })
 
