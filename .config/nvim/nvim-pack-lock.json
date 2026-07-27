@@ -69,6 +69,10 @@
       "rev": "21f5324bfac14e22ba26553caf69ec76ae8a7662",
       "src": "https://github.com/nvim-neotest/nvim-nio"
     },
+    "nvim-spider": {
+      "rev": "7f021426d4a615ea8f11cabed434b1f20376abae",
+      "src": "https://github.com/chrisgrieser/nvim-spider"
+    },
     "nvim-toc": {
       "rev": "2c0d90ee572780e0ae4632c93d0423f67032d024",
       "src": "https://github.com/richardbizik/nvim-toc"
@@ -100,6 +104,10 @@
     "tmux.nvim": {
       "rev": "2c1c3be0ef287073cef963f2aefa31a15c8b9cd8",
       "src": "https://github.com/aserowy/tmux.nvim"
+    },
+    "which-key.nvim": {
+      "rev": "3aab2147e74890957785941f0c1ad87d0a44c15a",
+      "src": "https://github.com/folke/which-key.nvim"
     }
   }
 }

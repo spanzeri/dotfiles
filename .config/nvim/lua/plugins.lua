@@ -70,6 +70,8 @@ vim.pack.add({
     'https://github.com/esmuellert/codediff.nvim',
     'https://github.com/lukas-reineke/indent-blankline.nvim',
     'https://github.com/rluba/jai.vim',
+    'https://github.com/folke/which-key.nvim',
+    'https://github.com/chrisgrieser/nvim-spider',
 })
 
 -- Load built-in and personal plugins
@@ -734,6 +736,9 @@ require('ibl').setup({
         highlight = { 'IBLActiveScope' },
     },
 })
+
+require('which-key').setup({})
+require('spider').setup({})
 
 -- HL-comments (my own plugin to highlight TODO comments)
 require('hl-comments').setup({})

@@ -57,11 +57,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     group = command_group,
 })
 
-require('gruber-darker').setup({
+require('vs-dark').setup({
     transparent = true,
     italic = false,
 })
-vim.cmd('colorscheme gruber-darker')
+vim.cmd('colorscheme vs-dark')
 
 vim.api.nvim_set_hl(0, "Normal", { bg = nil })
 vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" },
