@@ -44,21 +44,21 @@ function M.load()
         accent_lt = "#4cc2ff", -- VS light accent
 
         -- Editor classifications
-        blue      = "#569cd6", -- keywords, builtin types, tags
-        purple    = "#d8a0df", -- control-flow keywords
+        blue      = "#5c9bc9", -- keywords, builtin types, tags
+        purple    = "#d7a0de", -- control-flow keywords
         salmon    = "#d69d85", -- strings
-        green     = "#57a64a", -- comments
+        green     = "#58a64a", -- comments
         green_doc = "#608b4e", -- doc comments
         num       = "#b5cea8", -- numbers
-        teal      = "#4abf97", -- classes, types, namespaces
+        teal      = "#4cbbb1", -- classes, types, namespaces
         lgreen    = "#b8d7a3", -- interfaces, enums, constants
         sgreen    = "#86c691", -- structs
         yellow    = "#dcdcaa", -- methods
         sky       = "#9cdcfe", -- parameters, xml attributes
         gold      = "#d7ba7d", -- escapes, regex bits, current search
-        mauve     = "#bd63c5", -- macros
+        mauve     = "#beb7ff", -- macros
         op        = "#b4b4b4", -- operators
-        lnum      = "#45707e", -- line numbers (VS tints these teal)
+        lnum      = "#8a8a8a", -- line numbers
         lnum_cur  = "#2b91af", -- current line number
 
         -- Diagnostics / VCS
