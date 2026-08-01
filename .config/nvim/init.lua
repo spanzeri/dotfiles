@@ -57,6 +57,29 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     group = command_group,
 })
 
+-- Reload files changed outside of nvim (needs 'autoread', see options.lua)
+vim.api.nvim_create_autocmd({ 'FocusGained', 'BufEnter', 'CursorHold', 'CursorHoldI', 'TermLeave' },
+    {
+        callback = function()
+            -- checktime errors out in the command-line window and is pointless
+            -- for buffers not backed by a file (terminals, scratch, ...)
+            if vim.fn.getcmdwintype() ~= '' then return end
+            if vim.bo.buftype ~= '' then return end
+            vim.cmd('checktime')
+        end,
+        group = command_group,
+        desc = 'Check for external file changes',
+    })
+
+vim.api.nvim_create_autocmd('FileChangedShellPost',
+    {
+        callback = function()
+            vim.notify('File changed on disk, buffer reloaded', vim.log.levels.WARN)
+        end,
+        group = command_group,
+        desc = 'Warn when a buffer got reloaded from disk',
+    })
+
 require('vs-dark').setup({
     transparent = true,
     italic = false,
