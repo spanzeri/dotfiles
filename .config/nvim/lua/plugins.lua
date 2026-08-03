@@ -202,6 +202,81 @@ local function search_config()
     fzf.files({ cwd = vim.fn.stdpath('config') })
 end
 
+-- Directory holding the given compiler, when it can be found on the PATH.
+-- Symlinks are resolved: what is on the PATH is often just a link pointing
+-- into the actual installation, which is where the library lives.
+local function compiler_dir(exe)
+    local path = vim.fn.exepath(exe)
+    if path == nil or #path == 0 then
+        return nil
+    end
+    return vim.fs.dirname(vim.uv.fs_realpath(path) or path)
+end
+
+-- Standard library location per filetype. Each entry returns the directory to
+-- search, or nil when the platform has no known default.
+local library_locations = {
+    odin = function()
+        -- On Windows the compiler ships as a zip, so it can live anywhere.
+        if vim.fn.has('win32') == 1 then
+            return compiler_dir('odin.exe')
+        end
+        if vim.fn.has('mac') == 1 then
+            return nil
+        end
+        return '/usr/lib/odin'
+    end,
+
+    -- Jai has no fixed install location: derive it from the compiler on PATH.
+    -- The compiler sits in 'bin', one level below the install root that holds
+    -- modules, how_to, examples and the rest.
+    jai = function()
+        local exe = 'jai-linux'
+        if vim.fn.has('win32') == 1 then
+            exe = 'jai.exe'
+        elseif vim.fn.has('mac') == 1 then
+            exe = 'jai-macos'
+        end
+        local bin = compiler_dir(exe)
+        if bin == nil then
+            return nil
+        end
+        return vim.fs.dirname(bin)
+    end,
+}
+
+-- Resolve the library of the current buffer, notifying when there is none.
+local function get_library_location()
+    local filetype = vim.bo.filetype
+    local get_location = library_locations[filetype]
+    if get_location == nil then
+        vim.notify('No library search for filetype: '..filetype, vim.log.levels.WARN)
+        return nil
+    end
+
+    local location = get_location()
+    if location == nil or vim.fn.isdirectory(location) == 0 then
+        vim.notify('Library not found for filetype: '..filetype, vim.log.levels.WARN)
+        return nil
+    end
+
+    return location
+end
+
+local function search_library()
+    local location = get_library_location()
+    if location ~= nil then
+        fzf.files({ cwd = location })
+    end
+end
+
+local function grep_library()
+    local location = get_library_location()
+    if location ~= nil then
+        fzf.live_grep({ cwd = location })
+    end
+end
+
 vim.keymap.set('n', '<leader>sf',       fzf.files,        { desc = '[s]earch [f]ile' })
 vim.keymap.set('n', '<leader>sb',       fzf.buffers,      { desc = '[s]earch [b]uffers' })
 vim.keymap.set('n', '<leader>sh',       fzf.helptags,     { desc = '[s]earch [h]elp' })
@@ -215,6 +290,9 @@ vim.keymap.set('n', '<leader>sg',       fzf.live_grep,    { desc = '[s]earch [g]
 vim.keymap.set('n', '<leader>sG',       grep_other_dir,   { desc = '[s]earch [G]rep other directory' })
 vim.keymap.set('n', '<leader>sc',       fzf.resume,       { desc = '[s]earch [c]ontinue last' })
 vim.keymap.set('n', '<leader>sx',       fzf.builtin,      { desc = '[s]earch [x]: all available pickers' })
+vim.keymap.set('n', '<leader>/',        fzf.grep_curbuf,  { desc = 'search current buffer' })
+vim.keymap.set('n', '<leader>sl',       search_library,   { desc = '[s]earch [l]ibrary' })
+vim.keymap.set('n', '<leader>sL',       grep_library,     { desc = '[s]earch [L]ibrary grep' })
 vim.keymap.set('n', '<leader><leader>', fzf.global,       { desc = 'Global search' })
 
 -- OIL (manage files and directories like a text buffer)
