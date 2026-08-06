@@ -31,7 +31,7 @@ function M.load()
         bg4       = "#4a4a4e", -- brighter border / scrollbar thumb
 
         -- Text
-        fg        = "#dcdcdc", -- plain text
+        fg        = "#d9d9d9", -- plain text
         fg1       = "#f1f1f1", -- emphasised text
         fg_dim    = "#9b9b9b", -- preprocessor, muted UI text
         gray      = "#6a6a6a", -- comments-adjacent chrome, whitespace

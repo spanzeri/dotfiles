@@ -58,8 +58,34 @@ execute 'syntax region jaiTypeUse oneline keepend'
       \ . ':@<!:[:=]@!\s*' . s:mods . s:kw . '%(\h)@="'
       \ . ' matchgroup=NONE end="\v' . s:name . '"'
 
-" `-> TYPE` and `-> (TYPE, ...`
-execute 'syntax match jaiTypeUse "\v-\>\s*\(?\s*' . s:mods . '\zs' . s:name . '" display'
+" Return lists. All four spellings are legal, and they mix freely:
+"   -> t1, t2                 -> (t1, t2)
+"   -> n1: t1, n2: t2         -> (n1: t1, n2: t2 = default)
+"   -> t1, n2: t2             -> (t1, n2 := default)
+"
+" This is a `match` rather than a `region` on purpose: a region's start pattern
+" is consumed and becomes invisible to its contained items, so a contained rule
+" could not anchor on the `->` that introduced it. Inside a match the whole
+" matched text stays visible, so one rule covers the `->`, `(` and `,`
+" positions uniformly. The lazy match stops at `{`, `;` or `//` so a function
+" body's (or a trailing comment's) commas are never read as list separators.
+"
+" `contains=TOP,jaiReturnList` reads as "TOP *excluding* jaiReturnList" -- in a
+" contains list every name after TOP/ALLBUT/CONTAINED is an exclusion, never an
+" inclusion. Excluding itself is what stops the rule from nesting inside itself
+" at the same column and swallowing the `->` its own children anchor on; TOP
+" then lets every ordinary rule, notably the `x: TYPE` region that handles the
+" named forms, still apply inside. The two rules below opt in via containedin.
+syntax match jaiReturnList "\v-\>.{-}\ze%([{;]|//|$)"
+      \ contains=TOP,jaiReturnList display
+" An unnamed return type: opens the list or follows a comma, and is *not*
+" followed by `:` -- that would make it a return name, not a type.
+execute 'syntax match jaiReturnType "\v%(-\>|[(,])\s*' . s:mods . s:kw
+      \ . '\zs' . s:name . '%(\s*:)@!" contained containedin=jaiReturnList display'
+" A named return. Claiming the name here keeps it an Identifier; without it the
+" first name in the list would be coloured as though it were the type.
+syntax match jaiReturnName "\v%(-\>|[(,])\s*\zs<\h\w*>%(\s*:)@="
+      \ contained containedin=jaiReturnList display
 
 " `cast(TYPE)`, `size_of(TYPE)`, ... -- anchored on the `(` because a keyword
 " always outranks a match that starts at the same column.
@@ -91,5 +117,7 @@ if get(g:, 'jai_uppercase_constants', 1)
 endif
 
 highlight def link jaiTypeUse Type
+highlight def link jaiReturnType Type
+highlight def link jaiReturnName Identifier
 highlight def link jaiTypeDeclaration Type
 highlight def link jaiEnumLiteral Constant
