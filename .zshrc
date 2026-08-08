@@ -28,5 +28,3 @@ source $XDG_CONFIG_HOME/zsh/zshrc
 export PATH="$PATH:/home/sam/.lmstudio/bin"
 # End of LM Studio CLI section
 
-
-. "$HOME/.local/share/../bin/env"
