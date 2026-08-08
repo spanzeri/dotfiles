@@ -1,2 +1,14 @@
 emacs/.emacs.d/**
 !emacs/.emacs.d/init.el
+
+# OrcaSlicer — runtime/generated state, never version this.
+# Matters because if stow folds .config/OrcaSlicer into a single symlink (it will
+# on a machine where that directory does not already exist), the app writes all of
+# this straight into the repo. See README.
+.config/OrcaSlicer/log/
+.config/OrcaSlicer/cache/
+.config/OrcaSlicer/ota/
+.config/OrcaSlicer/system/
+.config/OrcaSlicer/printers/
+.config/OrcaSlicer/user_backup-*/
+.config/OrcaSlicer/*.sec

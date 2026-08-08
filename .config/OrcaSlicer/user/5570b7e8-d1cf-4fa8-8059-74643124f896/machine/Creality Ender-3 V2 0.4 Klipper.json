@@ -1,0 +1,35 @@
+{
+	"from": "User",
+	"gcode_flavor": "klipper",
+	"inherits": "Creality Ender-3 V2 0.4 nozzle",
+	"machine_max_acceleration_extruding": [
+		"800",
+		"500"
+	],
+	"machine_max_acceleration_x": [
+		"2000",
+		"500"
+	],
+	"machine_max_acceleration_y": [
+		"2000",
+		"500"
+	],
+	"machine_max_speed_e": [
+		"100",
+		"60"
+	],
+	"name": "Creality Ender-3 V2 0.4 Klipper",
+	"print_host": "192.168.1.69",
+	"printable_height": "230",
+	"printer_extruder_id": [
+		"1"
+	],
+	"printer_extruder_variant": [
+		"Direct Drive Standard"
+	],
+	"printer_settings_id": "Creality Ender-3 V2 0.4 Klipper",
+	"retraction_length": [
+		"0.8"
+	],
+	"version": "2.3.2.74"
+}
