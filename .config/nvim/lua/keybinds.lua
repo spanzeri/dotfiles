@@ -58,6 +58,31 @@ end
 
 vim.keymap.set('n', '<leader>et', toggle_errors, { desc = '[e]rrors [t]oggle' })
 
+-- Close every error window of the current tab: the quickfix list, location lists
+-- (both have the 'quickfix' buftype, and :cclose leaves loclists behind) and
+-- make-away's compilation window.
+local close_all_errors = function()
+    for _, winnr in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+        local bufnr = vim.api.nvim_win_get_buf(winnr)
+        if vim.bo[bufnr].buftype == 'quickfix' then
+            -- Fails when it is the last window of the tab, nothing to do then
+            pcall(vim.api.nvim_win_close, winnr, true)
+        end
+    end
+
+    -- The *compilation* window is a scratch buffer, so the loop above misses it.
+    -- Required here (and not at the top) so this does not depend on make-away
+    -- being loaded when this file is sourced.
+    local has_make, make = pcall(require, 'make-away')
+    if has_make then
+        make.close()
+    end
+end
+
+-- Requires the terminal to forward S-Esc: kitty does it natively, tmux needs
+-- 'extended-keys on' and the 'extkeys' terminal feature (see .tmux.conf)
+vim.keymap.set('n', '<S-Esc>', close_all_errors, { desc = '[e]rrors close (quickfix, loclist, compilation)' })
+
 -- Keybinds to make split navigation easier.
 --  Use CTRL+<hjkl> to switch between windows
 local tmux = require('tmux')

@@ -10,12 +10,6 @@ else
 	return 1
 fi
 
-if [[ -f $XDG_DATA_HOME/.env ]]; then
-    source $XDG_DATA_HOME/.env
-else
-    echo "Missing ENV file. Make sure this is intentional"
-fi
-
 # load_file "prompt.zsh"
 
 load_plugin "zsh-users" "zsh-syntax-highlighting"
@@ -35,7 +29,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:~/.local/lib:$LD_LIBRARY_PATH
 #
 alias vim="nvim"
 export EDITOR=nvim
-export CMAKE_GENERATOR="Ninja"
+export CMAKE_GENERATOR="Ninja Multi-Config"
 export ANDROID_HOME=$HOME/Android/Sdk
 export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.13846066
 
@@ -66,3 +60,7 @@ precmd_function+=(fix_cursor_shape)
 zle -N zle-keymap-select fix_cursor_shape
 eval $(ssh-agent) >/dev/null
 eval "$(starship init zsh)"
+
+export LIBVA_DRIVER_NAME=nvidia
+export NVD_BACKEND=direct
+

@@ -540,7 +540,7 @@ local dap = require('dap') local dapui = require('dapui') dapui.setup({ controls
                     size = 0.25
                 }
             },
-            position = 'left',
+            position = 'right',
             size = 50,
         }, {
             elements = { {
@@ -573,8 +573,9 @@ local function set_dap_cwd()
     })
     if new_dir == nil or new_dir == '' then
         cwd = nil
+    else
+        cwd = new_dir
     end
-    cwd = new_dir
 end
 
 if vim.fn.executable('gdb') == 1 then
