@@ -1,27 +1,10 @@
--- lua/vs-dark.lua
--- VS Dark — Neovim theme inspired by Visual Studio 2026's Dark theme
--- Fluent-era chrome greys + the classic Visual Studio editor classification
--- colours (blue keywords, purple control flow, salmon strings, green comments).
+-- lua/vs.lua
+-- VS — Neovim theme inspired by Visual Studio 2026's Dark and Light themes.
+-- Fluent-era chrome + the classic Visual Studio editor classification colours
+-- (blue keywords, purple control flow, brick strings, green comments).
 
-local M = {}
-
-M.config = {
-    transparent = false,
-    italic = true,
-}
-
-function M.setup(opts)
-    M.config = vim.tbl_deep_extend("force", M.config, opts or {})
-end
-
-function M.load()
-    vim.cmd("hi clear")
-    if vim.fn.exists("syntax_on") == 1 then vim.cmd("syntax reset") end
-    vim.g.colors_name = "vs-dark"
-    vim.o.background = "dark"
-
-    local transparent = M.config.transparent
-    local c = {
+local palettes = {
+    dark = {
         -- Surfaces (Visual Studio 2026 Fluent dark chrome)
         bg        = "#1f1f1f", -- editor
         bg_dim    = "#181818", -- deepest chrome (tab strip, inactive)
@@ -72,9 +55,108 @@ function M.load()
         diff_chg  = "#1f2c3d",
         diff_txt  = "#2d4a6b",
 
+        match     = "#3a5379", -- MatchParen
+        dap_stop  = "#3a3a1f", -- DapStoppedLine
+
+        -- Separate from the classifications above: VS leaves numbers/methods plain.
+        ansi = {
+            "#1f1f1f", "#d16969", "#58a64a", "#d7ba7d",
+            "#5c9bc9", "#d7a0de", "#4cbbb1", "#d9d9d9",
+            "#6a6a6a", "#f44747", "#b5cea8", "#dcdcaa",
+            "#9cdcfe", "#beb7ff", "#4cc2ff", "#f1f1f1",
+        },
+
         white     = "#ffffff",
         none      = "NONE",
-    }
+    },
+
+    light = {
+        -- Surfaces. bg must track themes/vs-light.conf: transparent = true
+        -- means kitty paints the canvas, not us.
+        bg        = "#ffffff", -- editor
+        bg_dim    = "#f0f0f0", -- deepest chrome (tab strip, inactive)
+        bg1       = "#f5f5f5", -- cursorline / subtle surface
+        bg2       = "#efefef", -- panels, statusline, tabline
+        bg3       = "#e4e4e4", -- floats, popup menu, borders
+        bg4       = "#cbcbcb", -- stronger border / scrollbar thumb
+
+        -- Text
+        fg        = "#000000", -- plain text
+        fg1       = "#000000", -- emphasised text
+        fg_dim    = "#808080", -- preprocessor, muted UI text
+        gray      = "#808080", -- comments-adjacent chrome, whitespace
+
+        -- Selection / accents
+        sel       = "#add6ff", -- editor selection
+        sel_dim   = "#e5ebf1", -- inactive selection
+        find      = "#a8ac94", -- find match
+        accent    = "#0078d4", -- VS accent blue
+        accent_lt = "#005a9e", -- VS accent, darkened to stay legible on white
+
+        -- Editor classifications (Visual Studio Light)
+        blue      = "#0000ff", -- keywords
+        purple    = "#8f08c4", -- control-flow keywords
+        salmon    = "#a31515", -- strings
+        green     = "#008000", -- comments
+        green_doc = "#008000", -- doc comments
+        num       = "#000000", -- numbers -- likewise plain text in VS
+        teal      = "#2b91af", -- classes, types, namespaces
+        lgreen    = "#2b91af", -- interfaces, enums, constants
+        sgreen    = "#2b91af", -- structs
+        yellow    = "#000000", -- methods -- VS renders these as plain text
+        sky       = "#808080", -- parameters -- VS greys these
+        gold      = "#ee0000", -- escapes, regex bits, current search
+        mauve     = "#000000", -- macros -- UPROPERTY/GENERATED_BODY are plain in VS
+        op        = "#000000", -- operators
+        lnum      = "#2b91af", -- line numbers
+        lnum_cur  = "#0b216f", -- current line number
+
+        -- Diagnostics / VCS
+        red       = "#cd3131",
+        amber     = "#bf8803", -- warnings
+        info      = "#0067c0",
+        dim_red   = "#a31515",
+
+        diff_add  = "#e6ffec",
+        diff_del  = "#ffebe9",
+        diff_chg  = "#ddf0ff",
+        diff_txt  = "#b6e3ff",
+
+        match     = "#c8e1ff", -- MatchParen
+        dap_stop  = "#fff3c0", -- DapStoppedLine
+
+        -- Separate from the classifications above: VS leaves numbers/methods plain.
+        -- Brights go darker; on a white canvas the usual brightening vanishes.
+        ansi = {
+            "#000000", "#cd3131", "#008000", "#795e26",
+            "#0000ff", "#8f08c4", "#2b91af", "#6e7781",
+            "#808080", "#a31515", "#107c10", "#9b6e02",
+            "#0078d4", "#6f42c1", "#1b7c83", "#8c959f",
+        },
+
+        white     = "#ffffff",
+        none      = "NONE",
+    },
+}
+
+local M = {}
+
+M.config = {
+    transparent = false,
+    italic = true,
+}
+
+function M.setup(opts)
+    M.config = vim.tbl_deep_extend("force", M.config, opts or {})
+end
+
+function M.load()
+    vim.cmd("hi clear")
+    if vim.fn.exists("syntax_on") == 1 then vim.cmd("syntax reset") end
+    vim.g.colors_name = "vs"
+
+    local transparent = M.config.transparent
+    local c = palettes[vim.o.background] or palettes.dark
 
     -- When transparent, remove backgrounds from the groups that sit directly
     -- on the terminal canvas so the terminal background shows through.
@@ -191,7 +273,7 @@ function M.load()
     hi("WarningMsg", c.amber,  c.none, "bold")
     hi("Directory",  c.blue,   c.none, "bold")
     hi("Title",      c.accent_lt, c.none, "bold")
-    hi("MatchParen", c.fg1,    "#3a5379", "bold")
+    hi("MatchParen", c.fg1,    c.match,   "bold")
     hi("SpellBad",   c.none,   c.none, "undercurl")
     hi("SpellCap",   c.none,   c.none, "undercurl")
     hi("SpellRare",  c.none,   c.none, "undercurl")
@@ -514,7 +596,7 @@ function M.load()
     hi("DapBreakpointRejected",  c.gray,    c.none)
     hi("DapLogPoint",            c.info,    c.none)
     hi("DapStopped",             c.gold,    c.none)
-    hi("DapStoppedLine",         c.none,    "#3a3a1f")
+    hi("DapStoppedLine",         c.none,    c.dap_stop)
     hi("NvimDapVirtualText",     c.teal,    c.none, italic())
     hi("NvimDapVirtualTextChanged", c.gold, c.none, italic())
 
@@ -554,22 +636,9 @@ function M.load()
     link("MinuetVirtualText", "NonText")
 
     -- ── Terminal ────────────────────────────────────────────────────────
-    vim.g.terminal_color_0  = c.bg
-    vim.g.terminal_color_1  = c.dim_red
-    vim.g.terminal_color_2  = c.green
-    vim.g.terminal_color_3  = c.gold
-    vim.g.terminal_color_4  = c.blue
-    vim.g.terminal_color_5  = c.purple
-    vim.g.terminal_color_6  = c.teal
-    vim.g.terminal_color_7  = c.fg
-    vim.g.terminal_color_8  = c.gray
-    vim.g.terminal_color_9  = c.red
-    vim.g.terminal_color_10 = c.num
-    vim.g.terminal_color_11 = c.yellow
-    vim.g.terminal_color_12 = c.sky
-    vim.g.terminal_color_13 = c.mauve
-    vim.g.terminal_color_14 = c.accent_lt
-    vim.g.terminal_color_15 = c.fg1
+    for i, col in ipairs(c.ansi) do
+        vim.g["terminal_color_" .. (i - 1)] = col
+    end
 end
 
 return M

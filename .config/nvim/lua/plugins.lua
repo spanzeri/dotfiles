@@ -139,6 +139,18 @@ fzf.setup({
             ['<C-u>'] = 'preview-page-up',
         },
     },
+
+    -- Stowed configs are symlinks, which rg skips unless told to follow.
+    files = {
+        rg_opts   = [[--color=never --files --follow -g "!.git" -g "!.jj"]],
+        fd_opts   = [[--color=never --type f --type l --follow --exclude .git --exclude .jj]],
+        find_opts = [[\( -type f -o -type l \) \! -path '*/.git/*' \! -path '*/.jj/*']],
+    },
+    grep = {
+        -- Trailing -e must stay last: the pattern is appended after it.
+        rg_opts = '--column --line-number --no-heading --color=always --smart-case '
+            .. '--max-columns=4096 --follow -e',
+    },
 })
 
 -- Query for a custom location or try to infer it from the previuos

@@ -1,0 +1,29 @@
+#!/bin/sh
+# Switch kitty (and every running nvim) between the dark and light themes.
+# nvim has no in-band way to hear about this, hence the state file + SIGUSR1.
+set -eu
+
+state="${XDG_STATE_HOME:-$HOME/.local/state}/theme"
+themes="$HOME/.config/kitty/themes"
+
+case "${1:-toggle}" in
+    dark|light) mode=$1 ;;
+    toggle) if [ "$(cat "$state" 2>/dev/null)" = light ]; then mode=dark; else mode=light; fi ;;
+    *) echo "usage: ${0##*/} [dark|light|toggle]" >&2; exit 2 ;;
+esac
+
+case "$mode" in
+    dark)  theme="$themes/alabaster-dark.conf" ;;
+    light) theme="$themes/vs-light.conf" ;;
+esac
+
+mkdir -p "${state%/*}"
+printf '%s\n' "$mode" > "$state"
+
+cp "$theme" "$HOME/.config/kitty/current-theme.conf"
+# Set only when kitty launched us with --allow-remote-control.
+if [ -n "${KITTY_LISTEN_ON:-}" ]; then
+    kitten @ set-colors --all --configured "$theme" 2>/dev/null || true
+fi
+
+pkill -USR1 -x nvim || true

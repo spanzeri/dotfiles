@@ -80,18 +80,35 @@ vim.api.nvim_create_autocmd('FileChangedShellPost',
         desc = 'Warn when a buffer got reloaded from disk',
     })
 
-require('vs-dark').setup({
+require('vs').setup({
     transparent = true,
     italic = false,
 })
-vim.cmd('colorscheme vs-dark')
 
-vim.api.nvim_set_hl(0, "Normal", { bg = nil })
-vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter" },
+-- Before the first :colorscheme, or it loads twice.
+vim.o.background = require('theme').read()
+vim.cmd('colorscheme vs')
+
+vim.api.nvim_create_autocmd('Signal', {
+    pattern = 'SIGUSR1',
+    callback = function() require('theme').sync() end,
+    group = command_group,
+    desc = 'Follow the terminal light/dark switch',
+})
+
+-- { bg = nil } would replace the group and drop fg too.
+local function clear_normal_bg()
+    local hl = vim.api.nvim_get_hl(0, { name = "Normal", link = false })
+    if hl.bg ~= nil then
+        hl.bg = nil
+        vim.api.nvim_set_hl(0, "Normal", hl)
+    end
+end
+
+clear_normal_bg()
+vim.api.nvim_create_autocmd({ "WinEnter", "BufEnter", "ColorScheme" },
     {
-        callback = function()
-            vim.api.nvim_set_hl(0, "Normal", { bg = nil })
-        end,
+        callback = clear_normal_bg,
         group = vim.api.nvim_create_augroup("hl-fix", { clear = true }),
         pattern = "*",
         desc = "Ensure the background is transparent",
