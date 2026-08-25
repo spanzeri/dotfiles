@@ -6,7 +6,7 @@
 local palettes = {
     dark = {
         -- Surfaces (Visual Studio 2026 Fluent dark chrome)
-        bg        = "#1f1f1f", -- editor
+        bg        = "#1e1e1e", -- editor
         bg_dim    = "#181818", -- deepest chrome (tab strip, inactive)
         bg1       = "#252526", -- cursorline / subtle surface
         bg2       = "#2d2d30", -- panels, statusline, tabline
@@ -14,7 +14,7 @@ local palettes = {
         bg4       = "#4a4a4e", -- brighter border / scrollbar thumb
 
         -- Text
-        fg        = "#d9d9d9", -- plain text
+        fg        = "#dcdcdc", -- plain text
         fg1       = "#f1f1f1", -- emphasised text
         fg_dim    = "#9b9b9b", -- preprocessor, muted UI text
         gray      = "#6a6a6a", -- comments-adjacent chrome, whitespace
@@ -27,17 +27,20 @@ local palettes = {
         accent_lt = "#4cc2ff", -- VS light accent
 
         -- Editor classifications
-        blue      = "#5c9bc9", -- keywords, builtin types, tags
-        purple    = "#d7a0de", -- control-flow keywords
+        blue      = "#569cd6", -- keywords
+        purple    = "#d8a0df", -- control-flow keywords
         salmon    = "#d69d85", -- strings
-        green     = "#58a64a", -- comments
+        green     = "#57a64a", -- comments
         green_doc = "#608b4e", -- doc comments
         num       = "#b5cea8", -- numbers
-        teal      = "#4cbbb1", -- classes, types, namespaces
+        teal      = "#4ec9b0", -- classes, types, namespaces
         lgreen    = "#b8d7a3", -- interfaces, enums, constants
         sgreen    = "#86c691", -- structs
         yellow    = "#dcdcaa", -- methods
-        sky       = "#9cdcfe", -- parameters, xml attributes
+        var       = "#dcdcdc", -- local variables (VS uses #9cdcfe; swapped by choice)
+        member    = "#9cdcfe", -- member fields   (VS uses #dcdcdc; swapped by choice)
+        param     = "#9b9b9b", -- parameters
+        sky       = "#9cdcfe", -- local variables
         gold      = "#d7ba7d", -- escapes, regex bits, current search
         mauve     = "#beb7ff", -- macros
         op        = "#b4b4b4", -- operators
@@ -99,14 +102,17 @@ local palettes = {
         salmon    = "#a31515", -- strings
         green     = "#008000", -- comments
         green_doc = "#008000", -- doc comments
-        num       = "#000000", -- numbers -- likewise plain text in VS
+        num       = "#000000", -- numbers (plain in VS light, unlike dark)
         teal      = "#2b91af", -- classes, types, namespaces
         lgreen    = "#2b91af", -- interfaces, enums, constants
         sgreen    = "#2b91af", -- structs
-        yellow    = "#000000", -- methods -- VS renders these as plain text
-        sky       = "#808080", -- parameters -- VS greys these
+        yellow    = "#795e26", -- methods
+        var       = "#000000", -- local variables (VS uses #001080; swapped by choice)
+        member    = "#001080", -- member fields   (VS uses #000000; swapped by choice)
+        param     = "#808080", -- parameters
+        sky       = "#001080", -- local variables
         gold      = "#ee0000", -- escapes, regex bits, current search
-        mauve     = "#000000", -- macros -- UPROPERTY/GENERATED_BODY are plain in VS
+        mauve     = "#8a1bff", -- macros
         op        = "#000000", -- operators
         lnum      = "#2b91af", -- line numbers
         lnum_cur  = "#0b216f", -- current line number
@@ -325,10 +331,10 @@ function M.load()
     hi("Todo",          c.bg,      c.gold, "bold")
 
     -- ── Treesitter ──────────────────────────────────────────────────────
-    link("@variable",              "Identifier")
+    hi("@variable",                c.var,    c.none)
     hi("@variable.builtin",        c.blue,   c.none)
-    hi("@variable.parameter",      c.sky,    c.none)
-    hi("@variable.member",         c.fg,     c.none)
+    hi("@variable.parameter",      c.param,  c.none)
+    hi("@variable.member",         c.member, c.none)
     link("@constant",              "Constant")
     hi("@constant.builtin",        c.blue,   c.none)
     link("@constant.macro",        "Macro")
@@ -366,7 +372,7 @@ function M.load()
     link("@keyword",               "Keyword")
     hi("@keyword.function",        c.blue,   c.none)
     hi("@keyword.operator",        c.blue,   c.none)
-    link("@keyword.import",        "Keyword")
+    hi("@keyword.import",          c.fg_dim, c.none)
     hi("@keyword.storage",         c.blue,   c.none)
     hi("@keyword.modifier",        c.blue,   c.none)
     hi("@keyword.type",            c.blue,   c.none)
