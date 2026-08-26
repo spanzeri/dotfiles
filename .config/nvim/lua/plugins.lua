@@ -811,12 +811,8 @@ require('gitsigns').setup({ current_line_blame = true })
 -- Codediff (better diff views)
 require('codediff').setup({})
 
--- Ident guidelines
-local ibl_hooks = require('ibl.hooks')
-ibl_hooks.register(ibl_hooks.type.HIGHLIGHT_SETUP, function()
-    vim.api.nvim_set_hl(0, 'IBLActiveScope', { fg = '#999999' })
-end)
-
+-- Ident guidelines. The guide colours come from the colorscheme's IblIndent
+-- and IblScope.
 require('ibl').setup({
     indent = {
         smart_indent_cap = true,
@@ -824,7 +820,6 @@ require('ibl').setup({
     scope = {
         show_start = false,
         show_end = false,
-        highlight = { 'IBLActiveScope' },
     },
 })
 
