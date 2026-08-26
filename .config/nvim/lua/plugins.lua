@@ -749,6 +749,25 @@ local set_program_and_run = function()
     dap.continue()
 end
 
+-- dapui has no API to focus a docked element, but its buffers carry a stable
+-- filetype. Fall back to a float when the layout is closed.
+local dap_focus_element = function(name)
+    local target = 'dapui_'..name
+    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+        if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == target then
+            vim.api.nvim_set_current_win(win)
+            return true
+        end
+    end
+    return false
+end
+
+local dap_goto_watches = function()
+    if not dap_focus_element('watches') then
+        dapui.float_element('watches', { enter = true })
+    end
+end
+
 local dap_terminate_or_toggle_ui = function()
     if dap.session() ~= nil then
         dap.terminate()
@@ -768,20 +787,25 @@ vim.keymap.set('n', '<leader>dS', dap.step_back, { desc = '[d]ebug [S]tep back' 
 vim.keymap.set('n', '<leader>do', dap.step_out, { desc = '[d]ebug step [o]ut' })
 vim.keymap.set('n', '<leader>db', dap.toggle_breakpoint, { desc = '[d]ebug toggle [b]reakpoint' })
 vim.keymap.set('n', '<leader>dB', toggle_conditional_breakpoint, { desc = '[d]ebug toggle conditional [B]reakpoint' })
+vim.keymap.set('n', '<leader>dg', dap.run_to_cursor, { desc = '[d]ebug [g]o to cursor' })
+vim.keymap.set('n', '<leader>du', dap.up, { desc = '[d]ebug frame [u]p (caller)' })
+vim.keymap.set('n', '<leader>dd', dap.down, { desc = '[d]ebug frame [d]own (callee)' })
 vim.keymap.set('n', '<leader>dh', dap_ui_widgets.hover, { desc = '[d]ebug [h]over' })
-vim.keymap.set('n', '<leader>dw', set_dap_cwd, { desc = '[d]ebug [w]orking d]irectory' })
-vim.keymap.set('n', '<leader>drc', dap.run_to_cursor, { desc = '[d]ebug [r]un to [c]ursor' })
+vim.keymap.set('n', '<leader>dw', dap_goto_watches, { desc = '[d]ebug go to [w]atches' })
+vim.keymap.set('n', '<leader>dW', set_dap_cwd, { desc = '[d]ebug [W]orking [d]irectory' })
 
 vim.keymap.set('n', '<F5>', dap.continue, { desc = 'debug continue' })
 vim.keymap.set('n', '<S-F5>', dap.terminate, { desc = 'debug terminate' })
-vim.keymap.set('n', '<M-S-F5>', dap.restart, { desc = 'debug continue' })
+vim.keymap.set('n', '<C-S-F5>', dap.restart, { desc = 'debug restart' })
 
 vim.keymap.set('n', '<F9>', dap.toggle_breakpoint, { desc = 'debug toggle breakpoint' })
 vim.keymap.set('n', '<M-F9>', toggle_conditional_breakpoint, { desc = 'debug toggle conditional breakpoint' })
 vim.keymap.set('n', '<F10>', dap.step_over, { desc = 'debug step over' })
+vim.keymap.set('n', '<C-F10>', dap.run_to_cursor, { desc = 'debug run to cursor' })
+vim.keymap.set('n', '<C-S-F10>', dap.goto_, { desc = 'debug set next statement' })
 vim.keymap.set('n', '<M-F10>', dap.step_back, { desc = 'debug step back' })
 vim.keymap.set('n', '<F11>', dap.step_into, { desc = 'debug step into' })
-vim.keymap.set('n', '<M-F11>', dap.step_out, { desc = 'debug step out' })
+vim.keymap.set('n', '<S-F11>', dap.step_out, { desc = 'debug step out' })
 
 local eval_at_cursor = function()
     dapui.eval(nil, { enter = true })
@@ -790,7 +814,7 @@ local eval_expr = function()
     dapui.eval(vim.fn.input('Expression: '))
 end
 
-vim.keymap.set('n', '<leader>du', dapui_toggle, { desc = '[d]ebug [u]i toggle' })
+vim.keymap.set('n', '<leader>dU', dapui_toggle, { desc = '[d]ebug [U]I toggle' })
 vim.keymap.set('n', '<leader>de', eval_at_cursor, { desc = '[d]ebug [e]val under the cursor' })
 vim.keymap.set('n', '<leader>dx', eval_expr, { desc = '[d]ebug eval e[x]pression' })
 
