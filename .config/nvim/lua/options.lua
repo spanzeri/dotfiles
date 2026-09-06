@@ -47,23 +47,3 @@ local odin_error_format = '%f(%l:%c) %t%*[^:]: %m,%f(%l:%c) %m'
 local jai_error_format = '%f:%l\\,%c: %t%*[^:]: %m'
 vim.o.errorformat = vim.o.errorformat .. ',' .. odin_error_format .. ',' .. jai_error_format
 
--- Jai: auto-set the make command from the OS compiler + project build file
-local jai_group = vim.api.nvim_create_augroup('SamConfig-Jai', { clear = true })
-vim.api.nvim_create_autocmd('FileType', {
-    pattern  = 'jai',
-    group    = jai_group,
-    callback = function(args)
-        local compiler = vim.loop.os_uname().sysname == 'Linux' and 'jai-linux' or 'jai'
-        local cwd      = vim.fn.getcwd()
-        local build_file
-        if vim.fn.filereadable(cwd .. '/first.jai') == 1 then
-            build_file = 'first.jai'
-        elseif vim.fn.filereadable(cwd .. '/build.jai') == 1 then
-            build_file = 'build.jai'
-        end
-        if build_file then
-            vim.bo[args.buf].makeprg = compiler .. ' ' .. build_file
-        end
-    end,
-})
-
