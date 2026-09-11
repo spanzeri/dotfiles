@@ -1,0 +1,48 @@
+#!/bin/sh
+
+if ! command -v tmux >/dev/null 2>&1; then
+	echo "tmuxcompanion: tmux is not installed" >&2
+	exit 1
+fi
+
+session=$1
+
+if [ -z "$session" ]; then
+	if ! command -v fzf >/dev/null 2>&1; then
+		echo "tmuxcompanion: fzf is required when no session is given" >&2
+		exit 1
+	fi
+
+	session=$(tmux list-sessions -F '#{session_name}' 2>/dev/null |
+		fzf --height=40% --layout=reverse --prompt='tmux session> ')
+
+	if [ -z "$session" ]; then
+		exit 0
+	fi
+fi
+
+if ! tmux has-session -t "=$session" 2>/dev/null; then
+	echo "tmuxcompanion: no session named '$session'" >&2
+	exit 1
+fi
+
+if [ -n "$TMUX" ]; then
+	echo "tmuxcompanion: run this from the second terminal, outside tmux" >&2
+	exit 1
+fi
+
+companion="$session-companion"
+
+if tmux has-session -t "=$companion" 2>/dev/null; then
+	group=$(tmux display-message -p -t "=$companion" '#{session_group}')
+	if [ -n "$group" ]; then
+		echo "tmuxcompanion: '$companion' is an old grouped session" >&2
+		echo "remove it with: tmux kill-session -t '=$companion'" >&2
+		exit 1
+	fi
+
+	exec tmux attach-session -t "=$companion"
+fi
+
+project_path=$(tmux display-message -p -t "=$session" '#{session_path}')
+exec tmux new-session -s "$companion" -c "$project_path"

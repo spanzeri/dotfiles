@@ -15,6 +15,7 @@ fi
 load_plugin "zsh-users" "zsh-syntax-highlighting"
 load_plugin "zsh-users" "zsh-autosuggestions"
 
+fpath=($XDG_CONFIG_HOME/zsh/completions $fpath)
 autoload -Uz compinit
 compinit
 
@@ -31,7 +32,7 @@ alias vim="nvim"
 export EDITOR=nvim
 export CMAKE_GENERATOR="Ninja Multi-Config"
 export ANDROID_HOME=$HOME/Android/Sdk
-export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.13846066
+export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.14206865
 
 alias wrenderdoc="WAYLAND_DISPLAY= QT_QA_PLATFORM=xcb qrenderdoc"
 
@@ -61,4 +62,3 @@ eval "$(starship init zsh)"
 
 export LIBVA_DRIVER_NAME=nvidia
 export NVD_BACKEND=direct
-

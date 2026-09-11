@@ -1,0 +1,5 @@
+#compdef tmuxcompanion
+
+local -a sessions
+sessions=("${(@f)$(tmux list-sessions -F '#{session_name}' 2>/dev/null)}")
+_describe 'tmux session' sessions
