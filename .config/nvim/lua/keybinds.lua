@@ -20,6 +20,16 @@ vim.keymap.set('i', '<C-BS>', [[<C-o>db]])
 vim.keymap.set('v', 'J', ':m \'>+1<CR>gv=gv')
 vim.keymap.set('v', 'K', ':m \'<-2<CR>gv=gv')
 
+vim.keymap.set('n', '<leader>yp', function()
+    local path = vim.fn.expand('%:p')
+    if path == '' then
+        vim.notify('Current buffer has no file path', vim.log.levels.WARN)
+        return
+    end
+    vim.fn.setreg('+', path)
+    vim.notify('Copied path: '..path)
+end, { desc = '[y]ank [p]ath' })
+
 -- Better movement
 vim.keymap.set('n', 'k', [[v:count == 0? 'gk' : 'k']], { expr = true, silent = true })
 vim.keymap.set('n', 'j', [[v:count == 0? 'gj' : 'j']], { expr = true, silent = true })

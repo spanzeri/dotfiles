@@ -315,6 +315,7 @@ require('oil').setup({
         ['<C-h>'] = false,
     ['<M-h>'] = 'actions.select_split',
     ['<BS>']  = 'actions.parent',
+    ['gy']    = 'actions.copy_to_system_clipboard',
     },
     view_options = { show_hidden = true },
     watch_for_changes = true,
