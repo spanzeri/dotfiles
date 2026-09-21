@@ -43,6 +43,24 @@ vim.o.synmaxcol         = 300                       -- Syntax highlighting limit
 
 vim.o.cmdheight         = 0                         -- Collapse command line when not typing commands
 
+-- Child build processes inherit these on Linux and Windows.
+vim.env.XMAKE_COLORTERM = 'nocolor'
+vim.env.XMAKE_THEME = 'plain'
+
+local cpp_error_formats = {}
+for _, prefix in ipairs({ 'error: ', 'warning: ', '' }) do
+    for _, location in ipairs({
+        [[%f:%l:%c: ]],
+        [[%f:%l: ]],
+        [[%f(%l\,%c)%\s%#: ]],
+        [[%f(%l)%\s%#: ]],
+    }) do
+        cpp_error_formats[#cpp_error_formats + 1] = prefix .. location .. 'fatal %t%*[^:]: %m'
+        cpp_error_formats[#cpp_error_formats + 1] = prefix .. location .. '%t%*[^:]: %m'
+    end
+end
+vim.o.errorformat = table.concat(cpp_error_formats, ',') .. ',' .. vim.o.errorformat
+
 local odin_error_format = '%f(%l:%c) %t%*[^:]: %m,%f(%l:%c) %m'
 local jai_error_format = '%f:%l\\,%c: %t%*[^:]: %m'
 vim.o.errorformat = vim.o.errorformat .. ',' .. odin_error_format .. ',' .. jai_error_format

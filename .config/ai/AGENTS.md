@@ -45,6 +45,10 @@
 
 ## Code style (all languages)
 
+- Preserve the existing coding style in edits and examples, including
+  whitespace, indentation, alignment, blank lines, brace placement, and
+  preprocessor directives (including indented #define lines). Follow nearby
+  code rather than imposing a different style; avoid unrelated reformatting.
 - No exceptions. No RTTI or dynamic type dispatch.
 - Plain imperative: explicit control flow, data laid out plainly, functions over
   class hierarchies and template machinery.

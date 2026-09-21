@@ -58,6 +58,36 @@ local function make_highlights(cfg)
     end
 end
 
+local function setup_syntax_fallbacks(cfg)
+    if not cfg.syntax_fallbacks then
+        return
+    end
+
+    for filetype, comment_groups in pairs(cfg.syntax_fallbacks) do
+        vim.api.nvim_create_autocmd("FileType", {
+            group = hl_comments_group,
+            pattern = filetype,
+            callback = function(ev)
+                vim.schedule(function()
+                    if not vim.api.nvim_buf_is_valid(ev.buf) then
+                        return
+                    end
+
+                    vim.api.nvim_buf_call(ev.buf, function()
+                        local containedin = table.concat(comment_groups, ",")
+
+                        for _, group in ipairs(cfg.groups) do
+                            local keywords = table.concat(group.keywords, "|")
+                            vim.cmd(("syntax match %s /\\v<(%s)>/ contained containedin=%s")
+                                :format(make_hl_name(group.category), keywords, containedin))
+                        end
+                    end)
+                end)
+            end,
+        })
+    end
+end
+
 local function get_comment_ranges(bufnr, start_row, end_row)
     local ok_parser, parser = pcall(vim.treesitter.get_parser, bufnr)
     if not ok_parser or not parser then
@@ -371,6 +401,7 @@ local default_config = {
         ["warn"] = { parent = "DiagnosticWarn",  fg = "#DDDD10", underline = true, bold = false, },
         ["note"] = { parent = "DiagnosticInfo",  fg = "#108810", underline = true, bold = false, },
     },
+    syntax_fallbacks = {},
     patterns = {
         [[\zs(<KEYWORDS>)\ze\(.*\):]],
         [[\zs\@(<KEYWORDS>)\ze(\(.*\))?:?]],
@@ -384,6 +415,7 @@ return {
         local cfg = merge(vim.deepcopy(default_config), opt or {})
         compile_regexes(cfg)
         make_highlights(cfg)
+        setup_syntax_fallbacks(cfg)
 
         vim.api.nvim_create_autocmd({ "BufWinEnter", "BufReadPost", "BufNewFile" }, {
             group = hl_comments_group,

@@ -71,7 +71,7 @@ vim.pack.add({
     'https://github.com/lukas-reineke/indent-blankline.nvim',
     'https://github.com/rluba/jai.vim',
     'https://github.com/folke/which-key.nvim',
-    'https://github.com/chrisgrieser/nvim-spider',
+    'https://github.com/olimorris/codecompanion.nvim',
 })
 
 -- Load built-in and personal plugins
@@ -335,10 +335,10 @@ vim.api.nvim_create_autocmd('FileType', {
     group = command_group,
 })
 
-local ts_ensure_installed   = { 'c', 'lua', 'luadoc', 'cpp', 'glsl', 'hlsl' }
+local ts_ensure_installed   = { 'c', 'lua', 'luadoc', 'cpp', 'glsl', 'hlsl', 'gdscript' }
 local ts_already_installed  = require('nvim-treesitter.config').get_installed()
 local ts_parsers_to_install = vim.iter(ts_ensure_installed)
-    :filter(function(parser) return not vim.tbl_contains(ts_already_installed, partser) end)
+    :filter(function(parser) return not vim.tbl_contains(ts_already_installed, parser) end)
     :totable()
 require('nvim-treesitter').install(ts_parsers_to_install)
 
@@ -512,6 +512,7 @@ end, { desc = 'Toggle diagnostic virtual lines' })
 
 vim.lsp.enable({
     'clangd',
+    'gdscript',
     'lua_ls',
     'ols',
     'slang',
@@ -848,8 +849,38 @@ require('ibl').setup({
 })
 
 require('which-key').setup({})
-require('spider').setup({})
 
 -- HL-comments (my own plugin to highlight TODO comments)
-require('hl-comments').setup({})
+require('hl-comments').setup({
+    syntax_fallbacks = {
+        jai = { 'jaiLineComment', 'jaiBlockComment' },
+    },
+})
 
+require('codecompanion').setup({
+    adapters = {
+        http = {
+            ["unsloth"] = function()
+                return require("codecompanion.adapters").extend(
+                    "openai_compatible",
+                    {
+                        env = {
+                            url = "http://127.0.0.1:8888",
+                            api_key = "sk-unsloth-0bfbaa5471891eb953884f346971f500",
+                            chat_url = "/v1/chat/completions",
+                        },
+                    }
+                )
+            end,
+        },
+    },
+
+    interactions = {
+        chat = {
+            adapter = "unsloth",
+        },
+        inline = {
+            adapter = "unsloth",
+        },
+    },
+})
