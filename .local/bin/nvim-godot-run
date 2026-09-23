@@ -1,20 +1,58 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 
-TERM="kitty"
-SERVER_PATH="$HOME/.cache/nvim/godot-sever-pipe"
+set -euo pipefail
 
-start_server() {
-	"$TERM" -e nvim --listen "$SERVER_PATH" "$1"
-}
-
-open_file() {
-	"$TERM" -e nvim --server "$SERVER_PATH" --remote-send "<C-\><C-n>:n $1<CR>:call cursor($2)<CR>"
-}
-
-if ! [ -e "$SERVER_PATH" ]; then
-	start_server "$1"
-else
-	open_file "$1" "$2"
+FILE="$(realpath -- "${1:?Usage: nvim-godot-run <file> [line]}")"
+LINE="${2:-1}"
+if [[ ! "$LINE" =~ ^[0-9]+$ ]]; then
+    printf 'Invalid line number: %s\n' "$LINE" >&2
+    exit 2
 fi
 
-# vim: filetype=bash
+PROJECT_DIR="$(dirname "$FILE")"
+while [ "$PROJECT_DIR" != "/" ] && [ ! -f "$PROJECT_DIR/project.godot" ]; do
+    PROJECT_DIR="$(dirname "$PROJECT_DIR")"
+done
+if [ ! -f "$PROJECT_DIR/project.godot" ]; then
+    printf 'No project.godot found for %s\n' "$FILE" >&2
+    exit 1
+fi
+
+PROJECT_ID="$(printf '%s' "$PROJECT_DIR" | sha256sum | cut -c1-16)"
+SERVER_PATH="${XDG_CACHE_HOME:-$HOME/.cache}/nvim/godot-tmux-${PROJECT_ID}.sock"
+SESSION="$(basename "$PROJECT_DIR" | tr '.' '_')"
+WINDOW="godot-editor"
+mkdir -p "$(dirname "$SERVER_PATH")"
+
+if ! tmux has-session -t "=$SESSION" 2>/dev/null; then
+    rm -f "$SERVER_PATH"
+    tmux new-session -d -s "$SESSION" -n "$WINDOW" -c "$PROJECT_DIR" -- \
+        nvim --listen "$SERVER_PATH" "+$LINE" "$FILE"
+elif ! tmux has-session -t "=$SESSION:$WINDOW" 2>/dev/null; then
+    rm -f "$SERVER_PATH"
+    tmux new-window -d -t "=$SESSION" -n "$WINDOW" -c "$PROJECT_DIR" -- \
+        nvim --listen "$SERVER_PATH" "+$LINE" "$FILE"
+else
+    CONNECTED=0
+    for attempt in {1..30}; do
+        if [ -S "$SERVER_PATH" ] &&
+            nvim --server "$SERVER_PATH" --remote-expr '1' >/dev/null 2>&1; then
+            nvim --server "$SERVER_PATH" --remote "$FILE" >/dev/null
+            nvim --server "$SERVER_PATH" --remote-expr "cursor($LINE, 1)" >/dev/null
+            CONNECTED=1
+            break
+        fi
+        sleep 0.1
+    done
+    if [ "$CONNECTED" -eq 0 ]; then
+        printf 'Godot editor window exists, but its Neovim server is unavailable\n' >&2
+        exit 1
+    fi
+fi
+
+tmux select-window -t "=$SESSION:$WINDOW"
+if [ -n "${TMUX:-}" ]; then
+    tmux switch-client -t "=$SESSION"
+elif [ "$(tmux display-message -p -t "=$SESSION:$WINDOW" '#{session_attached}')" = 0 ]; then
+    exec kitty -e tmux attach-session -t "=$SESSION"
+fi
