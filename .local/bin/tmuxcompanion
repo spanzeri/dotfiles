@@ -34,7 +34,7 @@ fi
 companion="$session-companion"
 
 if tmux has-session -t "=$companion" 2>/dev/null; then
-	group=$(tmux display-message -p -t "=$companion" '#{session_group}')
+	group=$(tmux display-message -p -t "=$companion:" '#{session_group}')
 	if [ -n "$group" ]; then
 		echo "tmuxcompanion: '$companion' is an old grouped session" >&2
 		echo "remove it with: tmux kill-session -t '=$companion'" >&2
@@ -44,5 +44,10 @@ if tmux has-session -t "=$companion" 2>/dev/null; then
 	exec tmux attach-session -t "=$companion"
 fi
 
-project_path=$(tmux display-message -p -t "=$session" '#{session_path}')
+project_path=$(tmux display-message -p -t "=$session:" '#{session_path}')
+if [ -z "$project_path" ]; then
+	echo "tmuxcompanion: could not find the directory for '$session'" >&2
+	exit 1
+fi
+
 exec tmux new-session -s "$companion" -c "$project_path"
