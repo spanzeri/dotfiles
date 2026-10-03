@@ -30,7 +30,6 @@ export LD_LIBRARY_PATH=/usr/local/lib:~/.local/lib:$LD_LIBRARY_PATH
 #
 alias vim="nvim"
 export EDITOR=nvim
-export CMAKE_GENERATOR="Ninja Multi-Config"
 export ANDROID_HOME=$HOME/Android/Sdk
 export ANDROID_NDK_HOME=$ANDROID_HOME/ndk/29.0.14206865
 
@@ -62,3 +61,4 @@ eval "$(starship init zsh)"
 
 export LIBVA_DRIVER_NAME=nvidia
 export NVD_BACKEND=direct
+export VCPKG_ROOT=$HOME/.local/share/vcpkg

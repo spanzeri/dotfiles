@@ -616,6 +616,31 @@ dap.adapters.codelldb = {
 }
 
 local exe_launch_opts = {}
+local function split_command(cmd)
+    local args = {}
+    local word = ''
+    local quoted = false
+
+    for ch in cmd:gmatch('.') do
+        if ch == '"' then
+            quoted = not quoted
+        elseif ch:match('%s') and not quoted then
+            if word ~= '' then
+                args[#args + 1] = word
+                word = ''
+            end
+        else
+            word = word .. ch
+        end
+    end
+
+    assert(not quoted, 'Unclosed quote in debug command')
+    if word ~= '' then
+        args[#args + 1] = word
+    end
+    return args
+end
+
 local make_launch_opts = function()
     exe_launch_opts.cmd = exe_launch_opts.cmd or vim.fn.getcwd() .. '/'
     local new_cmd = vim.fn.input('Command: ', exe_launch_opts.cmd, 'file')
@@ -624,7 +649,7 @@ local make_launch_opts = function()
     end
     exe_launch_opts.cmd = new_cmd
 
-    local args = vim.split(exe_launch_opts.cmd, ' ', { trimempty = true })
+    local args = split_command(exe_launch_opts.cmd)
     exe_launch_opts.program = table.remove(args, 1)
     exe_launch_opts.args = args
     exe_launch_opts.has_program =
