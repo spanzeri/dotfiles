@@ -21,7 +21,11 @@ compinit
 
 # Path
 #
-export PATH=~/jai/bin/:~/.local/bin:~/.cargo/bin:$PATH
+export PATH=$HOME/.local/bin:~/.cargo/bin:$PATH
+
+# Node global install
+#
+export npm_config_prefix="$HOME/.local"
 
 export LIBRARY_PATH=/usr/local/lib:$LIBRARY_PATH
 export LD_LIBRARY_PATH=/usr/local/lib:~/.local/lib:$LD_LIBRARY_PATH
