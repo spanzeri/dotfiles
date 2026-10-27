@@ -23,8 +23,18 @@ source $XDG_CONFIG_HOME/zsh/zshrc
 [[ -f /home/sam/.config/.dart-cli-completion/zsh-config.zsh ]] && . /home/sam/.config/.dart-cli-completion/zsh-config.zsh || true
 ## [/Completion]
 
-
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:/home/sam/.lmstudio/bin"
 # End of LM Studio CLI section
 
+case ":$PATH:" in *":$HOME/.local/bin:"*) ;; *) export PATH="$HOME/.local/bin:$PATH" ;; esac
+
+# Pi
+export PATH="/home/sam/.pi/agent/bin:$PATH"
+# Pi disables inline images under tmux; force kitty graphics when inside kitty.
+if [[ -n $KITTY_WINDOW_ID ]]; then
+	export PI_IMAGE_PROTOCOL=kitty
+fi
+
+# Added by Unsloth setup
+export PATH="/home/sam/.local/share/../bin:$PATH"

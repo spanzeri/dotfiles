@@ -1,0 +1,37 @@
+{
+  "$schema": "https://pi.dev/schemas/settings.schema.json",
+  "theme": "light",
+  "hideThinkingBlock": true,
+  "defaultProvider": "openrouter",
+  "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
+  "modelThinkingLevels": {
+    "strata/swift-1.5-iq3_xxs": "high"
+  },
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 16384,
+    "keepRecentTokens": 20000
+  },
+  "cachedCompaction": {
+    "cacheRetention": "long",
+    "compactBeforeExpiry": false
+  },
+  "packages": [
+    "npm:pi-web-access@0.44.0",
+    "npm:pi-cached-compaction",
+    "npm:pi-btw",
+    "npm:@nicknisi/pi-session-name",
+    "npm:pi-bro",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:pi-lens",
+    "npm:@plannotator/pi-extension",
+    "npm:@jmcombs/pi-notify",
+    "npm:pi-background-tasks",
+    "npm:pi-markdown-preview",
+    "npm:@walterra/pi-graphviz",
+    "npm:@howaboua/pi-unicode-charts",
+    "npm:pi-arxivist"
+  ],
+  "lastChangelogVersion": "1.4.0"
+}

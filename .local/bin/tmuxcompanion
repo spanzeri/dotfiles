@@ -1,53 +1,30 @@
 #!/bin/sh
+# Open a companion tmux session for the project session this is run from.
+# Must be run from inside a tmux project session. Each call opens its own
+# kitty window; windows share one dark-themed instance via --single-instance,
+# so the companion is always dark (see ~/.config/kitty-dark) while the main
+# kitty theme stays whatever the theme toggle set.
 
-if ! command -v tmux >/dev/null 2>&1; then
-	echo "tmuxcompanion: tmux is not installed" >&2
+set -eu
+
+[ -n "${TMUX:-}" ] || { echo "tmuxcompanion: run this from inside tmux" >&2; exit 1; }
+
+session=$(tmux display-message -p '#S')
+case "$session" in *-companion)
+	echo "tmuxcompanion: '$session' is already a companion session" >&2
 	exit 1
-fi
-
-session=$1
-
-if [ -z "$session" ]; then
-	if ! command -v fzf >/dev/null 2>&1; then
-		echo "tmuxcompanion: fzf is required when no session is given" >&2
-		exit 1
-	fi
-
-	session=$(tmux list-sessions -F '#{session_name}' 2>/dev/null |
-		fzf --height=40% --layout=reverse --prompt='tmux session> ')
-
-	if [ -z "$session" ]; then
-		exit 0
-	fi
-fi
-
-if ! tmux has-session -t "=$session" 2>/dev/null; then
-	echo "tmuxcompanion: no session named '$session'" >&2
-	exit 1
-fi
-
-if [ -n "$TMUX" ]; then
-	echo "tmuxcompanion: run this from the second terminal, outside tmux" >&2
-	exit 1
-fi
+	;;
+esac
 
 companion="$session-companion"
 
-if tmux has-session -t "=$companion" 2>/dev/null; then
-	group=$(tmux display-message -p -t "=$companion:" '#{session_group}')
-	if [ -n "$group" ]; then
-		echo "tmuxcompanion: '$companion' is an old grouped session" >&2
-		echo "remove it with: tmux kill-session -t '=$companion'" >&2
-		exit 1
-	fi
-
-	exec tmux attach-session -t "=$companion"
+if ! tmux has-session -t "=$companion" 2>/dev/null; then
+	tmux new-session -ds "$companion" -c "$(tmux display-message -p '#{session_path}')"
 fi
 
-project_path=$(tmux display-message -p -t "=$session:" '#{session_path}')
-if [ -z "$project_path" ]; then
-	echo "tmuxcompanion: could not find the directory for '$session'" >&2
-	exit 1
-fi
-
-exec tmux new-session -s "$companion" -c "$project_path"
+# The dark instance is created by the first companion and reused afterwards;
+# KITTY_CONFIG_DIRECTORY only matters on that first launch.
+env -u TMUX KITTY_CONFIG_DIRECTORY="$HOME/.config/kitty-dark" \
+	kitty --single-instance --instance-group pi-companion \
+	--detach --class pi-companion \
+	tmux attach -t "=$companion"
