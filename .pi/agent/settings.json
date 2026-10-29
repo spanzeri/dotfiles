@@ -5,7 +5,7 @@
   "defaultProvider": "openrouter",
   "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
   "modelThinkingLevels": {
-    "strata/swift-1.5-iq3_xxs": "high"
+    "strata/qwen3.8-flash-next-iq3_xxs": "low"
   },
   "compaction": {
     "enabled": true,
@@ -17,7 +17,7 @@
     "compactBeforeExpiry": false
   },
   "packages": [
-    "npm:pi-web-access@0.44.0",
+    "npm:pi-web-access",
     "npm:pi-cached-compaction",
     "npm:pi-btw",
     "npm:@nicknisi/pi-session-name",

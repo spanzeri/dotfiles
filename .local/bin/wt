@@ -1,0 +1,106 @@
+#!/bin/sh
+# wt - git worktree helper for side-tree LLM work.
+set -eu
+
+usage() {
+  cat <<'EOF'
+wt add NAME [REF]   create <repo>/.worktrees/NAME on branch wt/NAME from REF (default HEAD)
+wt carry NAME       copy the main tree's uncommitted work (tracked diff + untracked files) into NAME
+wt path NAME        print absolute worktree path
+wt rm [-f] NAME     remove worktree and delete branch wt/NAME; -f also discards branch commits
+wt selftest         run the helper's self-check against a scratch repo in a temp dir
+EOF
+  exit 1
+}
+
+[ $# -ge 1 ] || usage
+sub=$1
+shift
+# The self-check stays its own script: it drives wt from outside, so the usage and
+# dispatch paths below are still testable when wt itself is half-written. wt is
+# symlinked by stow, so look beside the link and beside the resolved real path.
+if [ "$sub" = selftest ]; then
+  [ $# -eq 0 ] || usage
+  here=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+  real=$(readlink -f "$0" 2>/dev/null || echo "$0")
+  for candidate in "$here/wt-selftest" "$(dirname -- "$real")/wt-selftest" "$(command -v wt-selftest 2>/dev/null || true)"; do
+    [ -n "$candidate" ] && [ -x "$candidate" ] && exec "$candidate"
+  done
+  echo "wt: cannot find wt-selftest beside $0" >&2
+  exit 1
+fi
+force=
+case $sub in
+  add) [ $# -ge 1 ] && [ $# -le 2 ] || usage; name=$1; ref=${2:-HEAD} ;;
+  carry) [ $# -eq 1 ] || usage; name=$1 ;;
+  path) [ $# -eq 1 ] || usage; name=$1 ;;
+  rm) if [ "${1:-}" = "-f" ]; then force=1; shift; fi; [ $# -eq 1 ] || usage; name=$1 ;;
+  *) usage ;;
+esac
+# A name is a path component and a branch component: no separators, no dot dirs.
+case $name in ''|.|..|*/*) echo "wt: invalid name: $name" >&2; exit 1 ;; esac
+
+common=$(git rev-parse --git-common-dir)
+common=$(cd "$common" && pwd) # absolute, keeps symlinked parents logical
+root=${common%/.git}
+dir="$root/.worktrees/$name"
+excl=$common/info/exclude
+
+need_tree() {
+  [ -d "$dir" ] || { echo "wt: no worktree $name (try: wt add $name)" >&2; exit 1; }
+}
+
+case $sub in
+  add)
+    git -C "$root" rev-parse --verify --quiet "$ref" >/dev/null ||
+      { echo "wt: no such ref: $ref" >&2; exit 1; }
+    # git status shows the worktree directory itself unless it is ignored;
+    # info/exclude keeps that local to this clone. Written before `add` so a
+    # failed write cannot leave a registered worktree behind.
+    grep -qxF '.worktrees/' "$excl" 2>/dev/null || echo '.worktrees/' >>"$excl"
+    git -C "$root" worktree add "$dir" -b "wt/$name" "$ref"
+    ;;
+  carry)
+    need_tree
+    scratch=$(mktemp -d "${TMPDIR:-/tmp}/wt-carry.XXXXXX")
+    trap 'rm -rf "$scratch"' 0
+    # --binary: a tracked binary change otherwise fails with
+    # "cannot apply binary patch ... without full index line".
+    # Written to a file, not piped live: a failing diff must not feed apply an
+    # empty patch, and an empty diff must not reach apply at all (it exits 128
+    # with "No valid patches in input").
+    git -C "$root" diff HEAD --binary >"$scratch/patch"
+    if [ -s "$scratch/patch" ]; then
+      git -C "$dir" apply --index --binary "$scratch/patch"
+    fi
+    # The worktree was cut from HEAD and `git diff HEAD` never sees untracked
+    # files, so they are copied explicitly. Without this the side tree tests a
+    # tree that is missing the user's new files while carry still exits 0.
+    git -C "$root" ls-files -o --exclude-standard -z >"$scratch/untracked"
+    if [ -s "$scratch/untracked" ]; then
+      tar -C "$root" -cf "$scratch/untracked.tar" --null -T "$scratch/untracked"
+      tar -C "$dir" -xf "$scratch/untracked.tar"
+    fi
+    ;;
+  path)
+    need_tree
+    echo "$dir"
+    ;;
+  rm)
+    need_tree
+    # Uncommitted edits are expected in a scratch tree; say what was dropped.
+    dirty=$(git -C "$dir" status --porcelain)
+    [ -z "$dirty" ] || echo "wt: discarded uncommitted changes in $dir" >&2
+    # Commits only reachable from wt/NAME would survive only until gc.
+    ahead=$(git -C "$root" log --oneline "HEAD..wt/$name" 2>/dev/null || :)
+    if [ -n "$ahead" ] && [ -z "$force" ]; then
+      echo "wt: branch wt/$name has commits not in HEAD:" >&2
+      echo "$ahead" >&2
+      echo "wt: merge them, or rerun: wt rm -f $name" >&2
+      exit 1
+    fi
+    git -C "$root" worktree remove --force "$dir"
+    git -C "$root" branch -D "wt/$name" >/dev/null
+    git -C "$root" worktree prune
+    ;;
+esac

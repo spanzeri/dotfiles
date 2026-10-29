@@ -1,0 +1,108 @@
+#!/bin/sh
+# Self-check for the wt worktree helper. Creates a scratch repo under a temp dir.
+set -eu
+
+SELF=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+# The helper may live beside this script (installed layout) or in a bin/ subdir
+# (plan layout). Fall back to PATH.
+if [ -z "${WT:-}" ]; then
+  if [ -x "$SELF/wt" ]; then WT=$SELF/wt
+  elif [ -x "$SELF/bin/wt" ]; then WT=$SELF/bin/wt
+  elif WT=$(command -v wt); then :
+  else echo "wt-selftest: cannot find the wt helper" >&2; exit 1; fi
+fi
+work=$(mktemp -d "${TMPDIR:-/tmp}/wt-selfcheck.XXXXXX")
+trap 'rm -rf "$work"' EXIT
+fail() { echo "FAIL: $1" >&2; exit 1; }
+pass=0
+ok() { pass=$((pass + 1)); }
+
+cd "$work"
+git init -q .
+git config user.email check@local
+git config user.name check
+printf 'base\n' > f.txt
+mkdir src && printf 'x\n' > src/g.txt
+head -c 64 /dev/urandom > blob.bin
+git add -A && git commit -qm init
+printf 'base\nlocal edit\n' > f.txt   # dirty the main tree
+
+# 1. add: creates worktree + branch, main status stays free of .worktrees noise
+"$WT" add probe >/dev/null
+[ -d .worktrees/probe ] || fail "worktree dir missing"
+git rev-parse --verify wt/probe >/dev/null || fail "branch wt/probe missing"
+out=$(git status --short)
+[ "$out" = " M f.txt" ] || fail "main status polluted: [$out]"
+grep -qxF '.worktrees/' .git/info/exclude || fail "exclude line missing"
+ok
+
+# 2. path is absolute and identical from the root and from a subdirectory
+want=$work/.worktrees/probe
+p=$("$WT" path probe)
+[ "$p" = "$want" ] || fail "path from root: $p"
+[ -d "$p" ] || fail "path from root is not a directory"
+q=$(cd src && "$WT" path probe)
+[ "$q" = "$want" ] || fail "path from subdir: $q"
+ok
+
+# 3. carry: main tree's uncommitted tracked diff lands staged in the side tree
+"$WT" carry probe
+side=$(cd .worktrees/probe && git status --porcelain)
+[ "$side" = "M  f.txt" ] || fail "carry status: [$side]"
+cmp -s .worktrees/probe/f.txt f.txt || fail "carry content mismatch"
+ok
+
+# 4. carry refuses when the worktree does not exist
+if "$WT" carry nope 2>/dev/null; then fail "carry should fail for unknown worktree"; fi
+ok
+
+# 5. rm: removes tree + branch, leaves no worktree entry
+"$WT" rm probe
+[ ! -e .worktrees/probe ] || fail "worktree dir not removed"
+git rev-parse --verify wt/probe 2>/dev/null && fail "branch not deleted"
+[ "$(git worktree list | wc -l)" = "1" ] || fail "stale worktree entry"
+ok
+
+# 6. carry transfers binary changes and untracked files (regression: both were
+#    silently dropped, the untracked one with exit 0)
+head -c 64 /dev/urandom > blob.bin
+printf 'brand new\n' > newfile.txt
+"$WT" add bin >/dev/null
+"$WT" carry bin
+cmp -s .worktrees/bin/blob.bin blob.bin || fail "binary change not carried"
+cmp -s .worktrees/bin/newfile.txt newfile.txt || fail "untracked file not carried"
+ok
+
+# 7. path refuses an unknown worktree instead of printing a dead path
+if "$WT" path nope >/dev/null 2>&1; then fail "path should fail for unknown worktree"; fi
+ok
+
+# 8. a name is one path component and one branch component
+if "$WT" add ../escape >/dev/null 2>&1; then fail "path-y name accepted"; fi
+if "$WT" add a/b >/dev/null 2>&1; then fail "slash name accepted"; fi
+ok
+
+# 9. rm refuses to drop commits that exist only on wt/*, unless -f
+(cd .worktrees/bin && printf 'commit\n' > c.txt && git add c.txt && git commit -qm wtcommit)
+if "$WT" rm bin >/dev/null 2>&1; then fail "rm should refuse unmerged commits"; fi
+[ -d .worktrees/bin ] || fail "refused rm still removed the worktree"
+"$WT" rm -f bin >/dev/null
+[ ! -e .worktrees/bin ] || fail "rm -f did not remove worktree"
+git rev-parse --verify wt/bin 2>/dev/null && fail "branch wt/bin not deleted"
+ok
+
+# 10. rm on a dirty-only tree proceeds but says what it dropped
+"$WT" add d1 >/dev/null
+printf 'scratch\n' > .worktrees/d1/scratch.txt
+msg=$("$WT" rm d1 2>&1 >/dev/null)
+[ ! -e .worktrees/d1 ] || fail "dirty rm did not remove worktree"
+case $msg in *discarded*) ;; *) fail "dirty rm did not warn: [$msg]" ;; esac
+ok
+
+# 11. usage errors exit non-zero
+if "$WT" >/dev/null 2>&1; then fail "no-args should exit 1"; fi
+if "$WT" path >/dev/null 2>&1; then fail "path without name should exit 1"; fi
+if "$WT" add >/dev/null 2>&1; then fail "add without name should exit 1"; fi
+ok
+
+echo "OK: $pass checks passed"
