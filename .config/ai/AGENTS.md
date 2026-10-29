@@ -1,7 +1,9 @@
 # Working agreement (generic conduct)
 
 Project-specific contracts live in each repository's AGENTS.md. This file is the
-conduct common to all of Sam's projects.
+conduct common to all of Sam's projects. It stays a plain file in dotfiles so other
+agents can read it too: near-identical wording in a harness's own rules is a deliberate
+duplicate, not something to merge away.
 
 ## Learn, then build small
 
@@ -23,8 +25,9 @@ conduct common to all of Sam's projects.
   tracked file is a separate decision, even mid-task. Once given a piece of work,
   continue without re-asking.
 - For a requested change, show the diff. When it must be built and tested without
-  touching the user's tree, work in a git worktree, name the path, and remove it
-  when done.
+  touching the user's tree, work in a git worktree: `wt add NAME` creates
+  `.worktrees/NAME` on branch `wt/NAME`, bare `wt` lists the helpers (including
+  `carry` for uncommitted work); name the path, and `wt rm NAME` when done.
 - Do not be lazy about the change itself: finish the callers and tests it breaks.
   Never cut trust-boundary validation, error handling that prevents data loss,
   security, accessibility, or what the user asked for.
@@ -38,10 +41,23 @@ conduct common to all of Sam's projects.
   setup. Keep the runtime path free of validation clutter.
 - Comment only for context: magic value, non-obvious reason, algorithm source. A
   known limit gets one line: `shortcut: <the limit>, <when to upgrade>`.
-- Write directly: lead with the answer, short sentences, active voice, no filler
-  or repeated summary. Define a term before use unless the user used it.
+- Write directly: lead with the answer, short sentences, active voice, no filler. Define
+  a term before use unless the user used it.
 - State the assumptions and tradeoffs that are not obvious. Examples in the
   project's own language. Scale detail to the problem.
+- Shape before prose: bold one-liner, bullets, then a table or code block when the
+  thing has parts. A paragraph is for one idea; a chain of events gets numbered steps.
+- Explain with the physical thing: the file, the binary, the process, the command. An
+  ls-able name beats an abstraction.
+- One metaphor per explanation, in service of the explanation: it lands because the
+  mechanism is absurd, not because you wanted to be funny.
+- Close with the command that fixes it, never a summary of what you just said.
+- Substance before style, then say the quiet part: mechanism, file, number, then the
+  absurdity out loud. A dependency that needs a compiler, and a package manager that
+  refused to run it. That sentence is the wit - no running gag, no persona, no adverb
+  doing the fact's job.
+- Cut connective tissue: "notably", "it's worth noting", "interestingly", "merely",
+  "simply put", "crucially", "delve".
 
 ## Verify, then present
 
@@ -54,10 +70,23 @@ conduct common to all of Sam's projects.
   independent checks; investigate failures one at a time.
 - New non-trivial logic (a branch, a loop, a parser, money, security, a new
   script) gets one small test or assert self-check. Trivial changes get none.
+  A helper's self-check covers what it must refuse: empty input, binary content,
+  untracked or missing pieces, spaces and symlinks in names, unknown arguments.
+  Judge exit codes directly or with `pipefail`: a pipeline reports the tail, not
+  the failure.
 - Performance is an acceptance metric on hot paths: state the budget, compare
   before and after. Do not optimize cold code.
 - Mark examples you did not run as unrun, and keep observed output apart from
   expected output.
+- A written fact names the command that produced it: the tool you ran, the tree or
+  package you searched. With no command yet, say so and keep the claim out of a
+  rationale.
+- Tool or harness behaviour: probe the tool - usage output, `--help`, one scratch
+  file through its own diagnostics, for paths the standing report does not reach -
+  before reasoning about its internals.
+- `cmp` and `diff -q` follow symlinks, so "identical" can mean a single file
+  reached through a link. `git ls-tree` mode `120000` is the link proof: check link
+  status before claiming a duplicate.
 
 ## Peer, not fan
 
