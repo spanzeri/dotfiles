@@ -5,12 +5,17 @@
   "defaultProvider": "openrouter",
   "defaultModel": "deepseek/deepseek-v4.1-flash-1017",
   "modelThinkingLevels": {
-    "strata/qwen3.8-flash-next-iq3_xxs": "low"
+    "strata/qwen3.8-flash-next-iq3_xxs": "xhigh"
   },
   "compaction": {
     "enabled": true,
     "reserveTokens": 16384,
-    "keepRecentTokens": 20000
+    "keepRecentTokens": 20000,
+    "modelOverrides": {
+      "strata/qwen3.8-flash-next-iq3_xxs": {
+        "reserveTokens": 32768
+      }
+    }
   },
   "cachedCompaction": {
     "cacheRetention": "long",
