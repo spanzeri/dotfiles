@@ -55,7 +55,8 @@ vim.pack.add({
     'https://github.com/nvim-treesitter/nvim-treesitter',
     'https://github.com/nvim-treesitter/nvim-treesitter-textobjects',
     'https://github.com/sar/friendly-snippets.nvim',
-    { src = 'https://github.com/Saghen/blink.cmp', version = 'v1' },
+    'https://github.com/Saghen/blink.lib',
+    'https://github.com/Saghen/blink.cmp',
     'https://github.com/neovim/nvim-lspconfig',
     'https://github.com/williamboman/mason.nvim',
     'https://github.com/aserowy/tmux.nvim',
@@ -132,7 +133,7 @@ require('snacks').setup({
 
 local fzf = require('fzf-lua')
 fzf.setup({
-    ui_select = true,
+    ui_select = {},
     keymap = {
         builtin = {
             ['<C-d>'] = 'preview-page-down',
@@ -374,7 +375,9 @@ ts_select('as', '@local.scope')
 
 -- Blink (auto-completion)
 
-require('blink.cmp').setup({
+local cmp = require('blink.cmp')
+cmp.build():pwait()
+cmp.setup({
     cmdline    = { enabled        = true, },
     completion = {
         list   = { selection = { preselect = false } },

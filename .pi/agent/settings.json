@@ -38,5 +38,12 @@
     "npm:@howaboua/pi-unicode-charts",
     "npm:pi-arxivist"
   ],
-  "lastChangelogVersion": "1.4.0"
+  "lastChangelogVersion": "1.5.0",
+  "extensionChangelogVersions": {
+    "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
+    "{\"source\":\"npm:pi-cached-compaction\",\"scope\":\"user\"}": "0.2.0",
+    "{\"source\":\"npm:pi-bro\",\"scope\":\"user\"}": "0.27.0",
+    "{\"source\":\"npm:pi-lens\",\"scope\":\"user\"}": "4.4.8",
+    "{\"source\":\"npm:@howaboua/pi-unicode-charts\",\"scope\":\"user\"}": "0.1.3"
+  }
 }
