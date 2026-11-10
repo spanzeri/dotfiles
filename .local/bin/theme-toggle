@@ -1,6 +1,4 @@
 #!/bin/sh
-# Switch kitty (and every running nvim) between the dark and light themes.
-# nvim has no in-band way to hear about this, hence the state file + SIGUSR1.
 set -eu
 
 state="${XDG_STATE_HOME:-$HOME/.local/state}/theme"
@@ -8,22 +6,25 @@ themes="$HOME/.config/kitty/themes"
 
 case "${1:-toggle}" in
     dark|light) mode=$1 ;;
-    toggle) if [ "$(cat "$state" 2>/dev/null)" = light ]; then mode=dark; else mode=light; fi ;;
+    toggle) [ "$(cat "$state" 2>/dev/null)" = light ] && mode=dark || mode=light ;;
     *) echo "usage: ${0##*/} [dark|light|toggle]" >&2; exit 2 ;;
 esac
 
-case "$mode" in
-    dark)  theme="$themes/alabaster-dark.conf" ;;
-    light) theme="$themes/vs-light.conf" ;;
-esac
+[ "$mode" = dark ] && theme="$themes/alabaster-dark.conf" || theme="$themes/vs-light.conf"
 
 mkdir -p "${state%/*}"
 printf '%s\n' "$mode" > "$state"
-
 cp "$theme" "$HOME/.config/kitty/current-theme.conf"
-# Set only when kitty launched us with --allow-remote-control.
-if [ -n "${KITTY_LISTEN_ON:-}" ]; then
-    kitten @ set-colors --all --configured "$theme" 2>/dev/null || true
-fi
 
-pkill -USR1 -x nvim || true
+# Add --all to set every open window at once; without it only the active window and the default change.
+if [ -n "${KITTY_LISTEN_ON:-}" ]; then
+    kitten @ set-colors --configured "$theme" 2>/dev/null || true
+    match="id:${KITTY_WINDOW_ID:-}"
+    [ -n "${KITTY_WINDOW_ID:-}" ] || match=state:focused
+    win_pid=$(kitten @ ls --match "$match" 2>/dev/null | python3 -c 'import json, sys
+d = json.load(sys.stdin)
+for w in d[0]["tabs"][0]["windows"]: print(w["pid"]); sys.exit(0)
+' 2>/dev/null || true)
+    tty=$(ps -o tty= -p "${win_pid:-0}" 2>/dev/null | tr -d ' ')
+    [ -n "$tty" ] && [ "$tty" != "?" ] && pkill -USR1 -t "$tty" -x nvim || true
+fi
