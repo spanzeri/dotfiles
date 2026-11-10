@@ -17,39 +17,6 @@ require('options')
 require('plugins')
 require('keybinds')
 
--- Replacement for default input (floating window instead of command line)
-vim.ui.input = function(opts, on_confirm)
-    local prompt  = opts.prompt or 'Input: '
-    local default = opts.default or ''
-
-    -- Create a small scratch buffer
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_lines(buf, 0, -1, false, { default })
-
-    -- Open a floating window
-    local win = vim.api.nvim_open_win(buf, true, {
-        relative = 'cursor',
-        row      = 1, col = 0,
-        width    = math.max(20, #prompt + #default + 10),
-        height   = 1,
-        border   = 'rounded',
-        title    = prompt,
-        style    = 'minimal',
-    })
-
-    -- Keymaps to confirm or cancel
-    local function close() vim.api.nvim_win_close(win, true) end
-
-    vim.keymap.set('i', '<CR>', function()
-        local input = vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1]
-        close()
-        on_confirm(input)
-    end, { buffer = buf })
-
-    vim.keymap.set('n', '<Esc>', close, { buffer = buf })
-    vim.cmd("startinsert!")
-end
-
 local command_group = vim.api.nvim_create_augroup('SamConfig-Init', { clear = true })
 
 vim.api.nvim_create_autocmd('TextYankPost', {
@@ -138,3 +105,84 @@ vim.api.nvim_create_autocmd({ 'WinEnter', 'BufEnter' },
         group = command_group,
         desc = 'Options to set when opening or entering a buffer',
     })
+
+-- Another session's swap is a sibling of ours: we get pushed to .swo, .swn, ...
+local function other_swaps()
+    local file = vim.api.nvim_buf_get_name(0)
+    if file == '' then return {} end
+    local own  = vim.fn.swapname(0)
+    local stem = own ~= '' and own:sub(1, -5)
+        or vim.o.directory:gsub('/+$', '') .. '/' .. vim.fn.fnamemodify(file, ':p'):gsub('/', '%%')
+    return vim.tbl_filter(function(swap) return swap ~= own end, vim.fn.glob(stem .. '.*', false, true))
+end
+
+local function diff_swap(swap)
+    -- 'recover' reads a swap only from 'directory', so recover a copy of it.
+    local dir = vim.fn.tempname()
+    local out = dir .. '/recovered'
+    vim.fn.mkdir(dir, 'p')
+    vim.uv.fs_copyfile(swap, dir .. '/' .. vim.fn.fnamemodify(swap, ':t'))
+    vim.fn.system({
+        vim.v.progpath, '--headless', '-u', 'NONE', '-n',
+        '--cmd', 'set directory=' .. vim.fn.escape(dir, ' \\') .. '//',
+        '-c', 'silent! recover ' .. vim.fn.fnameescape(vim.api.nvim_buf_get_name(0)),
+        '-c', 'silent! write! ' .. vim.fn.fnameescape(out),
+        '-c', 'qa!',
+    })
+    local lines = vim.fn.filereadable(out) == 1 and vim.fn.readfile(out)
+    vim.fn.delete(dir, 'rf')
+    if not lines then
+        vim.notify('Could not recover ' .. swap, vim.log.levels.ERROR)
+        return
+    end
+
+    local origin = vim.api.nvim_get_current_win()
+    local ft     = vim.bo.filetype
+    vim.cmd('vnew')
+    local buf = vim.api.nvim_get_current_buf()
+    vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+    vim.bo[buf].buftype   = 'nofile'
+    vim.bo[buf].bufhidden = 'wipe'
+    vim.bo[buf].swapfile  = false
+    vim.bo[buf].filetype  = ft
+    vim.api.nvim_buf_set_name(buf, '[swap] ' .. vim.fn.fnamemodify(swap, ':t'))
+    vim.cmd('diffthis')
+    vim.api.nvim_set_current_win(origin)
+    vim.cmd('diffthis')
+    vim.api.nvim_create_autocmd('BufWipeout', {
+        buffer = buf, once = true,
+        callback = function()
+            if vim.api.nvim_win_is_valid(origin) then vim.wo[origin].diff = false end
+        end,
+    })
+end
+
+vim.api.nvim_create_user_command('SwapDiff', function()
+    local swaps = other_swaps()
+    if #swaps == 0 then
+        vim.notify('No swap file for ' .. vim.api.nvim_buf_get_name(0), vim.log.levels.WARN)
+    elseif #swaps == 1 then
+        diff_swap(swaps[1])
+    else
+        vim.ui.select(swaps, { prompt = 'Swap file to diff:' }, function(swap)
+            if swap ~= nil then diff_swap(swap) end
+        end)
+    end
+end, { desc = "Diff the buffer against another session's swap file" })
+
+vim.api.nvim_create_user_command('SwapDelete', function(opts)
+    local swaps = other_swaps()
+    if #swaps == 0 then
+        vim.notify('No swap file for ' .. vim.api.nvim_buf_get_name(0), vim.log.levels.WARN)
+        return
+    end
+    if not opts.bang
+        and vim.fn.confirm('Delete swap file(s)?\n' .. table.concat(swaps, '\n'), '&Yes\n&No', 2) ~= 1 then
+        return
+    end
+    for _, swap in ipairs(swaps) do
+        local ok = vim.fn.delete(swap) == 0
+        vim.notify((ok and 'Deleted ' or 'Could not delete ') .. swap,
+            ok and vim.log.levels.INFO or vim.log.levels.ERROR)
+    end
+end, { bang = true, desc = 'Delete swap files left by other sessions' })

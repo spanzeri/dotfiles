@@ -162,7 +162,7 @@ local function get_default_search_location(location)
     end
     local curr_loc = vim.fn.expand('%:p:h')
     if curr_loc == nil or #curr_loc == 0 then
-        curr_loc = vin.fn.get_cwd()
+        curr_loc = vim.fn.getcwd()
     end
     local oil_prefix = 'oil://'
     if curr_loc:sub(1, #oil_prefix) == oil_prefix then
@@ -171,44 +171,50 @@ local function get_default_search_location(location)
     return curr_loc
 end
 
-local function get_custom_search_location(opts)
-    local opts = vim.tbl_deep_extend(
+-- Calls on_ok(dir) with an existing directory, or notifies and returns.
+local function get_custom_search_location(opts, on_ok)
+    opts = vim.tbl_deep_extend(
         'force',
         {
-            prompt       = '> Where: ',
-            default      = nil,
-            error        = 'Location not found',
-            autocomplete = 'dir',
+            prompt     = '> Where: ',
+            default    = nil,
+            error      = 'Location not found',
+            completion = 'dir',
         }, opts or {})
 
-    local loc = vim.fn.input(opts.prompt, get_default_search_location(opts.default), opts.autocomplete)
-
-    if loc == nil or #loc == 0 then
-        vim.notify(opts.error, vim.log.levels.ERROR)
-        return nil
-    end
-    if vim.fn.isdirectory(loc) == 0 then
-        vim.notify('Directory does not exist: ' .. loc, vim.log.levels.ERROR)
-        return nil
-    end
-
-    return loc
+    vim.ui.input({
+        prompt     = opts.prompt,
+        default    = get_default_search_location(opts.default),
+        completion = opts.completion,
+    }, function(loc)
+        if loc == nil or #loc == 0 then
+            vim.notify(opts.error, vim.log.levels.ERROR)
+            return
+        end
+        -- input() does not expand ~ or $VAR
+        loc = vim.fn.expand(loc)
+        if vim.fn.isdirectory(loc) == 0 then
+            vim.notify('Directory does not exist: ' .. loc, vim.log.levels.ERROR)
+            return
+        end
+        on_ok(loc)
+    end)
 end
 
 local other_search_dir
 local function search_other_dir()
-    other_search_dir = get_custom_search_location({ default = other_search_dir })
-    if other_search_dir ~= nil then
-        fzf.files({ cwd = other_search_dir })
-    end
+    get_custom_search_location({ default = other_search_dir }, function(loc)
+        other_search_dir = loc
+        fzf.files({ cwd = loc })
+    end)
 end
 
 local other_grep_dir
 local function grep_other_dir()
-    other_grep_dir = get_custom_search_location({ default = other_grep_dir, prompt = '> Grep location:' })
-    if other_grep_dir ~= nil then
-        fzf.live_grep({ cwd = other_grep_dir })
-    end
+    get_custom_search_location({ default = other_grep_dir, prompt = '> Grep location:' }, function(loc)
+        other_grep_dir = loc
+        fzf.live_grep({ cwd = loc })
+    end)
 end
 
 local function search_config()
