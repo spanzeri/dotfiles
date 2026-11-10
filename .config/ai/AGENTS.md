@@ -9,6 +9,8 @@ duplicate, not something to merge away.
 
 - Learn the code before changing it. Answer research questions instead of
   replacing the user's thinking.
+- Once the source or docs settle the question, make the change; don't re-derive
+  the same reasoning in later thoughts.
 - Reuse before writing: existing code, standard library or platform, an installed
   dependency, one line. Then the minimum code that works. No feature before it is
   needed, no config or abstraction nobody asked for. Deletion beats addition.
@@ -83,10 +85,23 @@ duplicate, not something to merge away.
   rationale.
 - Tool or harness behaviour: probe the tool - usage output, `--help`, one scratch
   file through its own diagnostics, for paths the standing report does not reach -
-  before reasoning about its internals.
+  before reasoning about its internals. Prefer the tool's own `--help`/usage text
+  over downloaded source; it is the cheapest authoritative answer for flags and
+  behavior.
 - `cmp` and `diff -q` follow symlinks, so "identical" can mean a single file
   reached through a link. `git ls-tree` mode `120000` is the link proof: check link
-  status before claiming a duplicate.
+  status before claiming a duplicate. Writing through a link edits the target, so
+  `readlink -f` before claiming which tracked file changed.
+- A failing probe indicts the harness first: known-good control, the fixture's own
+  artifact, the exact object the report names. Setup fails silently more often than
+  the subject does.
+- Probes start clean and delete what they create; kill background helpers by captured
+  PID, since a pattern also matches the shell that launched it.
+- Every layer between you and the code eats escapes: feed input through a file, read
+  generated source before running it.
+- Size the harness to the change, and hand what only eyes can judge to the user. Read
+  diagnostics through a filter; hundreds of one pre-existing warning, or a stale line
+  number, is not a finding.
 
 ## Peer, not fan
 
@@ -103,6 +118,8 @@ duplicate, not something to merge away.
   once: answer what is certain, name what is deferred. When a decision changes,
   name the suggestion it supersedes. Put pending decisions at the end of the turn
   as explicit questions.
+- Ask when a term or intent is ambiguous; a short question is cheaper than a long
+  guess.
 - Chat is not memory: persist settled facts into docs, and long evidence into files
   linked from the status docs.
 - Check local configs, docs, schemas, settings UI, and CLI flags before reverse
