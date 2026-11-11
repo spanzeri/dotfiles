@@ -60,9 +60,7 @@ vim.api.nvim_create_autocmd('Signal', {
     pattern = 'SIGUSR1',
     callback = function() require('theme').sync() end,
     group = command_group,
-    -- The reload re-sources the colorscheme, whose ColorScheme autocmd is what
-    -- rebuilds every plugin's derived highlights; without this it is nested
-    -- inside this one and skipped (:h autocmd-nested).
+    -- The colorscheme reload's highlights are skipped without it (:h autocmd-nested).
     nested = true,
     desc = 'Follow the terminal light/dark switch',
 })

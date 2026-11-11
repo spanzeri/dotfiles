@@ -41,8 +41,10 @@ duplicate, not something to merge away.
   the project's contract, not this file.
 - Handle failure with error codes or multiple returns, concentrated in init and
   setup. Keep the runtime path free of validation clutter.
-- Comment only for context: magic value, non-obvious reason, algorithm source. A
-  known limit gets one line: `shortcut: <the limit>, <when to upgrade>`.
+- Comments: none unless the code is unreadable without one, or it names a source (`:h`,
+  spec, the command that proved the behaviour). Never restate the code, and prefix an
+  existing comment `OUT OF DATE:` in the same change that invalidates it. A known limit
+  gets one line: `shortcut: <the limit>, <when to upgrade>`.
 - Write directly: lead with the answer, short sentences, active voice, no filler. Define
   a term before use unless the user used it.
 - State the assumptions and tradeoffs that are not obvious. Examples in the

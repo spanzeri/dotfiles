@@ -4,27 +4,42 @@ set -eu
 state="${XDG_STATE_HOME:-$HOME/.local/state}/theme"
 themes="$HOME/.config/kitty/themes"
 
+# A pane cannot see which kitty window shows it, so the theme travels per tmux session.
+# state:focused, not --self: a background launch has no KITTY_WINDOW_ID.
+session=
+if [ -n "${KITTY_LISTEN_ON:-}" ]; then
+    pid=$(kitten @ ls --match state:focused 2>/dev/null | grep -m1 -o '"pid": *[0-9]*' | tr -dc 0-9) || pid=
+    tty=$(ps -o tty= -p "${pid:-0}" 2>/dev/null | tr -d ' ') || tty=
+    session=$(tmux list-clients -F '#{client_tty} #{client_session}' 2>/dev/null |
+        awk -v tty="/dev/$tty" '$1 == tty { print $2; exit }') || session=
+fi
+
+current=
+if [ -n "$session" ]; then
+    current=$(tmux show-environment -t "$session" TERM_BACKGROUND 2>/dev/null |
+        sed -n 's/^TERM_BACKGROUND=//p') || true
+fi
+if [ -z "$current" ]; then
+    current=$(cat "$state" 2>/dev/null) || current=
+fi
+
 case "${1:-toggle}" in
     dark|light) mode=$1 ;;
-    toggle) [ "$(cat "$state" 2>/dev/null)" = light ] && mode=dark || mode=light ;;
+    toggle) if [ "$current" = light ]; then mode=dark; else mode=light; fi ;;
     *) echo "usage: ${0##*/} [dark|light|toggle]" >&2; exit 2 ;;
 esac
 
-[ "$mode" = dark ] && theme="$themes/alabaster-dark.conf" || theme="$themes/vs-light.conf"
+if [ "$mode" = dark ]; then theme="$themes/alabaster-dark.conf"; else theme="$themes/vs-light.conf"; fi
 
 mkdir -p "${state%/*}"
 printf '%s\n' "$mode" > "$state"
-cp "$theme" "$HOME/.config/kitty/current-theme.conf"
-
-# Add --all to set every open window at once; without it only the active window and the default change.
-if [ -n "${KITTY_LISTEN_ON:-}" ]; then
-    kitten @ set-colors --configured "$theme" 2>/dev/null || true
-    match="id:${KITTY_WINDOW_ID:-}"
-    [ -n "${KITTY_WINDOW_ID:-}" ] || match=state:focused
-    win_pid=$(kitten @ ls --match "$match" 2>/dev/null | python3 -c 'import json, sys
-d = json.load(sys.stdin)
-for w in d[0]["tabs"][0]["windows"]: print(w["pid"]); sys.exit(0)
-' 2>/dev/null || true)
-    tty=$(ps -o tty= -p "${win_pid:-0}" 2>/dev/null | tr -d ' ')
-    [ -n "$tty" ] && [ "$tty" != "?" ] && pkill -USR1 -t "$tty" -x nvim || true
+if [ -n "$session" ]; then
+    tmux set-environment -t "$session" TERM_BACKGROUND "$mode" || true
 fi
+
+# No --configured: that repaints every window without colours of its own.
+if [ -n "${KITTY_LISTEN_ON:-}" ]; then
+    kitten @ set-colors --match state:focused "$theme" 2>/dev/null || true
+fi
+
+pkill -USR1 -x nvim || true
